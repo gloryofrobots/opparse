@@ -1,0 +1,1412 @@
+from opparse.parse.basic import *
+from opparse.parse.lexicon import *
+from opparse.parse import nodes, tokens
+from opparse.parse.nodes import (
+    node_token as __ntok, node_0, node_1, node_2, node_3, list_node, empty_node)
+from opparse.misc import strutil
+from opparse import lang_names
+from opparse.parse.parser import newparser
+import lexicon as lex
+
+TERM_BLOCK = [TT_END]
+TERM_EXP = [TT_END_EXPR]
+
+TERM_IF_BODY = [TT_ELSE, TT_ELIF]
+TERM_IF_CONDITION = [TT_THEN]
+
+TERM_FILE = [TT_ENDSTREAM]
+
+TERM_MATCH_EXPR = [TT_WITH]
+TERM_MATCH_PATTERN = [TT_WITH]
+TERM_CASE = [TT_CASE] + TERM_BLOCK
+# TERM_CATCH = [TT_CATCH, TT_FINALLY] + TERM_BLOCK
+TERM_TRY = [TT_CATCH, TT_FINALLY]
+TERM_CATCH_CASE = [TT_CASE, TT_FINALLY] + TERM_BLOCK
+TERM_SINGLE_CATCH = [TT_FINALLY] + TERM_BLOCK
+
+TERM_LET = [TT_IN]
+
+TERM_PATTERN = [TT_WHEN]
+TERM_FUN_GUARD = [TT_ARROW]
+TERM_FUN_PATTERN = [TT_WHEN, TT_ARROW]
+TERM_FUN_SIGNATURE = [TT_ARROW, TT_CASE]
+
+TERM_CONDITION_BODY = [TT_CASE] + TERM_BLOCK
+TERM_BEFORE_FOR = [TT_FOR]
+
+TERM_BEFORE_WITH = [TT_WITH]
+
+TERM_TYPE_ARGS = TERM_BLOCK
+TERM_UNION_TYPE_ARGS = [TT_CASE] + TERM_BLOCK
+
+TERM_METHOD_SIG = [TT_DEF, TT_ARROW] + TERM_BLOCK
+TERM_METHOD_DEFAULT_BODY = [TT_DEF] + TERM_BLOCK
+TERM_METHOD_CONSTRAINTS = [TT_DEF] + TERM_BLOCK
+TERM_IMPL_BODY = [TT_CASE, TT_DEF] + TERM_BLOCK
+TERM_IMPL_HEADER = [TT_DEF] + TERM_BLOCK
+
+TERM_EXTEND_TRAIT = [TT_DEF, TT_ASSIGN] + TERM_BLOCK
+TERM_EXTEND_MIXIN_TRAIT = [TT_WITH] + TERM_BLOCK
+
+TERM_EXTEND_BODY = [TT_CASE, TT_DEF, TT_WITH] + TERM_BLOCK
+
+TERM_FROM_IMPORTED = [TT_IMPORT, TT_HIDE]
+
+TERM_CONDITION_CONDITION = [TT_ARROW]
+
+NODE_FOR_NAME = [NT_NAME]
+NODE_FUNC_NAME = [NT_NAME]
+NODE_DOT = [NT_NAME, NT_INT]
+NODE_IMPLEMENT_NAME = [NT_NAME, NT_IMPORTED_NAME]
+
+LOOP_CONTROL_TOKENS = [TT_END, TT_ELSE, TT_CASE]
+
+LEVELS_MATCH = TERM_MATCH_EXPR
+LEVELS_IF = [TT_ELSE, TT_ELIF]
+LEVELS_TRY = [TT_CATCH, TT_FINALLY]
+LEVELS_LET = [TT_IN]
+
+SKIP_JUXTAPOSITION = [TT_JUXTAPOSITION]
+
+
+""" GOLANG PRECEDENCES. SOURCE OF INSPIRATION
+Precedence    Operator
+    5             *  /  %  <<  >>  &  &^
+    4             +  -  |  ^
+    3             ==  !=  <  <=  >  >=
+    2             &&
+    1             ||
+"""
+"""
+OPPARSE PRECEDENCES
+Precedence    Operator
+    100           : . .{ .(
+    95           JUXTAPOSITION
+    60           :: :::
+    50           *  /
+    40           +  - ++
+    35           ==  !=  <  <=  >  >=
+    30           and
+    25           or << >>
+    20           |>
+    15           " ."  as of <|
+    10           = := @
+"""
+
+
+def is_wildcard_node(n):
+    return node_type(n) == lex.NT_WILDCARD
+
+
+def tuple_node_length(n):
+    assert node_type(n) == lex.NT_TUPLE, lex.node_type_to_s(node_type(n))
+    return len(node_first(n))
+
+
+def create_token_from_node(type, value, node):
+    return tokens.newtoken(type, value, node_position(node), node_line(node), node_column(node))
+
+
+def create_function_variants(args, body):
+    # print "ARGS", args
+    # print "BODY", body
+    return list_node([list_node([args, body])])
+
+
+def create_fun_simple_node(basenode, name, body):
+    return create_fun_node(basenode, name,
+                           create_function_variants(
+                               create_tuple_node(
+                                   basenode, [create_unit_node(basenode)]),
+                               body))
+
+
+def create_fun_node(basenode, name, funcs):
+    return node_2(lex.NT_FUN, create_token_from_node(lex.TT_STR, "fun", basenode), name, funcs)
+
+
+def create_partial_node(basenode, name):
+    return create_call_node_s(basenode, lang_names.PARTIAL, [name])
+
+
+def create_temporary_node(basenode, idx):
+    return node_1(lex.NT_TEMPORARY, create_token_from_node(lex.TT_UNKNOWN, "", basenode), idx)
+
+
+def create_name_from_operator(basenode, op):
+    return create_name_node_s(basenode, node_value_s(op))
+
+
+def create_name_node_s(basenode, name):
+    return node_0(lex.NT_NAME, create_token_from_node(lex.TT_NAME, name, basenode))
+
+
+def create_name_node(basenode, name):
+    return create_name_node_s(basenode, name)
+
+
+def create_str_node(basenode, strval):
+    return node_0(lex.NT_STR, create_token_from_node(lex.TT_STR, strval, basenode))
+
+
+def create_symbol_node(basenode, name):
+    return node_1(lex.NT_SYMBOL, create_token_from_node(lex.TT_SHARP, "#", basenode), name)
+
+
+def create_symbol_node_s(basenode, name):
+    return node_1(lex.NT_SYMBOL, create_token_from_node(lex.TT_SHARP, "#", basenode),
+                  create_name_node_s(basenode, name))
+
+
+def create_int_node(basenode, val):
+    return node_0(lex.NT_INT, create_token_from_node(lex.TT_INT, str(val), basenode))
+
+
+def create_true_node(basenode):
+    return node_0(lex.NT_TRUE, create_token_from_node(lex.TT_TRUE, "true", basenode))
+
+
+def create_false_node(basenode):
+    return node_0(lex.NT_FALSE, create_token_from_node(lex.TT_FALSE, "false", basenode))
+
+
+def create_void_node(basenode):
+    return node_0(lex.NT_VOID, create_token_from_node(lex.TT_TRUE, "void", basenode))
+
+
+def create_undefine_node(basenode, varname):
+    return node_1(lex.NT_UNDEFINE, create_token_from_node(lex.TT_UNKNOWN, "undefine", basenode), varname)
+
+
+def create_goto_node(label):
+    return node_0(lex.NT_GOTO,
+                  tokens.newtoken(lex.TT_UNKNOWN, str(label), -1, -1, -1))
+
+
+def create_fenv_node(basenode):
+    return node_0(lex.NT_FENV,
+                  create_token_from_node(lex.TT_NAME, "___fenv", basenode))
+
+
+def create_wildcard_node(basenode):
+    return node_0(lex.NT_WILDCARD, create_token_from_node(lex.TT_WILDCARD, "_", basenode))
+
+
+def create_unit_node(basenode):
+    return node_0(lex.NT_UNIT, create_token_from_node(lex.TT_LPAREN, "(", basenode))
+
+
+# def create_tuple_with_unit_node(basenode):
+# return create_tuple_node(basenode, node_0(lex.NT_UNIT,
+# create_token_from_node(lex.TT_LPAREN, "(", basenode)))
+
+def create_tuple_node(basenode, elements):
+    return node_1(lex.NT_TUPLE, create_token_from_node(lex.TT_LPAREN, "(", basenode), list_node(elements))
+
+
+def create_tuple_node_from_list(basenode, elements):
+    assert is_list_node(elements)
+    return node_1(lex.NT_TUPLE, create_token_from_node(lex.TT_LPAREN, "(", basenode), elements)
+
+
+def create_list_node(basenode, items):
+    return node_1(lex.NT_LIST, create_token_from_node(lex.TT_LSQUARE, "[", basenode), list_node(items))
+
+
+def create_list_node_from_list(basenode, items):
+    assert is_list_node(items)
+    return node_1(lex.NT_LIST, create_token_from_node(lex.TT_LSQUARE, "[", basenode), items)
+
+
+def create_empty_list_node(basenode):
+    return node_1(lex.NT_LIST, create_token_from_node(lex.TT_LSQUARE, "[", basenode), list_node([]))
+
+
+def create_empty_map_node(basenode):
+    return node_1(lex.NT_MAP, create_token_from_node(lex.TT_LCURLY, "{", basenode), list_node([]))
+
+
+def create_match_fail_node(basenode, val, idx):
+    sym = create_symbol_node_s(basenode, val)
+    return create_tuple_node(basenode, [sym, create_temporary_node(basenode, idx)])
+    # return create_call_node_s(basenode, val, [create_name_node(basenode,
+    # var)])
+
+
+def create_if_node(basenode, branches):
+    return node_1(lex.NT_CONDITION, create_token_from_node(lex.TT_IF, "if", basenode), list_node(branches))
+
+
+def create_call_node(basenode, func, exps):
+    return node_2(lex.NT_CALL, create_token_from_node(lex.TT_LPAREN, "(", basenode), func, exps)
+
+
+def create_call_node_1(basenode, func, exp):
+    return node_2(lex.NT_CALL, create_token_from_node(lex.TT_LPAREN, "(", basenode), func, list_node([exp]))
+
+
+def create_call_node_2(basenode, func, exp1, exp2):
+    return node_2(lex.NT_CALL, create_token_from_node(lex.TT_LPAREN, "(", basenode), func, list_node([exp1, exp2]))
+
+
+def create_call_node_3(basenode, func, exp1, exp2, exp3):
+    return node_2(lex.NT_CALL, create_token_from_node(lex.TT_LPAREN, "(", basenode), func, list_node([exp1, exp2, exp3]))
+
+
+def create_call_node_name(basenode, funcname, exps):
+    return create_call_node_s(basenode, funcname, exps)
+
+
+def create_call_node_s(basenode, funcname, exps):
+    return node_2(lex.NT_CALL,
+                  create_token_from_node(lex.TT_LPAREN, "(", basenode),
+                  create_name_node_s(basenode, funcname),
+                  list_node(exps))
+
+
+def create_when_no_else_node(basenode, cond, body):
+    return node_2(lex.NT_WHEN, create_token_from_node(lex.TT_WHEN, "when", basenode), cond, body)
+
+
+# CALL TO OPERATOR FUNCS
+# TODO MAKE IT CONSISTENT WITH OPERATOR REDECLARATION
+
+def create_eq_node(basenode, left, right):
+    return create_call_node_s(basenode, lang_names.EQ, [left, right])
+
+
+def create_gt_node(basenode, left, right):
+    return create_call_node_s(basenode, lang_names.GE, [left, right])
+
+
+def create_kindof_node(basenode, left, right):
+    return create_call_node_s(basenode, lang_names.KINDOF, [left, right])
+
+
+def create_isnot_node(basenode, left, right):
+    return create_call_node_s(basenode, lang_names.ISNOT, [left, right])
+
+
+def create_is_node(basenode, left, right):
+    return create_call_node_s(basenode, lang_names.IS, [left, right])
+
+
+def create_elem_node(basenode, left, right):
+    return create_call_node_s(basenode, lang_names.ELEM, [left, right])
+
+
+def create_is_indexed_node(basenode, val):
+    return create_call_node_s(basenode, lang_names.IS_INDEXED, [val])
+
+
+def create_is_dict_node(basenode, val):
+    return create_call_node_s(basenode, lang_names.IS_DICT, [val])
+
+
+def create_is_empty_node(basenode, val):
+    return create_call_node_s(basenode, lang_names.IS_EMPTY, [val])
+
+
+def create_is_seq_node(basenode, val):
+    return create_call_node_s(basenode, lang_names.IS_SEQ, [val])
+
+
+def create_len_node(basenode, val):
+    return create_call_node_s(basenode, lang_names.LEN, [val])
+
+
+def create_delay_node(basenode, exp):
+    return node_1(lex.NT_DELAY, create_token_from_node(lex.TT_DELAY, "delay", basenode), exp)
+
+
+def create_delayed_cons_node(basenode, left, right):
+    return create_cons_node(basenode, left, create_delay_node(basenode, right))
+
+
+def create_cons_node(basenode, left, right):
+    return create_call_node_s(basenode, lang_names.CONS, [left, right])
+
+
+##############################
+
+def create_and_node(basenode, left, right):
+    return node_2(lex.NT_AND, create_token_from_node(lex.TT_AND, "and", basenode), left, right)
+
+
+def create_assign_node(basenode, left, right):
+    return node_2(lex.NT_ASSIGN, create_token_from_node(lex.TT_ASSIGN, "=", basenode), left, right)
+
+
+def create_head_node(basenode):
+    return node_0(lex.NT_HEAD, create_token_from_node(lex.TT_UNKNOWN, "", basenode))
+
+
+def create_tail_node(basenode):
+    return node_0(lex.NT_TAIL, create_token_from_node(lex.TT_UNKNOWN, "", basenode))
+
+
+def create_drop_node(basenode, count):
+    return node_1(lex.NT_DROP, create_token_from_node(lex.TT_UNKNOWN, "..", basenode), count)
+
+
+def create_lookup_node(basenode, left, right):
+    return node_2(lex.NT_LOOKUP, create_token_from_node(lex.TT_LSQUARE, "[", basenode), left, right)
+
+
+def create_bind_node(basenode, left, right):
+    return node_2(lex.NT_BIND, create_token_from_node(lex.TT_AT_SIGN, "@", basenode), left, right)
+
+
+def create_of_node(basenode, left, right):
+    return node_2(lex.NT_OF, create_token_from_node(lex.TT_OF, "of", basenode), left, right)
+
+
+def create_match_node(basenode, exp, branches):
+    return node_2(lex.NT_MATCH, create_token_from_node(lex.TT_MATCH, "match", basenode), exp, list_node(branches))
+
+
+def create_try_statement_node(basenode, exp, success, fail):
+    return node_3(lex.NT_TRY,
+                  create_token_from_node(lex.TT_TRY, "try", basenode),
+                  list_node([exp, success]),
+                  list_node([empty_node(), list_node([fail])]),
+                  empty_node())
+
+NODE_TYPE_MAPPING = {
+    TT_COLON: NT_IMPORTED_NAME,
+    TT_TRUE: NT_TRUE,
+    TT_FALSE: NT_FALSE,
+    TT_INT: NT_INT,
+    TT_FLOAT: NT_FLOAT,
+    TT_STR: NT_STR,
+    TT_MULTI_STR: NT_MULTI_STR,
+    TT_CHAR: NT_CHAR,
+    TT_WILDCARD: NT_WILDCARD,
+    TT_NAME: NT_NAME,
+    TT_TYPENAME: NT_NAME,
+    TT_IF: NT_CONDITION,
+    TT_MATCH: NT_MATCH,
+    TT_EXPORT: NT_EXPORT,
+    TT_IMPORT: NT_IMPORT,
+    TT_TRAIT: NT_TRAIT,
+    TT_THROW: NT_THROW,
+    TT_ELLIPSIS: NT_REST,
+    TT_ASSIGN: NT_ASSIGN,
+    TT_OF: NT_OF,
+    TT_AS: NT_AS,
+    TT_AND: NT_AND,
+    TT_OR: NT_OR,
+    TT_DOUBLE_DOT: NT_RANGE,
+    TT_SHARP: NT_SYMBOL,
+    TT_OPERATOR: NT_NAME,
+    TT_DOUBLE_COLON: NT_CONS,
+    # TT_COMMA: NT_COMMA,
+    TT_CASE: NT_CASE,
+    # TT_END_EXPR: -100,
+}
+
+
+def __ntype(node):
+    node_type = NODE_TYPE_MAPPING[nodes.node_token_type(node)]
+    return node_type
+
+
+def _init_default_current_0(parser):
+    return nodes.node_0(__ntype(parser.node), __ntok(parser.node))
+
+
+##############################################################
+# INFIX
+##############################################################
+
+#
+def led_infix(parser, op, node, left):
+    exp = expression(parser, op.lbp)
+    return node_2(__ntype(node), __ntok(node), left, exp)
+
+
+def led_infixr(parser, op, node, left):
+    exp = expression(parser, op.lbp - 1)
+    return node_2(__ntype(node), __ntok(node), left, exp)
+
+
+def prefix_nud_function(parser, op, node):
+    exp = literal_expression(parser)
+    # exp = expression(parser, 100)
+    return nodes.create_call_node_name(node, op.prefix_function, [exp])
+
+
+def led_infix_function(parser, op, node, left):
+    exp = expression(parser, op.lbp)
+    return nodes.create_call_node_name(node, op.infix_function, [left, exp])
+
+
+def led_infixr_function(parser, op, node, left):
+    exp = expression(parser, op.lbp - 1)
+    return nodes.create_call_node_name(node, op.infix_function, [left, exp])
+
+
+def led_infixr_assign(parser, op, node, left):
+    exp = expression(parser, 9)
+    return node_2(__ntype(node), __ntok(node), left, exp)
+
+
+def prefix_backtick_operator(parser, op, node):
+    opname = strutil.cat_both_ends(nodes.node_value_s(node))
+    if opname == "::":
+        return nodes.create_name_node_s(node, lang_names.CONS)
+
+    op = parser_find_operator(parser, opname)
+    if op is None:
+        return parse_error(parser, u"Invalid operator", node)
+    if op.infix_function is None:
+        return parse_error(parser, u"Expected infix operator", node)
+
+    return nodes.create_name_node(node, op.infix_function)
+
+
+def infix_backtick_name(parser, op, node, left):
+    funcname = strutil.cat_both_ends(nodes.node_value_s(node))
+    if not funcname:
+        return parse_error(parser, u"invalid variable name in backtick expression", node)
+    funcnode = nodes.create_name_node_s(node, funcname)
+
+    right = expression(parser, op.lbp)
+    return nodes.create_call_node_2(node, funcnode, left, right)
+
+
+# def infix_double_colon(parser, op, node, left):
+#     right = rexpression(parser, op)
+#     return nodes.create_cons_node(node, left, right)
+
+
+def infix_triple_colon(parser, op, node, left):
+    right = rexpression(parser, op)
+    return nodes.create_delayed_cons_node(node, left, right)
+
+
+def infix_spacedot(parser, op, node, left):
+    right = expression(parser, op.lbp)
+    return nodes.node_2(NT_JUXTAPOSITION, __ntok(node), left, right)
+
+
+def infix_juxtaposition(parser, op, node, left):
+    right = base_expression(parser, op.lbp)
+    return nodes.node_2(NT_JUXTAPOSITION, __ntok(node), left, right)
+
+
+def infix_dot(parser, op, node, left):
+    if parser.token_type == TT_INT:
+        idx = _init_default_current_0(parser)
+        advance(parser)
+        return node_2(NT_LOOKUP, __ntok(node), left, idx)
+
+    symbol = grab_name(parser)
+    return node_2(NT_LOOKUP, __ntok(node), left, nodes.create_symbol_node(symbol, symbol))
+
+
+def infix_lcurly(parser, op, node, left):
+    items = []
+    init_free_layout(parser, node, [TT_RCURLY])
+    if parser.token_type != TT_RCURLY:
+        while True:
+            # TODO check it
+            check_token_types(
+                parser, [TT_NAME, TT_SHARP, TT_INT, TT_STR, TT_MULTI_STR, TT_CHAR, TT_FLOAT])
+            # WE NEED LBP=10 TO OVERRIDE ASSIGNMENT LBP(9)
+            key = expression(parser, 10)
+
+            advance_expected(parser, TT_ASSIGN)
+            value = expression(parser, 0)
+
+            items.append(list_node([key, value]))
+
+            if parser.token_type != TT_COMMA:
+                break
+
+            advance_expected(parser, TT_COMMA)
+
+    advance_expected(parser, TT_RCURLY)
+    return node_2(NT_MODIFY, __ntok(node), left, list_node(items))
+
+
+def infix_lsquare(parser, op, node, left):
+    init_free_layout(parser, node, [TT_RSQUARE])
+    exp = expression(parser, 0)
+    advance_expected(parser, TT_RSQUARE)
+    return node_2(NT_LOOKUP, __ntok(node), left, exp)
+
+
+def infix_name_pair(parser, op, node, left):
+    check_token_type(parser, TT_NAME)
+    name = _init_default_current_0(parser)
+    advance(parser)
+    return node_2(__ntype(node), __ntok(node), left, name)
+
+
+def infix_at(parser, op, node, left):
+    ltype = nodes.node_token_type(left)
+    if ltype != TT_NAME:
+        parse_error(parser, u"Bad lvalue in pattern binding", left)
+
+    exp = expression(parser, 9)
+    return node_2(NT_BIND, __ntok(node), left, exp)
+
+
+##############################################################
+# INFIX
+##############################################################
+
+
+def prefix_indent(parser, op, node):
+    return parse_error(parser, u"Invalid indentation level", node)
+
+
+def prefix_nud(parser, op, node):
+    exp = literal_expression(parser)
+    return node_1(__ntype(node), __ntok(node), exp)
+
+
+def itself(parser, op, node):
+    return node_0(__ntype(node), __ntok(node))
+
+
+def _parse_name(parser):
+    if parser.token_type == TT_SHARP:
+        node = parser.node
+        advance(parser)
+        return _parse_symbol(parser, node)
+
+    check_token_types(parser, [TT_STR, TT_MULTI_STR, TT_NAME])
+    node = parser.node
+    advance(parser)
+    return node_0(__ntype(node), __ntok(node))
+
+
+def _parse_symbol(parser, node):
+    check_token_types(parser, [TT_NAME, TT_MULTI_STR, TT_STR, TT_OPERATOR])
+    exp = node_0(__ntype(parser.node), __ntok(parser.node))
+    advance(parser)
+    return node_1(__ntype(node), __ntok(node), exp)
+
+
+def prefix_sharp(parser, op, node):
+    return _parse_symbol(parser, node)
+
+
+def prefix_delay(parser, op, node):
+    exp = expression(parser, 0)
+    return nodes.create_delay_node(node, exp)
+
+
+# def prefix_backtick(parser, op, node):
+#     val = strutil.cat_both_ends(nodes.node_value_s(node))
+#     if not val:
+#         return parse_error(parser, u"invalid variable name", node)
+#     return nodes.create_name_node(node, val)
+
+
+def symbol_wildcard(parser, op, node):
+    return parse_error(parser, u"Invalid use of _ pattern", node)
+
+
+# MOST complicated operator
+# expressions (f 1 2 3) (2 + 3) (-1)
+# tuples (1,2,3,4,5)
+def layout_lparen(parser, op, node):
+    init_free_layout(parser, node, [TT_RPAREN])
+
+
+def prefix_lparen(parser, op, node):
+    if parser.token_type == TT_RPAREN:
+        advance_expected(parser, TT_RPAREN)
+        return nodes.create_unit_node(node)
+
+    e = expression(parser, 0, [TT_RPAREN])
+    skip_end_expression(parser)
+
+    if parser.token_type == TT_RPAREN:
+        advance_expected(parser, TT_RPAREN)
+        return e
+
+    items = [e]
+    advance_expected(parser, TT_COMMA)
+
+    if parser.token_type != TT_RPAREN:
+        while True:
+            items.append(expression(parser, 0, [TT_COMMA]))
+            skip_end_expression(parser)
+            if parser.token_type == TT_RPAREN:
+                break
+            advance_expected(parser, TT_COMMA)
+
+    advance_expected(parser, TT_RPAREN)
+    return node_1(NT_TUPLE, __ntok(node), list_node(items))
+
+
+def layout_lsquare(parser, op, node):
+    init_free_layout(parser, node, [TT_RSQUARE])
+
+
+def prefix_lsquare(parser, op, node):
+    items = []
+    if parser.token_type != TT_RSQUARE:
+        while True:
+            items.append(expression(parser, 0))
+            skip_end_expression(parser)
+
+            if parser.token_type != TT_COMMA:
+                break
+
+            advance_expected(parser, TT_COMMA)
+
+    advance_expected(parser, TT_RSQUARE)
+    return node_1(NT_LIST, __ntok(node), list_node(items))
+
+
+def on_bind_node(parser, key):
+    if nodes.node_type(key) != NT_NAME:
+        parse_error(parser, u"Invalid bind name", key)
+    if parser.token_type == TT_OF:
+        advance_expected(parser, TT_OF)
+        check_token_type(parser, TT_NAME)
+        typename = grab_name(parser)
+        return nodes.create_of_node(key, key, typename), empty_node()
+
+    advance_expected(parser, TT_AT_SIGN)
+    real_key, value = _parse_map_key_pair(
+        parser, [TT_NAME, TT_SHARP, TT_STR, TT_MULTI_STR], None)
+
+    # allow syntax like {var1@ key}
+    if nodes.node_type(real_key) == NT_NAME:
+        real_key = nodes.create_symbol_node(real_key, real_key)
+
+    bind_key = nodes.create_bind_node(key, key, real_key)
+    return bind_key, value
+
+
+def prefix_lcurly_type(parser, op, node):
+    items = []
+    if parser.token_type != TT_RCURLY:
+        while True:
+            name = expression(parser, 0)
+            skip_end_expression(parser)
+            check_node_type(parser, name, NT_SYMBOL)
+
+            items.append(name)
+            if parser.token_type != TT_COMMA:
+                break
+
+            advance_expected(parser, TT_COMMA)
+
+    advance_expected(parser, TT_RCURLY)
+    return node_1(NT_LIST, __ntok(node), list_node(items))
+
+
+def layout_lcurly(parser, op, node):
+    init_free_layout(parser, node, [TT_RCURLY])
+
+
+# this callback used in pattern matching
+def prefix_lcurly_patterns(parser, op, node):
+    return _prefix_lcurly(parser, op, node, [TT_NAME, TT_SHARP, TT_INT, TT_MULTI_STR, TT_STR, TT_CHAR, TT_FLOAT],
+                          on_bind_node)
+
+
+def prefix_lcurly(parser, op, node):
+    return _prefix_lcurly(parser, op, node, [TT_NAME, TT_SHARP, TT_INT, TT_STR, TT_MULTI_STR, TT_CHAR, TT_FLOAT],
+                          on_bind_node)
+
+
+def _parse_map_key_pair(parser, types, on_unknown):
+    check_token_types(parser, types)
+    # WE NEED LBP=10 TO OVERRIDE ASSIGNMENT LBP(9)
+    key = expression(parser, 10)
+
+    if parser.token_type == TT_COMMA:
+        value = empty_node()
+    elif parser.token_type == TT_RCURLY:
+        value = empty_node()
+    elif parser.token_type == TT_ASSIGN:
+        advance_expected(parser, TT_ASSIGN)
+        value = expression(parser, 0)
+        skip_end_expression(parser)
+    else:
+        if on_unknown is None:
+            parse_error(parser, u"Invalid map declaration syntax", parser.node)
+        key, value = on_unknown(parser, key)
+
+    return key, value
+
+
+def _prefix_lcurly(parser, op, node, types, on_unknown):
+    # on_unknown used for pattern_match in binds {NAME @ name = "Alice"}
+    items = []
+    if parser.token_type != TT_RCURLY:
+        while True:
+            # TODO check it
+            key, value = _parse_map_key_pair(parser, types, on_unknown)
+            items.append(list_node([key, value]))
+
+            if parser.token_type != TT_COMMA:
+                break
+
+            advance_expected(parser, TT_COMMA)
+
+    advance_expected(parser, TT_RCURLY)
+    return node_1(NT_MAP, __ntok(node), list_node(items))
+
+
+def prefix_if(parser, op, node):
+    init_node_layout(parser, node, LEVELS_IF)
+    branches = []
+
+    cond = expression(parser, 0, TERM_IF_CONDITION)
+    advance_expected_one_of(parser, TERM_IF_CONDITION)
+    init_code_layout(parser, parser.node, TERM_IF_BODY)
+
+    body = statements(parser, TERM_IF_BODY)
+
+    branches.append(list_node([cond, body]))
+    check_token_types(parser, TERM_IF_BODY)
+
+    while parser.token_type == TT_ELIF:
+        advance_expected(parser, TT_ELIF)
+
+        cond = expression(parser, 0, TERM_IF_CONDITION)
+        advance_expected_one_of(parser, TERM_IF_CONDITION)
+        init_code_layout(parser, parser.node, TERM_IF_BODY)
+
+        body = statements(parser, TERM_IF_BODY)
+        check_token_types(parser, TERM_IF_BODY)
+        branches.append(list_node([cond, body]))
+
+    advance_expected(parser, TT_ELSE)
+    init_code_layout(parser, parser.node, TERM_BLOCK)
+
+    body = statements(parser, TERM_BLOCK)
+    branches.append(list_node([empty_node(), body]))
+    advance_end(parser)
+    return node_1(NT_CONDITION, __ntok(node), list_node(branches))
+
+
+def prefix_let(parser, op, node):
+    init_node_layout(parser, node, LEVELS_LET)
+    init_code_layout(parser, parser.node, TERM_LET)
+    letblock = statements(parser, TERM_LET)
+    advance_expected(parser, TT_IN)
+    skip_indent(parser)
+    init_code_layout(parser, parser.node)
+    inblock = statements(parser, TERM_BLOCK)
+    advance_end(parser)
+    return node_2(NT_LET, __ntok(node), letblock, inblock)
+
+
+def prefix_try(parser, op, node):
+    init_node_layout(parser, node, LEVELS_TRY)
+    init_code_layout(parser, parser.node, TERM_TRY)
+
+    trybody = statements(parser, TERM_TRY)
+    catches = []
+
+    check_token_type(parser, TT_CATCH)
+    advance(parser)
+    skip_indent(parser)
+
+    if parser.token_type == TT_CASE:
+        init_offside_layout(parser, parser.node)
+        while parser.token_type == TT_CASE:
+            advance_expected(parser, TT_CASE)
+            # pattern = expressions(parser.pattern_parser, 0)
+            pattern = _parse_pattern(parser)
+            advance_expected(parser, TT_ARROW)
+            init_code_layout(parser, parser.node, TERM_CATCH_CASE)
+            body = statements(parser, TERM_CATCH_CASE)
+            catches.append(list_node([pattern, body]))
+    else:
+        pattern = _parse_pattern(parser)
+        advance_expected(parser, TT_ARROW)
+        init_code_layout(parser, parser.node, TERM_SINGLE_CATCH)
+        body = statements(parser, TERM_SINGLE_CATCH)
+        catches.append(list_node([pattern, body]))
+
+    if parser.token_type == TT_FINALLY:
+        advance_expected(parser, TT_FINALLY)
+        advance_expected(parser, TT_ARROW)
+        init_code_layout(parser, parser.node)
+        finallybody = statements(parser, TERM_BLOCK)
+    else:
+        finallybody = empty_node()
+
+    advance_end(parser)
+
+    return node_3(NT_TRY, __ntok(node), trybody, list_node(catches), finallybody)
+
+
+def _parse_pattern(parser):
+    pattern = expression(parser.pattern_parser, 0, TERM_PATTERN)
+    if parser.token_type == TT_WHEN:
+        advance(parser)
+        guard = expression(parser.guard_parser, 0, TERM_FUN_GUARD)
+        pattern = node_2(NT_WHEN, __ntok(guard), pattern, guard)
+
+    return pattern
+
+
+def prefix_match(parser, op, node):
+    init_node_layout(parser, node, LEVELS_MATCH)
+    init_code_layout(parser, parser.node, TERM_MATCH_EXPR)
+
+    exp = expression_with_optional_end_of_expression(
+        parser, 0, TERM_MATCH_PATTERN)
+    # skip_indent(parser)
+    check_token_type(parser, TT_WITH)
+    advance(parser)
+    skip_indent(parser)
+
+    pattern_parser = parser.pattern_parser
+    branches = []
+    # check_token_type(parser, TT_CASE)
+
+    # TODO COMMON PATTERN MAKE ONE FUNC with try/fun/match
+    if parser.token_type == TT_CASE:
+        init_offside_layout(parser, parser.node)
+        while pattern_parser.token_type == TT_CASE:
+            advance_expected(pattern_parser, TT_CASE)
+            pattern = _parse_pattern(parser)
+
+            advance_expected(parser, TT_ARROW)
+            init_code_layout(parser, parser.node, TERM_CASE)
+            body = statements(parser, TERM_CASE)
+
+            branches.append(list_node([pattern, body]))
+    else:
+        pattern = _parse_pattern(parser)
+        advance_expected(parser, TT_ARROW)
+        init_code_layout(parser, parser.node)
+        body = statements(parser, TERM_BLOCK)
+        branches.append(list_node([pattern, body]))
+
+    advance_end(parser)
+
+    if len(branches) == 0:
+        parse_error(parser, u"Empty match expression", node)
+
+    return node_2(NT_MATCH, __ntok(node), exp, list_node(branches))
+
+
+def prefix_throw(parser, op, node):
+    exp = expression(parser, 0)
+    return node_1(__ntype(node), __ntok(node), exp)
+
+
+# FUNCTION STUFF################################
+
+def _parse_func_pattern(parser, arg_terminator, guard_terminator):
+    pattern = juxtaposition_as_tuple(parser.fun_pattern_parser, arg_terminator)
+    args_type = nodes.node_type(pattern)
+
+    if args_type != NT_TUPLE:
+        parse_error(parser, u"Invalid  syntax in function arguments", pattern)
+
+    if parser.token_type == TT_WHEN:
+        advance(parser)
+        guard = expression(parser.guard_parser, 0, guard_terminator)
+        pattern = node_2(NT_WHEN, __ntok(guard), pattern, guard)
+
+    return pattern
+
+
+def _parse_function_signature(parser):
+    """
+        signature can be one of
+        arg1 arg2
+        arg1 . arg2 ...arg3
+        arg1 of T arg2 of T
+        ()
+        (arg1 arg2 of T ...arg3)
+    """
+    pattern = juxtaposition_as_tuple(
+        parser.fun_signature_parser, TERM_FUN_SIGNATURE)
+    skip_indent(parser)
+    args_type = nodes.node_type(pattern)
+    if args_type != NT_TUPLE:
+        parse_error(parser, u"Invalid  syntax in function signature", pattern)
+    return pattern
+
+
+def _parse_function_variants(parser, signature, term_pattern, term_guard, term_case_body, term_single_body):
+    if parser.token_type == TT_ARROW:
+        advance(parser)
+        init_code_layout(parser, parser.node, term_single_body)
+        body = statements(parser, term_single_body)
+        return nodes.create_function_variants(signature, body)
+
+    # bind to different name for not confusing reading code
+    # it serves as basenode for node factory functions
+    node = signature
+    check_token_type(parser, TT_CASE)
+
+    init_offside_layout(parser, parser.node)
+
+    funcs = []
+    sig_args = nodes.node_first(signature)
+    sig_arity = len(sig_args)
+
+    while parser.token_type == TT_CASE:
+        advance_expected(parser, TT_CASE)
+        args = _parse_func_pattern(parser, term_pattern, term_guard)
+        if nodes.node_type(args) == NT_WHEN:
+            args_sig = nodes.node_first(args)
+        else:
+            args_sig = args
+        if nodes.tuple_node_length(args_sig) != sig_arity:
+            return parse_error(parser, u"Inconsistent clause arity with function signature", args)
+
+        advance_expected(parser, TT_ARROW)
+        init_code_layout(parser, parser.node, term_case_body)
+        body = statements(parser, term_case_body)
+        funcs.append(list_node([args, body]))
+
+    func = nodes.create_fun_node(node, empty_node(), list_node(funcs))
+
+    call_list = []
+    for arg in sig_args:
+        ntype = nodes.node_type(arg)
+        if ntype == NT_OF or ntype == NT_REST:
+            arg = nodes.node_first(arg)
+        call_list.append(arg)
+
+    body = list_node(
+        [nodes.create_call_node(node, func, list_node(call_list))])
+    main_func = nodes.create_function_variants(signature, body)
+    return main_func
+
+
+def _parse_function(parser, term_pattern, term_guard, term_case_body, term_single_body):
+    signature = _parse_function_signature(parser)
+    funcs = _parse_function_variants(
+        parser, signature, term_pattern, term_guard, term_case_body, term_single_body)
+    return funcs
+
+
+def _parse_named_function(parser, node):
+    init_node_layout(parser, node)
+    name = grab_name_or_operator(parser.name_parser)
+    func = _parse_function(
+        parser, TERM_FUN_PATTERN, TERM_FUN_GUARD, TERM_CASE, TERM_BLOCK)
+    advance_end(parser)
+    return name, func
+
+
+def prefix_fun(parser, op, node):
+    name, funcs = _parse_named_function(parser, node)
+    return node_2(NT_FUN, __ntok(node), name, funcs)
+
+
+def prefix_module_fun(parser, op, node):
+    name, funcs = _parse_named_function(parser.expression_parser, node)
+    return node_2(NT_FUN, __ntok(node), name, funcs)
+
+
+def prefix_lambda(parser, op, node):
+    init_node_layout(parser, node)
+    func = _parse_function(
+        parser, TERM_FUN_PATTERN, TERM_FUN_GUARD, TERM_CASE, TERM_BLOCK)
+    advance_end(parser)
+    return node_2(NT_FUN, __ntok(node), empty_node(), func)
+
+
+###############################################################
+# MODULE STATEMENTS
+###############################################################
+
+def stmt_module(parser, op, node):
+    name = expression(parser.name_parser, 0)
+    check_node_type(parser, name, NT_NAME)
+    stmts, scope = parse_module(parser, TERM_BLOCK)
+    advance_end(parser)
+    return node_3(NT_MODULE, __ntok(node), name, stmts, scope)
+
+
+def _load_path_s(node):
+    if nodes.node_type(node) == NT_IMPORTED_NAME:
+        return _load_path_s(nodes.node_first(node)) + ':' + nodes.node_value_s(nodes.node_second(node))
+    else:
+        return nodes.node_value_s(node)
+
+
+def _load_module(parser, exp):
+    # here module must be loaded with
+    # something like this
+
+    # if nodes.node_type(exp) == NT_AS:
+    #     import_name = nodes.node_second(exp)
+    #     module_path = _load_path_s(nodes.node_first(exp))
+    # elif nodes.node_type(exp) == NT_IMPORTED_NAME:
+    #     import_name = nodes.node_second(exp)
+    #     module_path = _load_path_s(exp)
+    # else:
+    #     assert nodes.node_type(exp) == NT_NAME
+    #     import_name = exp
+    #     module_path = nodes.node_value_s(exp)
+    #
+    # state = parser.close()
+    # module = import_module_function(state.process, module_path)
+    # parser.open(state)
+    pass
+
+
+def ensure_tuple(t):
+    if nodes.node_type(t) != NT_TUPLE:
+        return nodes.create_tuple_node(t, [t])
+    return t
+
+
+def stmt_from(parser, op, node):
+    imported = expression(parser.import_parser, 0, TERM_FROM_IMPORTED)
+    check_token_types(parser, [TT_IMPORT, TT_HIDE])
+    if parser.token_type == TT_IMPORT:
+        hiding = False
+        ntype = NT_IMPORT_FROM
+    else:
+        hiding = True
+        ntype = NT_IMPORT_FROM_HIDING
+
+    advance(parser)
+    if parser.token_type == TT_WILDCARD:
+        if hiding is True:
+            return parse_error(parser, u"Invalid usage of hide keyword. Symbol(s) expected", node)
+
+        names = empty_node()
+        advance(parser)
+    else:
+        names = expression(parser.import_names_parser, 0)
+        check_node_types(parser, names, [NT_TUPLE, NT_NAME, NT_AS])
+        names = ensure_tuple(names)
+        if hiding is True:
+            # hiding names can't have as binding
+            check_list_node_types(parser, nodes.node_first(names), [NT_NAME])
+
+    _load_module(parser, imported)
+    return node_2(ntype, __ntok(node), imported, names)
+
+
+def stmt_import(parser, op, node):
+    imported = expression(parser.import_parser, 0, [TT_LPAREN, TT_HIDING])
+
+    if parser.token_type == TT_HIDING:
+        ntype = NT_IMPORT_HIDING
+        hiding = True
+        advance(parser)
+    else:
+        hiding = False
+        ntype = NT_IMPORT
+
+    if parser.token_type == TT_LPAREN:
+        names = expression(parser.import_names_parser, 0)
+        check_node_types(parser, names, [NT_TUPLE, NT_NAME, NT_AS])
+        names = ensure_tuple(names)
+        if hiding is True:
+            # hiding names can't have as binding
+            check_list_node_types(parser, nodes.node_first(names), [NT_NAME])
+    else:
+        if hiding is True:
+            return parse_error(parser, u"Invalid usage of hide keyword. Symbol(s) expected", node)
+        names = empty_node()
+
+    _load_module(parser, imported)
+    return node_2(ntype, __ntok(node), imported, names)
+
+
+def stmt_export(parser, op, node):
+    check_token_types(parser, [TT_LPAREN, TT_NAME])
+    names = expression(parser.import_names_parser, 0)
+    check_node_types(parser, names, [NT_TUPLE, NT_NAME])
+    names = ensure_tuple(names)
+    check_list_node_types(parser, nodes.node_first(names), [NT_NAME])
+    return node_1(NT_EXPORT, __ntok(node), names)
+
+
+def symbol_or_name_value(parser, name):
+    if nodes.node_type(name) == NT_SYMBOL:
+        data = nodes.node_first(name)
+        if nodes.node_type(data) == NT_NAME:
+            return nodes.node_value(data)
+        elif nodes.node_type(data) == NT_STR:
+            return strutil.unquote_w(nodes.node_value(data))
+        else:
+            assert False, "Invalid symbol"
+    elif nodes.node_type(name) == NT_NAME:
+        return nodes.node_value(name)
+    else:
+        assert False, "Invalid name"
+
+
+# TYPES ************************
+def prefix_name_as_symbol(parser, op, node):
+    name = itself(parser, op, node)
+    return nodes.create_symbol_node(name, name)
+
+
+def symbol_list_to_arg_tuple(parser, node, symbols):
+    args = []
+    children = nodes.node_first(symbols)
+    for child in children:
+        assert nodes.node_type(child) == NT_SYMBOL
+        name = nodes.node_first(child)
+        args.append(name)
+
+    return nodes.node_1(NT_TUPLE, nodes.node_token(node), list_node(args))
+
+
+def _symbols_to_args(parser, node, symbols):
+    args = []
+    for child in symbols:
+        assert nodes.node_type(child) == NT_SYMBOL
+        name = nodes.node_first(child)
+        args.append(name)
+
+    return nodes.node_1(NT_TUPLE, nodes.node_token(node), list_node(args))
+
+
+# DERIVE ################################
+def _parse_tuple_of_names(parser, term):
+    exp = expect_expression_of_types(
+        parser, 0, [NT_NAME, NT_IMPORTED_NAME, NT_TUPLE], term)
+    if nodes.node_type(exp) == NT_TUPLE:
+        check_list_node_types(
+            parser, nodes.node_first(exp), [NT_NAME, NT_IMPORTED_NAME])
+        return exp
+    elif nodes.node_type(exp) != NT_TUPLE:
+        return nodes.create_tuple_node(exp, [exp])
+
+
+def _parse_union(parser, node, union_name):
+    types = []
+    init_offside_layout(parser, parser.node)
+    check_token_type(parser, TT_CASE)
+    while parser.token_type == TT_CASE:
+        advance(parser)
+        _typename = grab_name(parser.type_parser)
+        _type = _parse_type(parser, node, _typename, TERM_UNION_TYPE_ARGS)
+        types.append(_type)
+
+    if len(types) < 2:
+        parse_error(
+            parser, u"Union type must have at least two constructors", parser.node)
+
+    advance_end(parser)
+    return nodes.node_2(NT_UNION, __ntok(node), union_name, nodes.list_node(types))
+
+
+def _parse_type(parser, node, typename, term):
+    if parser.token_type == TT_NAME:
+        fields = juxtaposition_as_list(parser.type_parser, term)
+        args = symbol_list_to_arg_tuple(parser, parser.node, fields)
+        body = list_node([nodes.create_fenv_node(parser.node)])
+        construct_funcs = nodes.create_function_variants(args, body)
+    else:
+        fields = empty_node()
+        construct_funcs = empty_node()
+
+    return nodes.node_3(NT_TYPE, __ntok(node), typename, fields, construct_funcs)
+
+
+# TODO BETTER PARSE ERRORS HERE
+def stmt_type(parser, op, node):
+    init_node_layout(parser, node)
+    typename = grab_name(parser.type_parser)
+    skip_indent(parser)
+
+    if parser.token_type == TT_CASE:
+        return _parse_union(parser, node, typename)
+
+    _t = _parse_type(parser, node, typename, TERM_TYPE_ARGS)
+    advance_end(parser)
+    return _t
+
+
+# TRAIT*************************
+def symbol_operator_name(parser, op, node):
+    name = itself(parser, op, node)
+    return nodes.create_name_from_operator(node, name)
+
+
+def grab_name(parser):
+    check_token_type(parser, TT_NAME)
+    name = _init_default_current_0(parser)
+    advance(parser)
+    return name
+
+
+def grab_name_or_operator(parser):
+    check_token_types(parser, [TT_NAME, TT_OPERATOR, TT_DOUBLE_COLON])
+    name = _init_default_current_0(parser)
+    if parser.token_type == TT_OPERATOR:
+        name = nodes.create_name_from_operator(name, name)
+    elif parser.token_type == TT_DOUBLE_COLON:
+        name = nodes.create_name_node_s(name, lang_names.CONS)
+
+    advance(parser)
+    return name
+
+
+def _parser_trait_header(parser, node):
+    type_parser = parser.type_parser
+    name = grab_name(type_parser)
+    check_token_type(parser, TT_FOR)
+    advance(parser)
+    instance_name = grab_name(type_parser)
+    if parser.token_type == TT_OF:
+        advance(parser)
+        constraints = _parse_tuple_of_names(
+            parser.name_parser, TERM_METHOD_CONSTRAINTS)
+    else:
+        constraints = nodes.create_empty_list_node(node)
+    skip_indent(parser)
+    return name, instance_name, constraints
+
+
+def stmt_trait(parser, op, node):
+    init_node_layout(parser, node)
+    name, instance_name, constraints = _parser_trait_header(parser, node)
+    methods = []
+    init_offside_layout(parser, parser.node)
+    while parser.token_type == TT_DEF:
+        advance_expected(parser, TT_DEF)
+        method_name = grab_name_or_operator(parser)
+        check_token_type(parser, TT_NAME)
+
+        sig = juxtaposition_as_list(
+            parser.method_signature_parser, TERM_METHOD_SIG)
+        check_node_type(parser, sig, NT_LIST)
+        if parser.token_type == TT_ARROW:
+            advance(parser)
+            init_code_layout(parser, parser.node, TERM_METHOD_DEFAULT_BODY)
+            args = symbol_list_to_arg_tuple(parser, node, sig)
+            body = statements(
+                parser.expression_parser, TERM_METHOD_DEFAULT_BODY)
+            default_impl = nodes.create_function_variants(args, body)
+        else:
+            default_impl = empty_node()
+
+        methods.append(list_node([method_name, sig, default_impl]))
+    advance_end(parser)
+    return nodes.node_4(NT_TRAIT, __ntok(node), name, instance_name, constraints, list_node(methods))
+
+
+def _parser_implement_header(parser):
+    trait_name = expect_expression_of_types(
+        parser.name_parser, 0, NODE_IMPLEMENT_NAME, TERM_BEFORE_FOR)
+    advance_expected(parser, TT_FOR)
+    type_name = expect_expression_of_types(
+        parser.name_parser, 0, NODE_IMPLEMENT_NAME, TERM_IMPL_HEADER)
+    skip_indent(parser)
+    return trait_name, type_name
+
+
+def stmt_implement(parser, op, node):
+    init_node_layout(parser, node)
+    trait_name, type_name = _parser_implement_header(parser)
+
+    methods = []
+    if parser.token_type != TT_DEF:
+        advance_end(parser)
+        return nodes.node_3(NT_IMPLEMENT, __ntok(node), trait_name, type_name, list_node(methods))
+
+    init_offside_layout(parser, parser.node)
+    while parser.token_type == TT_DEF:
+        advance_expected(parser, TT_DEF)
+        # creating converting method names to symbols
+        # method_name = grab_name_or_operator(parser.name_parser)
+        method_name = expect_expression_of(parser.name_parser, 0, NT_NAME)
+        method_name = nodes.create_symbol_node_s(
+            method_name, nodes.node_value_s(method_name))
+
+        funcs = _parse_function(parser.expression_parser,
+                                TERM_FUN_PATTERN, TERM_FUN_GUARD, TERM_IMPL_BODY, TERM_IMPL_BODY)
+        methods.append(list_node([method_name, funcs]))
+
+    advance_end(parser)
+    return nodes.node_3(NT_IMPLEMENT, __ntok(node), trait_name, type_name, list_node(methods))
+
+
+def stmt_extend(parser, op, node):
+    init_node_layout(parser, node)
+    type_name = expect_expression_of_types(
+        parser.name_parser, 0, NODE_IMPLEMENT_NAME, TERM_BEFORE_WITH)
+    skip_indent(parser)
+    traits = []
+
+    while parser.token_type == TT_WITH:
+        init_offside_layout(parser, parser.node)
+        advance_expected(parser, TT_WITH)
+        trait_name = expect_expression_of_types(
+            parser.name_parser, 0, NODE_IMPLEMENT_NAME, TERM_EXTEND_TRAIT)
+        skip_indent(parser)
+        if parser.token_type == TT_ASSIGN:
+            advance(parser)
+            implementation = expression(parser, 0, TERM_EXTEND_MIXIN_TRAIT)
+        elif parser.token_type == TT_DEF:
+            init_offside_layout(parser, parser.node)
+            methods = []
+
+            while parser.token_type == TT_DEF:
+                advance_expected(parser, TT_DEF)
+                method_name = expect_expression_of(
+                    parser.name_parser, 0, NT_NAME)
+                method_name = nodes.create_symbol_node_s(
+                    method_name, nodes.node_value_s(method_name))
+
+                funcs = _parse_function(parser.expression_parser,
+                                        TERM_FUN_PATTERN, TERM_FUN_GUARD, TERM_EXTEND_BODY, TERM_EXTEND_BODY)
+                methods.append(list_node([method_name, funcs]))
+            implementation = list_node(methods)
+        else:
+            implementation = list_node([])
+        # advance_end(parser)
+        traits.append(list_node([trait_name, implementation]))
+
+    advance_end(parser)
+    return nodes.node_2(NT_EXTEND, __ntok(node), type_name, list_node(traits))
+
+
+# OPERATORS
+
+def stmt_prefix(parser, op, node):
+    op_node = expect_expression_of(parser.name_parser, 0, NT_NAME)
+    func_node = expect_expression_of(parser.name_parser, 0, NT_NAME)
+
+    op_value = symbol_or_name_value(parser, op_node)
+    func_value = symbol_or_name_value(parser, func_node)
+
+    op = parser_current_scope_find_operator_or_create_new(parser, op_value)
+    op = operator_prefix(op, prefix_nud_function, func_value)
+
+    parser_current_scope_add_operator(parser, op_value, op)
+
+
+def stmt_infixl(parser, op, node):
+    return _meta_infix(parser, node, led_infix_function)
+
+
+def stmt_infixr(parser, op, node):
+    return _meta_infix(parser, node, led_infixr_function)
+
+
+def _meta_infix(parser, node, infix_function):
+    op_node = expect_expression_of(parser.name_parser, 0, NT_NAME)
+    func_node = expect_expression_of(parser.name_parser, 0, NT_NAME)
+    precedence_node = expect_expression_of(parser.name_parser, 0, NT_INT)
+
+    op_value = symbol_or_name_value(parser, op_node)
+    func_value = symbol_or_name_value(parser, func_node)
+    try:
+        precedence = strutil.string_to_int(nodes.node_value_s(precedence_node))
+    except:
+        return parse_error(parser, u"Invalid infix operator precedence", precedence_node)
+
+    op = parser_current_scope_find_operator_or_create_new(parser, op_value)
+    op = operator_infix(op, precedence, infix_function, func_value)
+    parser_current_scope_add_operator(parser, op_value, op)
