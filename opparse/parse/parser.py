@@ -1,9 +1,8 @@
-from opparse.parse.tokenstream import TokenStream
-from opparse.parse.indenter import IndentationTokenStream, InvalidIndentationError
 from opparse.parse import nodes, tokens, lexer
 from opparse.misc.strutil import get_line, get_line_for_position
 from opparse import plist
 import operator
+from opparse.parse.indenter import InvalidIndentationError
 
 
 class ParseError(RuntimeError):
@@ -74,12 +73,14 @@ def skip_indent(parser):
 
 
 class ParserScope(object):
+
     def __init__(self):
         self.operators = {}
         self.macro = {}
 
 
 class ParseState:
+
     def __init__(self, ts, lexicon):
         self.ts = ts
         self.lexicon = lexicon
@@ -124,8 +125,8 @@ def parser_find_operator(parser, op_name):
     return None
 
 
-
 class W_Operator(object):
+
     def __init__(self):
         self.nud = None
         self.led = None
@@ -194,7 +195,9 @@ def parser_operator(parser, ttype):
 
         if parser.allow_unknown is True:
             return parser_operator(parser, parser.lex.TT_UNKNOWN)
-        return parse_error(parser, u"Invalid token %s" % tokens.token_type_to_s(ttype), parser.node)
+        return parse_error(parser,
+                           u"Invalid token %s" % tokens.token_type_to_s(ttype),
+                           parser.node)
 
 
 def get_or_create_operator(parser, ttype):
@@ -327,8 +330,10 @@ def token_is_one_of(parser, types):
 
 def check_token_type(parser, type):
     if parser.token_type != type:
-        parse_error(parser, u"Wrong token type, expected %s, got %s" % (tokens.token_type_to_s(type),
-                                                                        tokens.token_type_to_s(parser.token_type)),
+        parse_error(parser,
+                    u"Wrong token type, expected %s, got %s" %
+                    (tokens.token_type_to_s(type),
+                     tokens.token_type_to_s(parser.token_type)),
                     parser.node)
 
 
@@ -348,16 +353,14 @@ def check_node_type(parser, node, expected_type):
     ntype = nodes.node_type(node)
     if ntype != expected_type:
         parse_error(parser, u"Wrong node type, expected  %s, got %s" %
-                    (node_type_to_s(expected_type),
-                     node_type_to_s(ntype)), node)
+                    expected_type, ntype, node)
 
 
 def check_node_types(parser, node, types):
     ntype = nodes.node_type(node)
     if ntype not in types:
         parse_error(parser, u"Wrong node type, expected one of %s, got %s" %
-                    (unicode([node_type_to_s(type) for type in types]),
-                     node_type_to_s(ntype)), node)
+                    str(types), ntype, node)
 
 
 def advance(parser):
@@ -384,24 +387,12 @@ def advance_expected_one_of(parser, ttypes):
     return parser.next_token()
 
 
-def advance_end(parser):
-    advance_expected_one_of(parser, TERM_BLOCK)
-
-
-def on_endofexpression(parser):
-    if parser.isend():
-        return None
-    if parser.token_type in TERM_BLOCK:
-        return parser.node
-    if parser.token_type == parser.lex.TT_END_EXPR:
-        return advance(parser)
-    return False
-
-
 def endofexpression(parser):
-    res = on_endofexpression(parser)
+    res = parser.on_endofexpression()
     if res is False:
-        parse_error(parser, u"Expected end of expression mark got '%s'" % tokens.token_value(parser.token),
+        parse_error(parser,
+                    u"Expected end of expression mark got '%s'" %
+                    tokens.token_value(parser.token),
                     parser.node)
 
     return res
@@ -587,7 +578,7 @@ def statements(parser, endlist):
         if token_is_one_of(parser, endlist):
             break
         s = statement(parser)
-        end_exp = on_endofexpression(parser)
+        end_exp = parser.on_endofexpression()
         if s is None:
             continue
         stmts.append(s)
@@ -645,7 +636,7 @@ def empty(parser, op, node):
     # return None
 
 
-def is_assignment_node(node):
+def is_assignment_node(parser, node):
     token_type = nodes.node_token_type(node)
     assert isinstance(token_type, int)
     if token_type == parser.lex.TT_ASSIGN:
@@ -655,29 +646,36 @@ def is_assignment_node(node):
 
 def condition(parser):
     node = expression(parser, 0)
-    if is_assignment_node(node):
-        parse_error(parser, u"Assignment operators not allowed in conditions", node)
+    if is_assignment_node(parser, node):
+        parse_error(
+            parser, u"Assignment operators not allowed in conditions", node)
     return node
 
 
 def check_if_assignment(parser, node):
-    if is_assignment_node(node):
-        parse_error(parser, u"Assignment operators not allowed in conditions", node)
-
-# additional helpers
-def infix_operator(parser, ttype, lbp, infix_function):
-    op = get_or_create_operator(parser, ttype)
-    operator_infix(op, lbp, led_infix_function, infix_function)
+    if is_assignment_node(parser, node):
+        parse_error(
+            parser, u"Assignment operators not allowed in conditions", node)
 
 
-def infixr_operator(parser, ttype, lbp, infix_function):
-    op = get_or_create_operator(parser, ttype)
-    operator_infix(op, lbp, led_infixr_function, infix_function)
+def led_infix(parser, op, node, left):
+    exp = expression(parser, op.lbp)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        nodes.node_token(node),
+                        left, exp)
 
 
-def prefix_operator(parser, ttype, prefix_function):
-    op = get_or_create_operator(parser, ttype)
-    operator_prefix(op, prefix_nud_function, prefix_function)
+def led_infixr(parser, op, node, left):
+    exp = expression(parser, op.lbp - 1)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        nodes.node_token(node),
+                        left, exp)
+
+
+def led_infixr_assign(parser, op, node, left):
+    exp = expression(parser, 9)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        nodes.node_token(node), left, exp)
 
 
 def infixr(parser, ttype, lbp):
@@ -764,13 +762,7 @@ class Parser:
             parser_error_unknown(self, e.position)
 
     def isend(self):
-        return self.token_type == parser.lex.TT_ENDSTREAM
-
-
-def newtokenstream(source):
-    lx = lexer.lexer(source)
-    tokens_iter = lx.tokens()
-    return IndentationTokenStream(tokens_iter, source)
+        return self.token_type == self.lex.TT_ENDSTREAM
 
 
 def parse_script(parser, termination_tokens):
@@ -780,11 +772,8 @@ def parse_script(parser, termination_tokens):
     return stmts, scope
 
 
-def parse(src, lexicon):
-    parser = Parser()
-    ts = newtokenstream(src)
+def parse(parser, ts, lexicon):
     parser.open(ParseState(ts, lexicon))
-
     parser.next_token()
     stmts, scope = parse_script(parser, [parser.lex.TT_ENDSTREAM])
     assert plist.is_empty(parser.state.scopes)

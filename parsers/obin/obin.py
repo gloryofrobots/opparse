@@ -7,6 +7,36 @@ from opparse.misc import strutil
 from opparse.parse.parser import newparser
 from callbacks import *
 
+""" GOLANG PRECEDENCES. SOURCE OF INSPIRATION
+Precedence    Operator
+    5             *  /  %  <<  >>  &  &^
+    4             +  -  |  ^
+    3             ==  !=  <  <=  >  >=
+    2             &&
+    1             ||
+"""
+"""
+OPPARSE PRECEDENCES
+Precedence    Operator
+    100           : . .{ .(
+    95           JUXTAPOSITION
+    60           :: :::
+    50           *  /
+    40           +  - ++
+    35           ==  !=  <  <=  >  >=
+    30           and
+    25           or << >>
+    20           |>
+    15           " ."  as of <|
+    10           = := @
+"""
+
+from opparse.parse.indenter import IndentationTokenStream, InvalidIndentationError
+
+def newtokenstream(source):
+    lx = lexer.lexer(source)
+    tokens_iter = lx.tokens()
+    return IndentationTokenStream(tokens_iter, source)
 
 def create_parser():
     indenter_settings = dict(
@@ -43,6 +73,15 @@ class ModuleParser(BaseParser):
             BaseParser())
 
         module_parser_init(self)
+
+    def on_endofexpression(self):
+        if self.isend():
+            return None
+        if self.token_type in TERM_BLOCK:
+            return parser.node
+        if self.token_type == self.lex.TT_END_EXPR:
+            return advance(parser)
+        return False
 
     def _on_open(self, state):
         self.method_signature_parser.open(state)

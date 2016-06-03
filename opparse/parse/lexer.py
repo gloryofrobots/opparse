@@ -1,15 +1,5 @@
 from rply import LexerGenerator
 from opparse.parse import tokens
-import re
-
-def keyword(literal):
-    return re.compile('\\b%s\\b' % literal)
-
-
-def token(literal):
-    return re.compile(literal)
-
-
 def create_generator(rules):
     lg = LexerGenerator()
     for rule in rules:
