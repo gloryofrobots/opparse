@@ -456,28 +456,23 @@ def expect_expression_of_types(parser, _rbp, expected_types, terminators=None):
     return exp
 
 
-def skip_end_expression(parser):
-    if parser.token_type == parser.lex.TT_END_EXPR:
+def skip_token(parser, token_type):
+    if parser.token_type == token_type:
         advance(parser)
 
 
+# TODO mandatory terminators
 def expression(parser, _rbp, terminators=None):
-    if terminators is None:
-        terminators = TERM_EXP
+    if not terminators:
+        terminators = [parser.lex.TT_END_EXPR]
     expr = base_expression(parser, _rbp, terminators)
-    expr = postprocess(parser, expr)
+    expr = parser.postprocess(expr)
     return expr
 
 
 # INFIXR
-def rexpression(parser, op):
-    return expression(parser, op.lbp - 1)
-
-
-def expression_with_optional_end_of_expression(parser, _rbp, terminators):
-    exp = expression(parser, _rbp, terminators)
-    skip_end_expression(parser)
-    return exp
+def rexpression(parser, op, terminators):
+    return expression(parser, op.lbp - 1, terminators)
 
 
 def juxtaposition_as_list(parser, terminators):
@@ -500,7 +495,7 @@ def juxtaposition_as_tuple(parser, terminators):
 
 def flatten_juxtaposition(parser, node):
     ntype = nodes.node_type(node)
-    if ntype == NT_JUXTAPOSITION:
+    if ntype == parser.lex.NT_JUXTAPOSITION:
         first = nodes.node_first(node)
         second = nodes.node_second(node)
         head = flatten_juxtaposition(parser, first)
@@ -520,7 +515,7 @@ def postprocess(parser, node):
         return nodes.list_node(children)
 
     ntype = nodes.node_type(node)
-    if ntype == NT_JUXTAPOSITION:
+    if ntype == parser.lex.NT_JUXTAPOSITION:
         flatten = flatten_juxtaposition(parser, node)
         # probably overkill
         if len(flatten) < 2:
@@ -531,7 +526,10 @@ def postprocess(parser, node):
         else:
             caller = plist.head(flatten)
             args = plist.tail(flatten)
-            return postprocess(parser, nodes.node_2(NT_CALL, nodes.node_token(caller), caller, args))
+            return postprocess(parser,
+                               nodes.node_2(parser.lex.NT_CALL,
+                                            nodes.node_token(caller),
+                                            caller, args))
     else:
         children = []
         node_children = nodes.node_children(node)
@@ -541,7 +539,8 @@ def postprocess(parser, node):
         for c in node_children:
             new_child = postprocess(parser, c)
             children.append(new_child)
-        return nodes.newnode(nodes.node_type(node), nodes.node_token(node), children)
+        return nodes.newnode(nodes.node_type(node),
+                             nodes.node_token(node), children)
 
 
 def literal_expression(parser):
@@ -587,7 +586,8 @@ def statements(parser, endlist):
 
     length = len(stmts)
     if length == 0:
-        return parse_error(parser, u"Expected one or more expressions", parser.node)
+        return parse_error(parser,
+                           u"Expected one or more expressions", parser.node)
 
     return nodes.list_node(stmts)
 
@@ -631,31 +631,7 @@ def skip(parser, ttype):
 
 
 def empty(parser, op, node):
-    print "EMPTY"
     return expression(parser, 0)
-    # return None
-
-
-def is_assignment_node(parser, node):
-    token_type = nodes.node_token_type(node)
-    assert isinstance(token_type, int)
-    if token_type == parser.lex.TT_ASSIGN:
-        return True
-    return False
-
-
-def condition(parser):
-    node = expression(parser, 0)
-    if is_assignment_node(parser, node):
-        parse_error(
-            parser, u"Assignment operators not allowed in conditions", node)
-    return node
-
-
-def check_if_assignment(parser, node):
-    if is_assignment_node(parser, node):
-        parse_error(
-            parser, u"Assignment operators not allowed in conditions", node)
 
 
 def led_infix(parser, op, node, left):
@@ -688,17 +664,15 @@ def assignment(parser, ttype, lbp):
 
 class Parser:
 
-    def __init__(self, settings):
+    def __init__(self, allow_overloading=False,
+                 break_on_juxtaposition=False, allow_unknown=True,
+                 juxtaposition_as_list=True):
         self.handlers = {}
         self.state = None
-        self.allow_overloading = settings.get("allow_overloading", False)
-        self.break_on_juxtaposition = settings.get(
-            "break_on_juxtaposition", False)
-
-        self.allow_unknown = settings.get("allow_unknown", True)
-
-        self.juxtaposition_as_list = settings.get(
-            "juxtaposition_as_list", True)
+        self.allow_overloading = allow_overloading
+        self.break_on_juxtaposition = break_on_juxtaposition
+        self.allow_unknown = allow_unknown
+        self.juxtaposition_as_list = juxtaposition_as_list
 
         self.subparsers = {}
 

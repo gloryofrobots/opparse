@@ -1,9 +1,9 @@
 from opparse.parse import *
-from opparse.parse import nodes, tokens
+from opparse.parse import nodes
 from opparse.parse.nodes import (
-    node_token as __ntok, node_0, node_1, node_2, node_3, list_node, empty_node)
+    node_token as __ntok,
+    node_0, node_1, node_2, node_3, list_node, empty_node)
 from opparse.misc import strutil
-from opparse.parse.parser import newparser
 import lexicon.ObinLexicon as lex
 
 TERM_BLOCK = [lex.TT_END]
@@ -78,10 +78,23 @@ def tuple_node_length(n):
     return len(node_first(n))
 
 
-
 def _init_default_current_0(parser):
-    return nodes.node_0(parser.lex.get_nt_for_node(parser.node), __ntok(parser.node))
+    return nodes.node_0(parser.lex.get_nt_for_node(parser.node),
+                        __ntok(parser.node))
+
 # additional helpers
+
+
+def skip_end_expression(parser):
+    skip_token(parser, parser.lex.TT_END_EXPR)
+
+
+def expression_with_optional_end_of_expression(parser, _rbp, terminators):
+    exp = expression(parser, _rbp, terminators)
+    skip_end_expression(parser)
+    return exp
+
+
 def infix_operator(parser, ttype, lbp, infix_function):
     op = get_or_create_operator(parser, ttype)
     operator_infix(op, lbp, led_infix_function, infix_function)
@@ -113,11 +126,6 @@ def led_infixr_function(parser, op, node, left):
     return create_call_node_s(node, op.infix_function, [left, exp])
 
 
-
-
-
-
-
 ##############################################################
 # INFIX
 ##############################################################
@@ -125,20 +133,17 @@ def led_infixr_function(parser, op, node, left):
 def infix_backtick_name(parser, op, node, left):
     funcname = strutil.cat_both_ends(nodes.node_value_s(node))
     if not funcname:
-        return parse_error(parser, u"invalid variable name in backtick expression", node)
+        return parse_error(parser,
+                           u"invalid variable name in backtick expression",
+                           node)
     funcnode = nodes.create_name_node_s(node, funcname)
 
     right = expression(parser, op.lbp)
     return nodes.create_call_node_2(node, funcnode, left, right)
 
 
-# def infix_double_colon(parser, op, node, left):
-#     right = rexpression(parser, op)
-#     return nodes.create_cons_node(node, left, right)
-
-
 def infix_triple_colon(parser, op, node, left):
-    right = rexpression(parser, op)
+    right = rexpression(parser, op, TERM_EXP)
     return nodes.create_delayed_cons_node(node, left, right)
 
 
@@ -159,7 +164,8 @@ def infix_dot(parser, op, node, left):
         return node_2(lex.NT_LOOKUP, __ntok(node), left, idx)
 
     symbol = grab_name(parser)
-    return node_2(lex.NT_LOOKUP, __ntok(node), left, nodes.create_symbol_node(symbol, symbol))
+    return node_2(lex.NT_LOOKUP,
+                  __ntok(node), left, nodes.create_symbol_node(symbol, symbol))
 
 
 def infix_lcurly(parser, op, node, left):
@@ -169,7 +175,10 @@ def infix_lcurly(parser, op, node, left):
         while True:
             # TODO check it
             check_token_types(
-                parser, [lex.TT_NAME, lex.TT_SHARP, lex.TT_INT, lex.TT_STR, lex.TT_MULTI_STR, lex.TT_CHAR, lex.TT_FLOAT])
+                parser,
+                [lex.TT_NAME, lex.TT_SHARP, lex.TT_INT,
+                 lex.TT_STR, lex.TT_MULTI_STR, lex.TT_CHAR, lex.TT_FLOAT])
+
             # WE NEED LBP=10 TO OVERRIDE ASSIGNMENT LBP(9)
             key = expression(parser, 10)
 
@@ -241,7 +250,8 @@ def _parse_name(parser):
 
 
 def _parse_symbol(parser, node):
-    check_token_types(parser, [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
+    check_token_types(
+        parser, [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
     exp = node_0(parser.lex.get_nt_for_node(parser.node), __ntok(parser.node))
     advance(parser)
     return node_1(parser.lex.get_nt_for_node(node), __ntok(node), exp)
@@ -346,7 +356,9 @@ def on_bind_node(parser, key):
 
     advance_expected(parser, lex.TT_AT_SIGN)
     real_key, value = _parse_map_key_pair(
-        parser, [lex.TT_NAME, lex.TT_SHARP, lex.TT_STR, lex.TT_MULTI_STR], None)
+        parser, [lex.TT_NAME,
+                 lex.TT_SHARP, lex.TT_STR,
+                 lex.TT_MULTI_STR], None)
 
     # allow syntax like {var1@ key}
     if nodes.node_type(real_key) == lex.NT_NAME:
@@ -380,12 +392,18 @@ def layout_lcurly(parser, op, node):
 
 # this callback used in pattern matching
 def prefix_lcurly_patterns(parser, op, node):
-    return _prefix_lcurly(parser, op, node, [lex.TT_NAME, lex.TT_SHARP, lex.TT_INT, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_CHAR, lex.TT_FLOAT],
+    return _prefix_lcurly(parser, op, node,
+                          [lex.TT_NAME, lex.TT_SHARP, lex.TT_INT,
+                           lex.TT_MULTI_STR, lex.TT_STR,
+                           lex.TT_CHAR, lex.TT_FLOAT],
                           on_bind_node)
 
 
 def prefix_lcurly(parser, op, node):
-    return _prefix_lcurly(parser, op, node, [lex.TT_NAME, lex.TT_SHARP, lex.TT_INT, lex.TT_STR, lex.TT_MULTI_STR, lex.TT_CHAR, lex.TT_FLOAT],
+    return _prefix_lcurly(parser, op, node,
+                          [lex.TT_NAME, lex.TT_SHARP, lex.TT_INT,
+                           lex.TT_STR, lex.TT_MULTI_STR,
+                           lex.TT_CHAR, lex.TT_FLOAT],
                           on_bind_node)
 
 
@@ -511,7 +529,8 @@ def prefix_try(parser, op, node):
 
     advance_end(parser)
 
-    return node_3(lex.NT_TRY, __ntok(node), trybody, list_node(catches), finallybody)
+    return node_3(lex.NT_TRY,
+                  __ntok(node), trybody, list_node(catches), finallybody)
 
 
 def _parse_pattern(parser):
@@ -606,7 +625,9 @@ def _parse_function_signature(parser):
     return pattern
 
 
-def _parse_function_variants(parser, signature, term_pattern, term_guard, term_case_body, term_single_body):
+def _parse_function_variants(parser, signature,
+                             term_pattern, term_guard,
+                             term_case_body, term_single_body):
     if parser.token_type == lex.TT_ARROW:
         advance(parser)
         init_code_layout(parser, parser.node, term_single_body)
@@ -632,7 +653,10 @@ def _parse_function_variants(parser, signature, term_pattern, term_guard, term_c
         else:
             args_sig = args
         if nodes.tuple_node_length(args_sig) != sig_arity:
-            return parse_error(parser, u"Inconsistent clause arity with function signature", args)
+            return parse_error(parser,
+                               u"Inconsistent clause arity" +
+                               "with function signature",
+                               args)
 
         advance_expected(parser, lex.TT_ARROW)
         init_code_layout(parser, parser.node, term_case_body)
@@ -654,10 +678,12 @@ def _parse_function_variants(parser, signature, term_pattern, term_guard, term_c
     return main_func
 
 
-def _parse_function(parser, term_pattern, term_guard, term_case_body, term_single_body):
+def _parse_function(parser, term_pattern,
+                    term_guard, term_case_body, term_single_body):
     signature = _parse_function_signature(parser)
     funcs = _parse_function_variants(
-        parser, signature, term_pattern, term_guard, term_case_body, term_single_body)
+        parser, signature, term_pattern,
+        term_guard, term_case_body, term_single_body)
     return funcs
 
 
@@ -702,7 +728,8 @@ def stmt_module(parser, op, node):
 
 def _load_path_s(node):
     if nodes.node_type(node) == lex.NT_IMPORTED_NAME:
-        return _load_path_s(nodes.node_first(node)) + ':' + nodes.node_value_s(nodes.node_second(node))
+        return _load_path_s(nodes.node_first(node)) + \
+            ':' + nodes.node_value_s(nodes.node_second(node))
     else:
         return nodes.node_value_s(node)
 
@@ -747,7 +774,10 @@ def stmt_from(parser, op, node):
     advance(parser)
     if parser.token_type == lex.TT_WILDCARD:
         if hiding is True:
-            return parse_error(parser, u"Invalid usage of hide keyword. Symbol(s) expected", node)
+            return parse_error(parser,
+                               "Invalid usage of hide"
+                               "Symbol(s) expected",
+                               node)
 
         names = empty_node()
         advance(parser)
@@ -757,14 +787,16 @@ def stmt_from(parser, op, node):
         names = ensure_tuple(names)
         if hiding is True:
             # hiding names can't have as binding
-            check_list_node_types(parser, nodes.node_first(names), [lex.NT_NAME])
+            check_list_node_types(
+                parser, nodes.node_first(names), [lex.NT_NAME])
 
     _load_module(parser, imported)
     return node_2(ntype, __ntok(node), imported, names)
 
 
 def stmt_import(parser, op, node):
-    imported = expression(parser.import_parser, 0, [lex.TT_LPAREN, lex.TT_HIDING])
+    imported = expression(
+        parser.import_parser, 0, [lex.TT_LPAREN, lex.TT_HIDING])
 
     if parser.token_type == lex.TT_HIDING:
         ntype = lex.NT_IMPORT_HIDING
@@ -780,10 +812,13 @@ def stmt_import(parser, op, node):
         names = ensure_tuple(names)
         if hiding is True:
             # hiding names can't have as binding
-            check_list_node_types(parser, nodes.node_first(names), [lex.NT_NAME])
+            check_list_node_types(
+                parser, nodes.node_first(names), [lex.NT_NAME])
     else:
         if hiding is True:
-            return parse_error(parser, u"Invalid usage of hide keyword. Symbol(s) expected", node)
+            return parse_error(parser,
+                               "Invalid usage of hide keyword."
+                               " Symbol(s) expected", node)
         names = empty_node()
 
     _load_module(parser, imported)
@@ -865,10 +900,12 @@ def _parse_union(parser, node, union_name):
 
     if len(types) < 2:
         parse_error(
-            parser, u"Union type must have at least two constructors", parser.node)
+            parser, u"Union type must have at least two constructors",
+            parser.node)
 
     advance_end(parser)
-    return nodes.node_2(lex.NT_UNION, __ntok(node), union_name, nodes.list_node(types))
+    return nodes.node_2(lex.NT_UNION,
+                        __ntok(node), union_name, nodes.list_node(types))
 
 
 def _parse_type(parser, node, typename, term):
@@ -881,7 +918,8 @@ def _parse_type(parser, node, typename, term):
         fields = empty_node()
         construct_funcs = empty_node()
 
-    return nodes.node_3(lex.NT_TYPE, __ntok(node), typename, fields, construct_funcs)
+    return nodes.node_3(lex.NT_TYPE,
+                        __ntok(node), typename, fields, construct_funcs)
 
 
 # TODO BETTER PARSE ERRORS HERE
@@ -912,7 +950,8 @@ def grab_name(parser):
 
 
 def grab_name_or_operator(parser):
-    check_token_types(parser, [lex.TT_NAME, lex.TT_OPERATOR, lex.TT_DOUBLE_COLON])
+    check_token_types(
+        parser, [lex.TT_NAME, lex.TT_OPERATOR, lex.TT_DOUBLE_COLON])
     name = _init_default_current_0(parser)
     if parser.token_type == lex.TT_OPERATOR:
         name = nodes.create_name_from_operator(name, name)
@@ -964,7 +1003,9 @@ def stmt_trait(parser, op, node):
 
         methods.append(list_node([method_name, sig, default_impl]))
     advance_end(parser)
-    return nodes.node_4(lex.NT_TRAIT, __ntok(node), name, instance_name, constraints, list_node(methods))
+    return nodes.node_4(lex.NT_TRAIT,
+                        __ntok(node), name,
+                        instance_name, constraints, list_node(methods))
 
 
 def _parser_implement_header(parser):
@@ -984,7 +1025,9 @@ def stmt_implement(parser, op, node):
     methods = []
     if parser.token_type != lex.TT_DEF:
         advance_end(parser)
-        return nodes.node_3(lex.NT_IMPLEMENT, __ntok(node), trait_name, type_name, list_node(methods))
+        return nodes.node_3(lex.NT_IMPLEMENT,
+                            __ntok(node),
+                            trait_name, type_name, list_node(methods))
 
     init_offside_layout(parser, parser.node)
     while parser.token_type == lex.TT_DEF:
@@ -996,11 +1039,13 @@ def stmt_implement(parser, op, node):
             method_name, nodes.node_value_s(method_name))
 
         funcs = _parse_function(parser.expression_parser,
-                                TERM_FUN_PATTERN, TERM_FUN_GUARD, TERM_IMPL_BODY, TERM_IMPL_BODY)
+                                TERM_FUN_PATTERN, TERM_FUN_GUARD,
+                                TERM_IMPL_BODY, TERM_IMPL_BODY)
         methods.append(list_node([method_name, funcs]))
 
     advance_end(parser)
-    return nodes.node_3(lex.NT_IMPLEMENT, __ntok(node), trait_name, type_name, list_node(methods))
+    return nodes.node_3(lex.NT_IMPLEMENT, __ntok(node),
+                        trait_name, type_name, list_node(methods))
 
 
 def stmt_extend(parser, op, node):
@@ -1031,7 +1076,8 @@ def stmt_extend(parser, op, node):
                     method_name, nodes.node_value_s(method_name))
 
                 funcs = _parse_function(parser.expression_parser,
-                                        TERM_FUN_PATTERN, TERM_FUN_GUARD, TERM_EXTEND_BODY, TERM_EXTEND_BODY)
+                                        TERM_FUN_PATTERN, TERM_FUN_GUARD,
+                                        TERM_EXTEND_BODY, TERM_EXTEND_BODY)
                 methods.append(list_node([method_name, funcs]))
             implementation = list_node(methods)
         else:
@@ -1040,7 +1086,8 @@ def stmt_extend(parser, op, node):
         traits.append(list_node([trait_name, implementation]))
 
     advance_end(parser)
-    return nodes.node_2(lex.NT_EXTEND, __ntok(node), type_name, list_node(traits))
+    return nodes.node_2(lex.NT_EXTEND,
+                        __ntok(node), type_name, list_node(traits))
 
 
 # OPERATORS
@@ -1076,7 +1123,9 @@ def _meta_infix(parser, node, infix_function):
     try:
         precedence = strutil.string_to_int(nodes.node_value_s(precedence_node))
     except:
-        return parse_error(parser, u"Invalid infix operator precedence", precedence_node)
+        return parse_error(parser,
+                           u"Invalid infix operator precedence",
+                           precedence_node)
 
     op = parser_current_scope_find_operator_or_create_new(parser, op_value)
     op = operator_infix(op, precedence, infix_function, func_value)

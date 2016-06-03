@@ -36,6 +36,9 @@ class Lexicon:
         (token("[0-9]+", TT_INT),
     ]
     """
+    # DEFAULTS
+    TT_UNKNOWN = -1
+    TT_ENDSTREAM = 0
 
     def __init(self):
         assert hasattr(self.__class__, "TT_TO_NT_MAPPING")

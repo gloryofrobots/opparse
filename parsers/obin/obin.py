@@ -7,7 +7,7 @@ from opparse.misc import strutil
 from opparse.parse.parser import newparser
 from callbacks import *
 
-""" GOLANG PRECEDENCES. SOURCE OF INSPIRATION
+""" GOLA, terminatorsNG PRECEDENCES. SOURCE OF INSPIRATION
 Precedence    Operator
     5             *  /  %  <<  >>  &  &^
     4             +  -  |  ^

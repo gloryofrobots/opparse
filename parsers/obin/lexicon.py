@@ -16,7 +16,6 @@ multi_string_literal = '"{3}([\s\S]*?"{3})'
 
 
 class ObinLexicon(Lexicon):
-    TT_ENDSTREAM = 0
     TT_INT = 1
     TT_FLOAT = 2
     TT_STR = 3
@@ -98,7 +97,6 @@ class ObinLexicon(Lexicon):
     TT_DOUBLE_DOT = 79
     TT_BACKTICK_NAME = 80
     TT_BACKTICK_OPERATOR = 81
-    TT_UNKNOWN = 82
 
     NT_GOTO = 0
     NT_TRUE = 1
