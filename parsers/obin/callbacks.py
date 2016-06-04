@@ -1,10 +1,11 @@
-from opparse.parse import *
+from opparse.parse.parser import *
 from opparse.parse import nodes
 from opparse.parse.nodes import (
     node_token as __ntok,
     node_0, node_1, node_2, node_3, list_node, empty_node)
 from opparse.misc import strutil
-import lexicon.ObinLexicon as lex
+import helpers
+from lexicon import ObinLexicon as lex
 
 TERM_BLOCK = [lex.TT_END]
 TERM_EXP = [lex.TT_END_EXPR]
@@ -64,6 +65,38 @@ LEVELS_LET = [lex.TT_IN]
 
 SKIP_JUXTAPOSITION = [lex.TT_JUXTAPOSITION]
 
+# juxtaposition
+
+def juxtaposition_as_list(parser, terminators):
+    node = parser.node
+    exp = expression(parser, 0, terminators)
+    if not nodes.is_list_node(exp):
+        return helpers.create_list_node(node, [exp])
+
+    return helpers.create_list_node_from_list(node, exp)
+
+
+def juxtaposition_as_tuple(parser, terminators):
+    node = parser.node
+    exp = expression(parser, 0, terminators)
+    if not nodes.is_list_node(exp):
+        return helpers.create_tuple_node(node, [exp])
+
+    return helpers.create_tuple_node_from_list(node, exp)
+
+
+def flatten_juxtaposition(parser, node):
+    ntype = nodes.node_type(node)
+    if ntype == parser.lex.NT_JUXTAPOSITION:
+        first = nodes.node_first(node)
+        second = nodes.node_second(node)
+        head = flatten_juxtaposition(parser, first)
+        tail = flatten_juxtaposition(parser, second)
+        return plist.concat(head, tail)
+    else:
+        return helpers.list_node([node])
+
+#####################
 
 def advance_end(parser):
     advance_expected_one_of(parser, TERM_BLOCK)
@@ -226,15 +259,6 @@ def infix_at(parser, op, node, left):
 
 def prefix_indent(parser, op, node):
     return parse_error(parser, u"Invalid indentation level", node)
-
-
-def prefix_nud(parser, op, node):
-    exp = literal_expression(parser)
-    return node_1(parser.lex.get_nt_for_node(node), __ntok(node), exp)
-
-
-def itself(parser, op, node):
-    return node_0(parser.lex.get_nt_for_node(node), __ntok(node))
 
 
 def _parse_name(parser):

@@ -81,9 +81,8 @@ class ParserScope(object):
 
 class ParseState:
 
-    def __init__(self, ts, lexicon):
+    def __init__(self, ts):
         self.ts = ts
-        self.lexicon = lexicon
         self.scopes = plist.empty()
 
 
@@ -186,7 +185,6 @@ def parser_has_operator(parser, ttype):
 
 
 def parser_operator(parser, ttype):
-    assert ttype <= parser.lex.TT_UNKNOWN
     try:
         return parser.handlers[ttype]
     except:
@@ -613,8 +611,18 @@ def stmt(parser, ttype, std):
     parser_set_std(parser, ttype, std)
 
 
+def prefix_nud(parser, op, node):
+    exp = literal_expression(parser)
+    return nodes.node_1(parser.lex.get_nt_for_node(node),
+                        nodes.node_token(node), exp)
+
+
+def itself(parser, op, node):
+    return nodes.node_0(parser.lex.get_nt_for_node(node),
+                        nodes.node_token(node))
+
+
 def literal(parser, ttype):
-    from opparse.parse.callbacks import itself
     parser_set_nud(parser, ttype, itself)
 
 
@@ -664,9 +672,10 @@ def assignment(parser, ttype, lbp):
 
 class Parser:
 
-    def __init__(self, allow_overloading=False,
+    def __init__(self, lexicon, allow_overloading=False,
                  break_on_juxtaposition=False, allow_unknown=True,
                  juxtaposition_as_list=True):
+        self.lexicon = lexicon
         self.handlers = {}
         self.state = None
         self.allow_overloading = allow_overloading
@@ -676,6 +685,9 @@ class Parser:
 
         self.subparsers = {}
 
+    def on_endofexpression(self):
+        raise NotImplementedError()
+
     def add_subparser(self, parser_name, parser):
         setattr(self, parser_name, parser)
         self.subparsers[parser_name] = parser
@@ -684,28 +696,19 @@ class Parser:
         assert self.state is None
         self.state = state
         for parser in self.subparsers.values():
-            parser._on_open(state)
-
-        self._on_open(state)
-
-    def _on_open(self, state):
-        pass
+            parser.open(state)
 
     def close(self):
         state = self.state
         self.state = None
         for parser in self.subparsers.values():
-            parser._on_close(state)
+            parser.close(state)
 
-        self._on_close()
         return state
-
-    def _on_close(self):
-        pass
 
     @property
     def lex(self):
-        return self.state.lexicon
+        return self.lexicon
 
     @property
     def ts(self):
@@ -739,17 +742,18 @@ class Parser:
         return self.token_type == self.lex.TT_ENDSTREAM
 
 
-def parse_script(parser, termination_tokens):
+def _parse(parser, termination_tokens):
     parser_enter_scope(parser)
     stmts = statements(parser, termination_tokens)
     scope = parser_exit_scope(parser)
     return stmts, scope
 
 
-def parse(parser, ts, lexicon):
-    parser.open(ParseState(ts, lexicon))
+def parse_token_stream(parser, ts, lexicon):
+    print "LEXICON", lexicon
+    parser.open(ParseState(ts))
     parser.next_token()
-    stmts, scope = parse_script(parser, [parser.lex.TT_ENDSTREAM])
+    stmts, scope = _parse(parser, [parser.lex.TT_ENDSTREAM])
     assert plist.is_empty(parser.state.scopes)
     check_token_type(parser, parser.lex.TT_ENDSTREAM)
     parser.close()

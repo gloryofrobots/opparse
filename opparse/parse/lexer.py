@@ -1,5 +1,6 @@
 from rply import LexerGenerator
 from opparse.parse import tokens
+
 def create_generator(rules):
     lg = LexerGenerator()
     for rule in rules:
@@ -27,17 +28,16 @@ class LexerError(Exception):
 
 
 class Lexer:
-    def __init__(self, rules, skip_whitespace):
-        assert isinstance(rules, list)
-        assert isinstance(skip_whitespace, bool)
-
-        self.lexer = create_generator(rules)
+    def __init__(self, lexicon, skip_whitespace):
+        self.lexicon = lexicon
+        self.lexer = create_generator(lexicon.RULES)
         self.stream = None
 
     def input(self, buf):
         self.stream = self.lexer.lex(buf)
 
     def token(self):
+
         """ Return the next token (a Token object) found in the
             input buffer. None is returned if the end of the
             buffer was reached.
@@ -45,6 +45,7 @@ class Lexer:
             buffer matches no rule), a LexerError is raised with
             the position of the error.
         """
+
         from rply.lexer import LexingError
         try:
             return self._token()
@@ -72,8 +73,8 @@ class Lexer:
             tok = self.token()
             if tok is None:
                 # ADD FAKE NEWLINE TO SUPPORT ONE LINE SCRIPT FILES
-                yield tokens.newtoken(tokens.TT_NEWLINE, "\n", -1, -1, 1)
-                yield tokens.newtoken(tokens.TT_ENDSTREAM, "", -1, -1, 1)
+                yield tokens.newtoken(self.lexicon.TT_NEWLINE, "\n", -1, -1, 1)
+                yield tokens.newtoken(self.lexicon.TT_ENDSTREAM, "", -1, -1, 1)
                 break
             yield tok
 
@@ -81,7 +82,7 @@ class Lexer:
 ##
 
 
-def lexer(txt):
-    lx = Lexer(tokens.RULES, False)
+def lexer(txt, lex):
+    lx = Lexer(lex, False)
     lx.input(txt)
     return lx

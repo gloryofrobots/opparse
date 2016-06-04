@@ -1,7 +1,6 @@
 class Token:
 
     def __init__(self, type, val, pos, line, column):
-        assert isinstance(type, int)
         assert isinstance(val, str)
         assert isinstance(pos, int)
         assert isinstance(line, int)
@@ -42,7 +41,7 @@ class Token:
 
     def __str__(self):
         return "Token(%s, %s, %d, %d)" % (str(self.type),
-                                          self.val),
+                                          self.val,
                                           self.line,
                                           self.column)
 

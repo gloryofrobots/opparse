@@ -1,8 +1,7 @@
 import operator
 from opparse.parse import tokens
-from opparse.parse import token_type as tt
-from opparse.parse import node_type as nt
 from opparse import plist
+
 
 def newnode(ntype, token, children):
     if children is not None:
@@ -10,12 +9,12 @@ def newnode(ntype, token, children):
             assert is_node(child), child
         return (
             ntype, token, children,
-            tt.token_type_to_s(tokens.token_type(token))
+            tokens.token_type(token)
         )
     else:
         return (
             ntype, token, [],
-            tt.token_type_to_s(tokens.token_type(token))
+            tokens.token_type(token)
         )
 
 
@@ -44,7 +43,8 @@ def is_single_node(node):
 
 
 def is_node(node):
-    return is_list_node(node) or is_single_node(node) or is_scope_node(node) or is_int_node(node) or is_empty_node(node)
+    return is_list_node(node) or is_single_node(node) \
+        or is_scope_node(node) or is_int_node(node) or is_empty_node(node)
 
 
 def is_scope_node(node):
@@ -89,7 +89,8 @@ def node_equal(node1, node2):
     if node_value_s(node1) != node_value_s(node2):
         return False
 
-    return plist.equal_with(node_children(node1), node_children(node2), node_equal)
+    return plist.equal_with(node_children(node1),
+                            node_children(node2), node_equal)
 
 
 def node_blank(token):
@@ -188,7 +189,7 @@ def node_to_d(node):
     else:
         d = {
             # "_type": tokens.token_type_to_str(node_token_type(node)),
-            "_ntype": nt.node_type_to_s(node_type(node)) if node_type(node) != -1 else "",
+            "_ntype": node_type(node) if node_type(node) != -1 else "",
             "_value": node_value_s(node),
             # "_line": node_line(node)
         }
@@ -203,5 +204,3 @@ def node_to_string(node):
     import json
     d = node_to_d(node)
     return json.dumps(d, sort_keys=True, indent=2, separators=(',', ': '))
-
-

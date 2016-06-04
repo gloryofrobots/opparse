@@ -122,12 +122,12 @@ class IndentationTokenStream:
 
         self.operator_tokens = tokens_options.get("operator_tokens", [])
         self.end_token = tokens_options["end_token"]
-        self.end_stream_token = tokens_options["endstream_token"]
-        self.new_line_token = tokens_options["newline_token"]
+        self.end_stream_token = tokens_options["end_stream_token"]
+        self.new_line_token = tokens_options["new_line_token"]
 
         if LOG_INDENTER:
             for token in self.tokens:
-                print tokens.token_to_s(token)
+                print str(token)
 
         self.index = 0
         self.length = len(self.tokens)
@@ -207,12 +207,12 @@ class IndentationTokenStream:
 
     def next_logical(self):
         token = self.logical_tokens.pop()
-        # log("=*=* NEXT LOGICAL TOKEN", tokens.token_to_s(token))
+        # log("=*=* NEXT LOGICAL TOKEN", str(token))
         return self.attach_token(token)
 
     def next_physical(self):
         token = self.tokens[self.index]
-        # log( "++++ NEXT STREAM TOKEN", tokens.token_to_s(token))
+        # log( "++++ NEXT STREAM TOKEN", str(token))
         self.index += 1
         return token
 
@@ -241,7 +241,7 @@ class IndentationTokenStream:
 
         layout = self.current_layout()
         level = tokens.token_level(token)
-        log("----NEW LINE", level, layout, tokens.token_to_s(token))
+        log("----NEW LINE", level, layout, str(token))
 
         # TODO remove not layout.is_module() after implementing real pragmas
         # ![]
@@ -301,7 +301,7 @@ class IndentationTokenStream:
                 self.layouts = layouts
 
     def attach_token(self, token):
-        log("^^^^^ATTACH", tokens.token_to_s(token))
+        log("^^^^^ATTACH", str(token))
         self.token = token
         self.node = nodes.node_blank(self.token)
         self.produced_tokens.append(self.token)
