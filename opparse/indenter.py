@@ -1,6 +1,5 @@
-from opparse.parse import nodes
-from opparse.parse import tokens
-from opparse import plist
+from opparse import plist, nodes
+import opparse.lexer
 from opparse.misc.fifo import Fifo
 
 LOG_INDENTER = False
@@ -92,9 +91,9 @@ class Layout(object):
 
 def indentation_error(msg, token):
     raise InvalidIndentationError(msg,
-                                  tokens.token_position(token),
-                                  tokens.token_line(token),
-                                  tokens.token_column(token))
+                                  token.position,
+                                  token.line,
+                                  token.column)
 
 
 class IndentationTokenStream:
@@ -126,25 +125,25 @@ class IndentationTokenStream:
 
     def create_end_token(self, token):
 
-        return tokens.newtoken(self.end_token, "(end)",
-                               tokens.token_position(token),
-                               tokens.token_line(token),
-                               tokens.token_column(token))
+        return opparse.lexer.Token(self.end_token, "(end)",
+                               token.position,
+                               token.line,
+                               token.column)
 
     def create_end_expression_token(self, token):
-        return tokens.newtoken(self.end_expr_token, "(end_expr)",
-                               tokens.token_position(token),
-                               tokens.token_line(token),
-                               tokens.token_column(token))
+        return opparse.lexer.Token(self.end_expr_token, "(end_expr)",
+                               token.position,
+                               token.line,
+                               token.column)
 
     def create_indent_token(self, token):
-        return tokens.newtoken(self.indent_token, "(indent)",
-                               tokens.token_position(token),
-                               tokens.token_line(token),
-                               tokens.token_column(token))
+        return opparse.lexer.Token(self.indent_token, "(indent)",
+                               token.position,
+                               token.line,
+                               token.column)
 
     def advanced_values(self):
-        t = [tokens.token_value(token) for token in self.produced_tokens]
+        t = [token.value for token in self.produced_tokens]
         return " ".join(t)
 
     def current_layout(self):
@@ -162,13 +161,12 @@ class IndentationTokenStream:
 
     def _find_level(self):
         token = self._skip_newlines()
-        return tokens.token_level(token)
+        return token.level
 
-    def _add_layout(self, node, type, level_tokens=None, terminators=None):
+    def _add_layout(self, node, layout_type, level_tokens=None, terminators=None):
         token = nodes.node_token(node)
         cur = self.current_layout()
-        level = tokens.token_level(token)
-        layout = Layout(cur.level, level, type, level_tokens, terminators)
+        layout = Layout(cur.level, token.level, layout_type, level_tokens, terminators)
 
         log("---- ADD LAYOUT", layout)
         self.layouts = plist.cons(layout, self.layouts)
@@ -221,7 +219,7 @@ class IndentationTokenStream:
 
     def _skip_newlines(self):
         token = self.next_physical()
-        while tokens.token_type(token) == self.new_line_token:
+        while token.type == self.new_line_token:
             # log("++++ SKIP")
             token = self.next_physical()
 
@@ -232,18 +230,18 @@ class IndentationTokenStream:
         return self.tokens[self.index]
 
     def current_type(self):
-        return tokens.token_type(self.token)
+        return self.token.type
 
     def current_physical_type(self):
-        return tokens.token_type(self.current_physical())
+        return self.current_physical().type
 
     def _on_newline(self):
         token = self._skip_newlines()
-        ttype = tokens.token_type(token)
+        ttype = token.type
         cur_type = self.current_type()
 
         layout = self.current_layout()
-        level = tokens.token_level(token)
+        level = token.level
         log("----NEW LINE", level, layout, str(token))
 
         # TODO remove not layout.is_module() after implementing real pragmas
@@ -271,12 +269,12 @@ class IndentationTokenStream:
                 layout = plist.head(layouts)
                 layouts = plist.tail(layouts)
                 if layout is None:
-                    return indentation_error(u"Indentation does not match"
+                    return indentation_error("Indentation does not match"
                                              " with any of previous levels",
                                              token)
 
                 if layout.level < level:
-                    return indentation_error(u"Invalid indentation level",
+                    return indentation_error("Invalid indentation level",
                                              token)
                 elif layout.level > level:
                     if layout.push_end_of_expression_on_new_line is True:
@@ -326,7 +324,7 @@ class IndentationTokenStream:
                 log(self.advanced_values())
                 break
             elif layout.is_module():
-                indentation_error(u"Invalid end keyword", token)
+                indentation_error("Invalid end keyword", token)
             else:
                 popped.append(layout)
         self.layouts = layouts
@@ -339,7 +337,7 @@ class IndentationTokenStream:
             return self.node
 
         token = self.next_physical()
-        ttype = tokens.token_type(token)
+        ttype = token.type
 
         if ttype == self.new_line_token:
             return self._on_newline()
@@ -349,7 +347,7 @@ class IndentationTokenStream:
             return self.attach_token(token)
         elif ttype == self.end_stream_token:
             if not self.current_layout().is_module():
-                indentation_error(u"Not all layouts closed", token)
+                indentation_error("Not all layouts closed", token)
 
         layout = self.current_layout()
 

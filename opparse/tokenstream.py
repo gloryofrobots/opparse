@@ -1,8 +1,5 @@
 from opparse.parse.token_type import TT_NEWLINE
-from opparse.parse import nodes
-from opparse.parse import tokens
-
-
+from opparse import tokens, nodes
 
 
 class TokenStream:
@@ -16,10 +13,10 @@ class TokenStream:
     def next(self):
         token = self.tokens.next_token()
 
-        if tokens.token_type(token) == TT_NEWLINE:
+        if token.type == TT_NEWLINE:
             # print "NEW LINE"
             self.is_newline_occurred = True
-            while tokens.token_type(token) == TT_NEWLINE:
+            while token.type == TT_NEWLINE:
                 token = self.tokens.next_token()
         else:
             # print "TOKEN"

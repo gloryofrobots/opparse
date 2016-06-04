@@ -182,9 +182,9 @@ def slice(pl, start, end):
     if start == end:
         return empty()
 
-    assert (start >= 0, u"Invalid slice : start < 0")
-    assert (end > start, u"Invalid slice : end <= start")
-    assert (end > 0, u"Invalid slice : end <= 0 start")
+    assert (start >= 0, "Invalid slice : start < 0")
+    assert (end > start, "Invalid slice : end <= start")
+    assert (end > 0, "Invalid slice : end <= 0 start")
 
     # return take(drop(pl, start), end - 1)
     return _slice(pl, 0, start, end)

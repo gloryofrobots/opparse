@@ -1,9 +1,9 @@
-from opparse.parse.parser import *
-from opparse.parse import nodes
-from opparse.parse.nodes import (
+from opparse.parser import *
+from opparse import nodes
+from opparse.nodes import (
     node_token as __ntok,
     node_0, node_1, node_2, node_3, list_node, empty_node, node_type,
-    node_first, node_second)
+    node_first)
 from opparse.misc import strutil
 import helpers
 from lexicon import ObinLexicon as lex
@@ -66,6 +66,7 @@ LEVELS_LET = [lex.TT_IN]
 
 SKIP_JUXTAPOSITION = [lex.TT_JUXTAPOSITION]
 
+
 # juxtaposition
 
 def juxtaposition_as_list(parser, terminators):
@@ -97,6 +98,7 @@ def flatten_juxtaposition(parser, node):
     else:
         return helpers.list_node([node])
 
+
 #####################
 
 def advance_end(parser):
@@ -115,6 +117,7 @@ def tuple_node_length(n):
 def _init_default_current_0(parser):
     return nodes.node_0(parser.lex.get_nt_for_node(parser.node),
                         __ntok(parser.node))
+
 
 # additional helpers
 
@@ -147,17 +150,17 @@ def prefix_operator(parser, ttype, prefix_function):
 def prefix_nud_function(parser, op, node):
     exp = literal_expression(parser)
     # exp = expression(parser, 100)
-    return helpers.create_call_node_s(node, op.prefix_function, [exp])
+    return helpers.create_call_node(node, op.prefix_function, [exp])
 
 
 def led_infix_function(parser, op, node, left):
     exp = expression(parser, op.lbp)
-    return helpers.create_call_node_s(node, op.infix_function, [left, exp])
+    return helpers.create_call_node(node, op.infix_function, [left, exp])
 
 
 def led_infixr_function(parser, op, node, left):
     exp = expression(parser, op.lbp - 1)
-    return helpers.create_call_node_s(node, op.infix_function, [left, exp])
+    return helpers.create_call_node(node, op.infix_function, [left, exp])
 
 
 ##############################################################
@@ -165,20 +168,15 @@ def led_infixr_function(parser, op, node, left):
 ##############################################################
 
 def infix_backtick_name(parser, op, node, left):
-    funcname = strutil.cat_both_ends(nodes.node_value_s(node))
+    funcname = strutil.cat_both_ends(nodes.node_value(node))
     if not funcname:
         return parse_error(parser,
-                           u"invalid variable name in backtick expression",
+                           "invalid variable name in backtick expression",
                            node)
     funcnode = helpers.create_name_node_s(node, funcname)
 
     right = expression(parser, op.lbp)
     return helpers.create_call_node_2(node, funcnode, left, right)
-
-
-def infix_triple_colon(parser, op, node, left):
-    right = rexpression(parser, op, TERM_EXP)
-    return helpers.create_delayed_cons_node(node, left, right)
 
 
 def infix_spacedot(parser, op, node, left):
@@ -247,7 +245,7 @@ def infix_name_pair(parser, op, node, left):
 def infix_at(parser, op, node, left):
     ltype = nodes.node_token_type(left)
     if ltype != lex.TT_NAME:
-        parse_error(parser, u"Bad lvalue in pattern binding", left)
+        parse_error(parser, "Bad lvalue in pattern binding", left)
 
     exp = expression(parser, 9)
     return node_2(lex.NT_BIND, __ntok(node), left, exp)
@@ -259,7 +257,7 @@ def infix_at(parser, op, node, left):
 
 
 def prefix_indent(parser, op, node):
-    return parse_error(parser, u"Invalid indentation level", node)
+    return parse_error(parser, "Invalid indentation level", node)
 
 
 def _parse_name(parser):
@@ -283,15 +281,15 @@ def _parse_symbol(parser, node):
 
 
 def prefix_backtick_operator(parser, op, node):
-    opname = strutil.cat_both_ends(nodes.node_value_s(node))
+    opname = strutil.cat_both_ends(nodes.node_value(node))
     if opname == "::":
-        return helpers.create_name_node_s(node, lang_names.CONS)
+        return helpers.create_name_node_s(node, "cons")
 
     op = parser_find_operator(parser, opname)
     if op is None:
-        return parse_error(parser, u"Invalid operator", node)
+        return parse_error(parser, "Invalid operator", node)
     if op.infix_function is None:
-        return parse_error(parser, u"Expected infix operator", node)
+        return parse_error(parser, "Expected infix operator", node)
 
     return helpers.create_name_node(node, op.infix_function)
 
@@ -300,20 +298,15 @@ def prefix_sharp(parser, op, node):
     return _parse_symbol(parser, node)
 
 
-def prefix_delay(parser, op, node):
-    exp = expression(parser, 0)
-    return helpers.create_delay_node(node, exp)
-
-
 # def prefix_backtick(parser, op, node):
-#     val = strutil.cat_both_ends(nodes.node_value_s(node))
+#     val = strutil.cat_both_ends(nodes.node_value(node))
 #     if not val:
-#         return parse_error(parser, u"invalid variable name", node)
+#         return parse_error(parser, "invalid variable name", node)
 #     return helpers.create_name_node(node, val)
 
 
 def symbol_wildcard(parser, op, node):
-    return parse_error(parser, u"Invalid use of _ pattern", node)
+    return parse_error(parser, "Invalid use of _ pattern", node)
 
 
 # MOST complicated operator
@@ -326,7 +319,7 @@ def layout_lparen(parser, op, node):
 def prefix_lparen(parser, op, node):
     if parser.token_type == lex.TT_RPAREN:
         advance_expected(parser, lex.TT_RPAREN)
-        return helpers.create_unit_node(node)
+        return node_0(lex.NT_UNIT, __ntok(node))
 
     e = expression(parser, 0, [lex.TT_RPAREN])
     skip_end_expression(parser)
@@ -372,12 +365,14 @@ def prefix_lsquare(parser, op, node):
 
 def on_bind_node(parser, key):
     if nodes.node_type(key) != lex.NT_NAME:
-        parse_error(parser, u"Invalid bind name", key)
+        parse_error(parser, "Invalid bind name", key)
     if parser.token_type == lex.TT_OF:
         advance_expected(parser, lex.TT_OF)
         check_token_type(parser, lex.TT_NAME)
         typename = grab_name(parser)
-        return helpers.create_of_node(key, key, typename), empty_node()
+        return node_2(lex.NT_OF,
+                      __ntok(key),
+                      key, typename), empty_node()
 
     advance_expected(parser, lex.TT_AT_SIGN)
     real_key, value = _parse_map_key_pair(
@@ -389,7 +384,8 @@ def on_bind_node(parser, key):
     if nodes.node_type(real_key) == lex.NT_NAME:
         real_key = helpers.create_symbol_node(real_key, real_key)
 
-    bind_key = helpers.create_bind_node(key, key, real_key)
+    bind_key = node_2(lex.NT_BIND, __ntok(key), key, real_key)
+
     return bind_key, value
 
 
@@ -447,7 +443,7 @@ def _parse_map_key_pair(parser, types, on_unknown):
         skip_end_expression(parser)
     else:
         if on_unknown is None:
-            parse_error(parser, u"Invalid map declaration syntax", parser.node)
+            parse_error(parser, "Invalid map declaration syntax", parser.node)
         key, value = on_unknown(parser, key)
 
     return key, value
@@ -605,7 +601,7 @@ def prefix_match(parser, op, node):
     advance_end(parser)
 
     if len(branches) == 0:
-        parse_error(parser, u"Empty match expression", node)
+        parse_error(parser, "Empty match expression", node)
 
     return node_2(lex.NT_MATCH, __ntok(node), exp, list_node(branches))
 
@@ -622,7 +618,7 @@ def _parse_func_pattern(parser, arg_terminator, guard_terminator):
     args_type = nodes.node_type(pattern)
 
     if args_type != lex.NT_TUPLE:
-        parse_error(parser, u"Invalid  syntax in function arguments", pattern)
+        parse_error(parser, "Invalid  syntax in function arguments", pattern)
 
     if parser.token_type == lex.TT_WHEN:
         advance(parser)
@@ -646,7 +642,7 @@ def _parse_function_signature(parser):
     skip_indent(parser)
     args_type = nodes.node_type(pattern)
     if args_type != lex.NT_TUPLE:
-        parse_error(parser, u"Invalid  syntax in function signature", pattern)
+        parse_error(parser, "Invalid  syntax in function signature", pattern)
     return pattern
 
 
@@ -679,7 +675,7 @@ def _parse_function_variants(parser, signature,
             args_sig = args
         if tuple_node_length(args_sig) != sig_arity:
             return parse_error(parser,
-                               u"Inconsistent clause arity" +
+                               "Inconsistent clause arity" +
                                "with function signature",
                                args)
 
@@ -689,18 +685,7 @@ def _parse_function_variants(parser, signature,
         funcs.append(list_node([args, body]))
 
     func = helpers.create_fun_node(node, empty_node(), list_node(funcs))
-
-    call_list = []
-    for arg in sig_args:
-        ntype = nodes.node_type(arg)
-        if ntype == lex.NT_OF or ntype == lex.NT_REST:
-            arg = nodes.node_first(arg)
-        call_list.append(arg)
-
-    body = list_node(
-        [helpers.create_call_node(node, func, list_node(call_list))])
-    main_func = helpers.create_function_variants(signature, body)
-    return main_func
+    return func
 
 
 def _parse_function(parser, term_pattern,
@@ -746,9 +731,9 @@ def prefix_lambda(parser, op, node):
 def _load_path_s(node):
     if nodes.node_type(node) == lex.NT_IMPORTED_NAME:
         return _load_path_s(nodes.node_first(node)) + \
-            ':' + nodes.node_value_s(nodes.node_second(node))
+               ':' + nodes.node_value(nodes.node_second(node))
     else:
-        return nodes.node_value_s(node)
+        return nodes.node_value(node)
 
 
 def _load_module(parser, exp):
@@ -764,7 +749,7 @@ def _load_module(parser, exp):
     # else:
     #     assert nodes.node_type(exp) == lex.NT_NAME
     #     import_name = exp
-    #     module_path = nodes.node_value_s(exp)
+    #     module_path = nodes.node_value(exp)
     #
     # state = parser.close()
     # module = import_module_function(state.process, module_path)
@@ -917,7 +902,7 @@ def _parse_union(parser, node, union_name):
 
     if len(types) < 2:
         parse_error(
-            parser, u"Union type must have at least two constructors",
+            parser, "Union type must have at least two constructors",
             parser.node)
 
     advance_end(parser)
@@ -928,15 +913,11 @@ def _parse_union(parser, node, union_name):
 def _parse_type(parser, node, typename, term):
     if parser.token_type == lex.TT_NAME:
         fields = juxtaposition_as_list(parser.type_parser, term)
-        args = symbol_list_to_arg_tuple(parser, parser.node, fields)
-        body = list_node([helpers.create_fenv_node(parser.node)])
-        construct_funcs = helpers.create_function_variants(args, body)
     else:
         fields = empty_node()
-        construct_funcs = empty_node()
 
-    return nodes.node_3(lex.NT_TYPE,
-                        __ntok(node), typename, fields, construct_funcs)
+    return nodes.node_2(lex.NT_TYPE,
+                        __ntok(node), typename, fields)
 
 
 # TODO BETTER PARSE ERRORS HERE
@@ -973,7 +954,7 @@ def grab_name_or_operator(parser):
     if parser.token_type == lex.TT_OPERATOR:
         name = helpers.create_name_from_operator(name, name)
     elif parser.token_type == lex.TT_DOUBLE_COLON:
-        name = helpers.create_name_node_s(name, lang_names.CONS)
+        name = helpers.create_name_node_s(name, "cons")
 
     advance(parser)
     return name
@@ -1053,7 +1034,7 @@ def stmt_implement(parser, op, node):
         # method_name = grab_name_or_operator(parser.name_parser)
         method_name = expect_expression_of(parser.name_parser, 0, lex.NT_NAME)
         method_name = helpers.create_symbol_node_s(
-            method_name, nodes.node_value_s(method_name))
+            method_name, nodes.node_value(method_name))
 
         funcs = _parse_function(parser.expression_parser,
                                 TERM_FUN_PATTERN, TERM_FUN_GUARD,
@@ -1090,7 +1071,7 @@ def stmt_extend(parser, op, node):
                 method_name = expect_expression_of(
                     parser.name_parser, 0, lex.NT_NAME)
                 method_name = helpers.create_symbol_node_s(
-                    method_name, nodes.node_value_s(method_name))
+                    method_name, nodes.node_value(method_name))
 
                 funcs = _parse_function(parser.expression_parser,
                                         TERM_FUN_PATTERN, TERM_FUN_GUARD,
@@ -1138,10 +1119,10 @@ def _meta_infix(parser, node, infix_function):
     op_value = symbol_or_name_value(parser, op_node)
     func_value = symbol_or_name_value(parser, func_node)
     try:
-        precedence = strutil.string_to_int(nodes.node_value_s(precedence_node))
+        precedence = strutil.string_to_int(nodes.node_value(precedence_node))
     except:
         return parse_error(parser,
-                           u"Invalid infix operator precedence",
+                           "Invalid infix operator precedence",
                            precedence_node)
 
     op = parser_current_scope_find_operator_or_create_new(parser, op_value)

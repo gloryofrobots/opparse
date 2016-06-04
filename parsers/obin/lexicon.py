@@ -1,4 +1,4 @@
-from opparse.parse.lexicon import Lexicon, token, keyword
+from opparse.lexicon import Lexicon, token, keyword
 
 name_const = '[a-zA-Z_][0-9a-zA-Z_]*'
 typename = '[A-Z][0-9a-zA-Z_]*'
@@ -47,7 +47,6 @@ class ObinLexicon(Lexicon):
     TT_LET = "TT_LET"
     TT_IN = "TT_IN"
     TT_AS = "TT_AS"
-    TT_DELAY = "TT_DELAY"
     TT_AND = "TT_AND"
     TT_OR = "TT_OR"
     TT_TRUE = "TT_TRUE"
@@ -95,7 +94,6 @@ class ObinLexicon(Lexicon):
     TT_DOT = "TT_DOT"
     TT_COLON = "TT_COLON"
     TT_DOUBLE_COLON = "TT_DOUBLE_COLON"
-    TT_TRIPLE_COLON = "TT_TRIPLE_COLON"
     TT_DOUBLE_DOT = "TT_DOUBLE_DOT"
     TT_BACKTICK_NAME = "TT_BACKTICK_NAME"
     TT_BACKTICK_OPERATOR = "TT_BACKTICK_OPERATOR"
@@ -246,7 +244,6 @@ class ObinLexicon(Lexicon):
         (keyword('let'), TT_LET),
         (keyword('when'), TT_WHEN),
 
-        (keyword('delay'), TT_DELAY),
         (keyword('in'), TT_IN),
 
         (keyword('infixl'), TT_INFIXL),
@@ -281,7 +278,6 @@ class ObinLexicon(Lexicon):
         (token('\.'), TT_DOT),
         (token('\.\.'), TT_DOUBLE_DOT),
         (token('@'), TT_AT_SIGN),
-        (token(':::'), TT_TRIPLE_COLON),
         (token('::'), TT_DOUBLE_COLON),
         (token('[:^:][%s]+' % operator_char), TT_OPERATOR),
         (token(':'), TT_COLON),

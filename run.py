@@ -4,9 +4,10 @@
 # ;;; end: ***
 #import os
 #print os.getcwd()
-from opparse.parse import nodes
-from opparse.misc import fs, timer
 import importlib
+
+from opparse import nodes
+from opparse.misc import fs, timer
 
 PARSERS = ["obin"]
 
@@ -17,7 +18,7 @@ def execute_parser(parser_name):
     # print dir(parser_module)
     # exit()
     parser_dir = fs.join("parsers", parser_name)
-    syntax_path = fs.join(parser_dir, parser_name + ".syntax")
+    syntax_path = fs.join(parser_dir,  "syntax." + parser_name)
     ast_path = fs.join(parser_dir, parser_name + ".json")
 
     source = fs.load_file(syntax_path)

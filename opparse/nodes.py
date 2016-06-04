@@ -1,5 +1,5 @@
 import operator
-from opparse.parse import tokens
+
 from opparse import plist
 
 
@@ -9,12 +9,12 @@ def newnode(ntype, token, children):
             assert is_node(child), child
         return (
             ntype, token, children,
-            tokens.token_type(token)
+            token.type
         )
     else:
         return (
             ntype, token, [],
-            tokens.token_type(token)
+            token.type
         )
 
 
@@ -44,11 +44,11 @@ def is_single_node(node):
 
 def is_node(node):
     return is_list_node(node) or is_single_node(node) \
-        or is_scope_node(node) or is_int_node(node) or is_empty_node(node)
+           or is_scope_node(node) or is_int_node(node) or is_empty_node(node)
 
 
 def is_scope_node(node):
-    from opparse.parse.parser import ParserScope
+    from opparse.parser import ParserScope
     return isinstance(node, ParserScope)
 
 
@@ -86,7 +86,7 @@ def node_equal(node1, node2):
     if node_type(node1) != node_type(node2):
         return False
 
-    if node_value_s(node1) != node_value_s(node2):
+    if node_value(node1) != node_value(node2):
         return False
 
     return plist.equal_with(node_children(node1),
@@ -130,7 +130,7 @@ def node_children(node):
 
 
 def node_token_type(node):
-    return tokens.token_type(node_token(node))
+    return node_token(node).type
 
 
 def node_arity(node):
@@ -157,24 +157,20 @@ def node_fourth(node):
     return node_getchild(node, 3)
 
 
-def node_value_s(node):
-    return tokens.token_value(node_token(node))
-
-
 def node_value(node):
-    return tokens.token_value(node_token(node))
+    return node_token(node).value
 
 
 def node_position(node):
-    return tokens.token_position(node_token(node))
+    return node_token(node).position
 
 
 def node_line(node):
-    return tokens.token_line(node_token(node))
+    return node_token(node).line
 
 
 def node_column(node):
-    return tokens.token_column(node_token(node))
+    return node_token(node).column
 
 
 def node_to_d(node):
@@ -188,9 +184,8 @@ def node_to_d(node):
         return {'intValue': node}
     else:
         d = {
-            # "_type": tokens.token_type_to_str(node_token_type(node)),
             "_ntype": node_type(node) if node_type(node) != -1 else "",
-            "_value": node_value_s(node),
+            "_value": node_value(node),
             # "_line": node_line(node)
         }
 

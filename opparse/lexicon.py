@@ -1,5 +1,6 @@
 import re
-from opparse.parse import nodes
+
+from opparse import nodes
 
 
 def keyword(literal):
@@ -39,10 +40,10 @@ class Lexicon:
     # DEFAULTS
     TT_UNKNOWN = -1
     TT_ENDSTREAM = 0
+    TT_TO_NT_MAPPING = {}
+    RULES = {}
 
     def __init(self):
-        assert hasattr(self.__class__, "TT_TO_NT_MAPPING")
-        assert hasattr(self.__class__, "RULES")
         self.rules = []
 
     def add_keyword(self, literal, token_type):

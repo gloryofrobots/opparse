@@ -1,14 +1,13 @@
-from opparse.parse.parser import *
 from lexicon import ObinLexicon
-from opparse.parse.indenter import IndentationTokenStream
+from opparse.indenter import IndentationTokenStream
 from callbacks import *
 
 lex = ObinLexicon()
 
+
 def create_stream(parser, source):
     indenter_settings = dict(
         operator_tokens=[parser.lex.TT_SPACE_DOT, lex.TT_DOUBLE_COLON,
-                         parser.lex.TT_TRIPLE_COLON,
                          parser.lex.TT_COLON, lex.TT_OPERATOR,
                          parser.lex.TT_DOT,
                          lex.TT_ASSIGN, lex.TT_OR, lex.TT_AND],
@@ -26,7 +25,6 @@ def create_stream(parser, source):
 
 
 class ObinParser(Parser):
-
     def on_endofexpression(self):
         if self.isend():
             return None
@@ -51,7 +49,7 @@ class ObinParser(Parser):
             flatten = flatten_juxtaposition(self, node)
             # probably overkill
             if len(flatten) < 2:
-                parse_error(self, u"Invalid use of juxtaposition operator", node)
+                parse_error(self, "Invalid use of juxtaposition operator", node)
 
             if self.juxtaposition_as_list:
                 return self.postprocess(flatten)
@@ -59,9 +57,9 @@ class ObinParser(Parser):
                 caller = plist.head(flatten)
                 args = plist.tail(flatten)
                 return self.postprocess(
-                                nodes.node_2(self.lex.NT_CALL,
-                                                nodes.node_token(caller),
-                                                caller, args))
+                    nodes.node_2(self.lex.NT_CALL,
+                                 nodes.node_token(caller),
+                                 caller, args))
         else:
             children = []
             node_children = nodes.node_children(node)
@@ -72,7 +70,7 @@ class ObinParser(Parser):
                 new_child = self.postprocess(c)
                 children.append(new_child)
             return nodes.newnode(nodes.node_type(node),
-                                nodes.node_token(node), children)
+                                 nodes.node_token(node), children)
 
 
 def create_parser():
@@ -80,41 +78,41 @@ def create_parser():
     set_parser_literals(parser)
 
     parser.add_subparser("import_parser",
-                         import_parser_init(ObinParser(lex,allow_unknown=True)))
-    parser.add_subparser("pattern_parser", pattern_parser_init(ObinParser(lex,)))
+                         import_parser_init(ObinParser(lex, allow_unknown=True)))
+    parser.add_subparser("pattern_parser", pattern_parser_init(ObinParser(lex, )))
     parser.add_subparser("guard_parser",
-                         guard_parser_init(ObinParser(lex,allow_overloading=True)))
+                         guard_parser_init(ObinParser(lex, allow_overloading=True)))
     parser.add_subparser("fun_pattern_parser",
                          fun_pattern_parser_init(
-                             ObinParser(lex,break_on_juxtaposition=False,
+                             ObinParser(lex, break_on_juxtaposition=False,
                                         juxtaposition_as_list=True)))
 
     parser.add_subparser("fun_signature_parser",
                          fun_signature_parser_init(
-                             ObinParser(lex,juxtaposition_as_list=True)))
+                             ObinParser(lex, juxtaposition_as_list=True)))
 
     parser.add_subparser("guard_parser",
-                         guard_parser_init(ObinParser(lex,allow_overloading=True)))
+                         guard_parser_init(ObinParser(lex, allow_overloading=True)))
 
     parser.add_subparser("expression_parser",
                          expression_parser_init(
-                             ObinParser(lex,allow_overloading=True)))
+                             ObinParser(lex, allow_overloading=True)))
 
     parser.add_subparser("name_parser", name_parser_init(ObinParser(lex,
-        break_on_juxtaposition=True, allow_unknown=True)))
+                                                                    break_on_juxtaposition=True, allow_unknown=True)))
 
     parser.add_subparser("import_names_parser",
                          import_names_parser_init(
-                             ObinParser(lex,allow_unknown=True)))
+                             ObinParser(lex, allow_unknown=True)))
 
     parser.add_subparser("type_parser",
                          type_parser_init(
-                             ObinParser(lex,juxtaposition_as_list=True,
+                             ObinParser(lex, juxtaposition_as_list=True,
                                         allow_unknown=True)))
 
     parser.add_subparser("method_signature_parser",
                          method_signature_parser_init(
-                             ObinParser(lex,juxtaposition_as_list=True)))
+                             ObinParser(lex, juxtaposition_as_list=True)))
 
     symbol(parser, lex.TT_RSQUARE)
     symbol(parser, lex.TT_ARROW)
@@ -323,16 +321,16 @@ def expression_parser_init(parser):
                          pattern_parser_init(ObinParser(lex)))
 
     parser.add_subparser("guard_parser",
-                         guard_parser_init(ObinParser(lex,allow_overloading=True)))
+                         guard_parser_init(ObinParser(lex, allow_overloading=True)))
 
     parser.add_subparser("fun_pattern_parser",
                          fun_pattern_parser_init(
-                             ObinParser(lex,break_on_juxtaposition=False,
+                             ObinParser(lex, break_on_juxtaposition=False,
                                         juxtaposition_as_list=True)))
 
     parser.add_subparser("fun_signature_parser",
                          fun_signature_parser_init(
-                             ObinParser(lex,juxtaposition_as_list=True)))
+                             ObinParser(lex, juxtaposition_as_list=True)))
 
     parser.add_subparser("guard_parser",
                          guard_parser_init(ObinParser(lex,
@@ -340,8 +338,8 @@ def expression_parser_init(parser):
 
     parser.add_subparser("name_parser",
                          name_parser_init(ObinParser(lex,
-                             break_on_juxtaposition=True,
-                             allow_unknown=True)))
+                                                     break_on_juxtaposition=True,
+                                                     allow_unknown=True)))
 
     symbol(parser, lex.TT_RSQUARE)
     symbol(parser, lex.TT_ARROW)
@@ -376,7 +374,6 @@ def expression_parser_init(parser):
     prefix(parser, lex.TT_MATCH, prefix_match)
     prefix(parser, lex.TT_TRY, prefix_try)
     prefix(parser, lex.TT_BACKTICK_OPERATOR, prefix_backtick_operator)
-    prefix(parser, lex.TT_DELAY, prefix_delay)
     prefix(parser, lex.TT_LET, prefix_let)
 
     assignment(parser, lex.TT_ASSIGN, 10)
@@ -386,7 +383,6 @@ def expression_parser_init(parser):
     infix(parser, lex.TT_AND, 30, led_infix)
     infix(parser, lex.TT_BACKTICK_NAME, 35, infix_backtick_name)
     infix(parser, lex.TT_DOUBLE_COLON, 70, led_infixr)
-    infix(parser, lex.TT_TRIPLE_COLON, 70, infix_triple_colon)
 
     infix(parser, lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
     infix(parser, lex.TT_COLON, 100, infix_name_pair)

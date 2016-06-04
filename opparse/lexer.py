@@ -1,5 +1,57 @@
 from rply import LexerGenerator
-from opparse.parse import tokens
+
+
+class Token:
+    def __init__(self, type, val, pos, line, column):
+        assert isinstance(val, str), val
+        assert isinstance(pos, int)
+        assert isinstance(line, int)
+        assert isinstance(column, int)
+        self.type = type
+        self.value = val
+        self.position = pos
+        self.line = line
+        self.column = column
+        # indentation level
+        self.level = self.column - 1
+        self._hash_ = None
+
+    def __hash__(self):
+        if not self._hash_:
+            self._hash_ = self._compute_hash_()
+
+        return self._hash_
+
+    def _compute_hash_(self):
+        x = 0x345678
+        for item in [self.value, self.position, self.line, self.column]:
+            y = hash(item)
+            x = ((1000003 * x) ^ y)
+        return x
+
+    def __eq__(self, other):
+        if not isinstance(other, Token):
+            return False
+
+        if self.type != other.type:
+            return False
+        if self.value != other.value:
+            return False
+
+        if self.position != other.position:
+            return False
+
+        return True
+
+    def __str__(self):
+        return "Token(%s, %s, %d, %d)" % (str(self.type),
+                                          self.value,
+                                          self.line,
+                                          self.column)
+
+    def __repr__(self):
+        return self.__str__()
+
 
 def create_generator(rules):
     lg = LexerGenerator()
@@ -10,13 +62,11 @@ def create_generator(rules):
 
 
 class UnknownTokenError(Exception):
-
     def __init__(self, position):
         self.position = position
 
 
 class LexerError(Exception):
-
     """ Lexer error exception.
 
         pos:
@@ -53,15 +103,16 @@ class Lexer:
             return None
         except LexingError as e:
             pos = e.source_pos
-            raise(UnknownTokenError(pos.idx))
+            raise (UnknownTokenError(pos.idx))
 
     def _token(self):
         t = next(self.stream)
         # print tokens.token_type_to_str(t.name), t.value
-        token = tokens.newtoken(t.name, t.value,
-                                t.source_pos.idx,
-                                t.source_pos.lineno, t.source_pos.colno)
-        if tokens.token_type(token) == -1:
+        token = Token(t.name, t.value,
+                      t.source_pos.idx,
+                      t.source_pos.lineno, t.source_pos.colno)
+
+        if token.type == -1:
             return self._token()
 
         return token
@@ -75,8 +126,8 @@ class Lexer:
             tok = self.token()
             if tok is None:
                 # ADD FAKE NEWLINE TO SUPPORT ONE LINE SCRIPT FILES
-                yield tokens.newtoken(self.lexicon.TT_NEWLINE, "\n", -1, -1, 1)
-                yield tokens.newtoken(self.lexicon.TT_ENDSTREAM, "", -1, -1, 1)
+                yield Token(self.lexicon.TT_NEWLINE, "\n", -1, -1, 1)
+                yield Token(self.lexicon.TT_ENDSTREAM, "", -1, -1, 1)
                 break
             yield tok
 
