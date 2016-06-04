@@ -48,7 +48,7 @@ def is_node(node):
 
 
 def is_scope_node(node):
-    from opparse.parse.basic import ParserScope
+    from opparse.parse.parser import ParserScope
     return isinstance(node, ParserScope)
 
 

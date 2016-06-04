@@ -5,25 +5,6 @@ from opparse.misc.fifo import Fifo
 
 LOG_INDENTER = False
 
-def create_end_token(token):
-    return tokens.newtoken(TT_END, "end",
-                    tokens.token_position(token),
-                    tokens.token_line(token),
-                    tokens.token_column(token))
-
-
-def create_end_expression_token(token):
-    return tokens.newtoken(TT_END_EXPR, ";",
-                    tokens.token_position(token),
-                    tokens.token_line(token),
-                    tokens.token_column(token))
-
-
-def create_indent_token(token):
-    return tokens.newtoken(TT_INDENT, "(indent)",
-                    tokens.token_position(token),
-                    tokens.token_line(token),
-                    tokens.token_column(token))
 
 class InvalidIndentationError(Exception):
 
@@ -93,7 +74,8 @@ class Layout(object):
             bt_s = "NODE"
         elif bt == OFFSIDE:
             bt_s = "OFFSIDE"
-        return "<Block pl=%d, l=%d, t=%s>" % (self.parent_level, self.level, bt_s)
+        return "<Block pl=%d, l=%d, t=%s>" % \
+            (self.parent_level, self.level, bt_s)
 
     def is_code(self):
         return self.type == CODE
@@ -122,8 +104,10 @@ class IndentationTokenStream:
 
         self.operator_tokens = tokens_options.get("operator_tokens", [])
         self.end_token = tokens_options["end_token"]
+        self.end_expr_token = tokens_options["end_expr_token"]
         self.end_stream_token = tokens_options["end_stream_token"]
         self.new_line_token = tokens_options["new_line_token"]
+        self.indent_token = tokens_options["indent_token"]
 
         if LOG_INDENTER:
             for token in self.tokens:
@@ -139,6 +123,25 @@ class IndentationTokenStream:
 
         level = self._find_level()
         self.layouts = plist.plist([Layout(-1, level, MODULE, None, None)])
+
+    def create_end_token(self, token):
+
+        return tokens.newtoken(self.end_token, "(end)",
+                               tokens.token_position(token),
+                               tokens.token_line(token),
+                               tokens.token_column(token))
+
+    def create_end_expression_token(self, token):
+        return tokens.newtoken(self.end_expr_token, "(end_expr)",
+                               tokens.token_position(token),
+                               tokens.token_line(token),
+                               tokens.token_column(token))
+
+    def create_indent_token(self, token):
+        return tokens.newtoken(self.indent_token, "(indent)",
+                               tokens.token_position(token),
+                               tokens.token_line(token),
+                               tokens.token_column(token))
 
     def advanced_values(self):
         t = [tokens.token_value(token) for token in self.produced_tokens]
@@ -245,10 +248,11 @@ class IndentationTokenStream:
 
         # TODO remove not layout.is_module() after implementing real pragmas
         # ![]
-        if cur_type in SKIP_NEWLINE_TOKENS and not layout.is_module():
+        if cur_type in self.operator_tokens and not layout.is_module():
             if level <= layout.level:
-                return indentation_error(u"Indentation level of token next to"
-                                         u" operator must be bigger then of parent layout",
+                return indentation_error("Indentation level of token next to"
+                                         " operator must be bigger then"
+                                         " of parent layout",
                                          token)
 
             return self.next_token()
@@ -257,8 +261,8 @@ class IndentationTokenStream:
             return self.next_token()
 
         if level > layout.level:
-            if ttype not in SKIP_NEWLINE_TOKENS:
-                self.add_logical_token(tokens.create_indent_token(token))
+            if ttype not in self.operator_tokens:
+                self.add_logical_token(self.create_indent_token(token))
 
             return self.next_token()
         else:
@@ -267,32 +271,35 @@ class IndentationTokenStream:
                 layout = plist.head(layouts)
                 layouts = plist.tail(layouts)
                 if layout is None:
-                    return indentation_error(u"Indentation does not match with any of previous levels", token)
+                    return indentation_error(u"Indentation does not match"
+                                             " with any of previous levels",
+                                             token)
 
                 if layout.level < level:
-                    return indentation_error(u"Invalid indentation level", token)
+                    return indentation_error(u"Invalid indentation level",
+                                             token)
                 elif layout.level > level:
                     if layout.push_end_of_expression_on_new_line is True:
                         self.add_logical_token(
-                            tokens.create_end_expression_token(token))
+                            self.create_end_expression_token(token))
                     if layout.push_end_on_dedent is True:
-                        self.add_logical_token(tokens.create_end_token(token))
+                        self.add_logical_token(self.create_end_token(token))
                 elif layout.level == level:
                     if layout.push_end_of_expression_on_new_line is True:
                         self.add_logical_token(
-                            tokens.create_end_expression_token(token))
+                            self.create_end_expression_token(token))
                     elif layout.is_node():
                         if ttype == self.end_token:
                             self.index += 1
                             self.add_logical_token(
-                                tokens.create_end_token(token))
+                                self.create_end_token(token))
                             self.pop_layout()
 
                         elif not layout.has_level(ttype):
                             self.add_logical_token(
-                                tokens.create_end_token(token))
+                                self.create_end_token(token))
                             self.add_logical_token(
-                                tokens.create_end_expression_token(token))
+                                self.create_end_expression_token(token))
                             self.pop_layout()
                     return self.next_token()
 

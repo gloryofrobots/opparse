@@ -1,4 +1,4 @@
-import lexicon.ObinLexicon as lex
+from lexicon import ObinLexicon as lex
 import lang_names
 
 from opparse.parse.nodes import (
@@ -7,35 +7,6 @@ from opparse.parse.nodes import (
     list_node, empty_node)
 
 from opparse.parse import tokens
-
-def juxtaposition_as_list(parser, terminators):
-    node = parser.node
-    exp = expression(parser, 0, terminators)
-    if not is_list_node(exp):
-        return create_list_node(node, [exp])
-
-    return create_list_node_from_list(node, exp)
-
-
-def juxtaposition_as_tuple(parser, terminators):
-    node = parser.node
-    exp = expression(parser, 0, terminators)
-    if not is_list_node(exp):
-        return create_tuple_node(node, [exp])
-
-    return create_tuple_node_from_list(node, exp)
-
-
-def flatten_juxtaposition(parser, node):
-    ntype = nodes.node_type(node)
-    if ntype == parser.lex.NT_JUXTAPOSITION:
-        first = nodes.node_first(node)
-        second = nodes.node_second(node)
-        head = flatten_juxtaposition(parser, first)
-        tail = flatten_juxtaposition(parser, second)
-        return plist.concat(head, tail)
-    else:
-        return list_node([node])
 
 
 def create_token_from_node(type, value, node):

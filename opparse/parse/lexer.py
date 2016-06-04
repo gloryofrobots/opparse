@@ -67,8 +67,10 @@ class Lexer:
         return token
 
     def tokens(self):
-        """ Returns an iterator to the tokens found in the buffer.
         """
+        Returns an iterator to the tokens found in the buffer.
+        """
+
         while 1:
             tok = self.token()
             if tok is None:

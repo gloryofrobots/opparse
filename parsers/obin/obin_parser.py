@@ -3,14 +3,18 @@ from lexicon import ObinLexicon
 from opparse.parse.indenter import IndentationTokenStream
 from callbacks import *
 
+lex = ObinLexicon()
 
 def create_stream(parser, source):
     indenter_settings = dict(
         operator_tokens=[parser.lex.TT_SPACE_DOT, lex.TT_DOUBLE_COLON,
                          parser.lex.TT_TRIPLE_COLON,
                          parser.lex.TT_COLON, lex.TT_OPERATOR,
-                         parser.lex.TT_DOT, lex.TT_ASSIGN, lex.TT_OR, lex.TT_AND],
+                         parser.lex.TT_DOT,
+                         lex.TT_ASSIGN, lex.TT_OR, lex.TT_AND],
 
+        end_expr_token=lex.TT_END_EXPR,
+        indent_token=lex.TT_INDENT,
         end_token=parser.lex.TT_END,
         end_stream_token=parser.lex.TT_ENDSTREAM,
         new_line_token=parser.lex.TT_NEWLINE
@@ -27,9 +31,9 @@ class ObinParser(Parser):
         if self.isend():
             return None
         if self.token_type in TERM_BLOCK:
-            return parser.node
+            return self.node
         if self.token_type == self.lex.TT_END_EXPR:
-            return advance(parser)
+            return advance(self)
         return False
 
     def postprocess(self, node):
@@ -72,8 +76,6 @@ class ObinParser(Parser):
 
 
 def create_parser():
-    lex = ObinLexicon()
-    print lex
     parser = ObinParser(lex, allow_overloading=True)
     set_parser_literals(parser)
 
@@ -402,4 +404,4 @@ def expression_parser_init(parser):
 def parse(source):
     parser = create_parser()
     ts = create_stream(parser, source)
-    return parse_token_stream(parser, ts, lex())
+    return parse_token_stream(parser, ts)

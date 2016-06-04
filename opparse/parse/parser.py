@@ -473,74 +473,6 @@ def rexpression(parser, op, terminators):
     return expression(parser, op.lbp - 1, terminators)
 
 
-def juxtaposition_as_list(parser, terminators):
-    node = parser.node
-    exp = expression(parser, 0, terminators)
-    if not nodes.is_list_node(exp):
-        return nodes.create_list_node(node, [exp])
-
-    return nodes.create_list_node_from_list(node, exp)
-
-
-def juxtaposition_as_tuple(parser, terminators):
-    node = parser.node
-    exp = expression(parser, 0, terminators)
-    if not nodes.is_list_node(exp):
-        return nodes.create_tuple_node(node, [exp])
-
-    return nodes.create_tuple_node_from_list(node, exp)
-
-
-def flatten_juxtaposition(parser, node):
-    ntype = nodes.node_type(node)
-    if ntype == parser.lex.NT_JUXTAPOSITION:
-        first = nodes.node_first(node)
-        second = nodes.node_second(node)
-        head = flatten_juxtaposition(parser, first)
-        tail = flatten_juxtaposition(parser, second)
-        return plist.concat(head, tail)
-    else:
-        return nodes.list_node([node])
-
-
-def postprocess(parser, node):
-    if nodes.is_empty_node(node):
-        return node
-    elif nodes.is_list_node(node):
-        children = []
-        for c in node:
-            children.append(postprocess(parser, c))
-        return nodes.list_node(children)
-
-    ntype = nodes.node_type(node)
-    if ntype == parser.lex.NT_JUXTAPOSITION:
-        flatten = flatten_juxtaposition(parser, node)
-        # probably overkill
-        if len(flatten) < 2:
-            parse_error(parser, u"Invalid use of juxtaposition operator", node)
-
-        if parser.juxtaposition_as_list:
-            return postprocess(parser, flatten)
-        else:
-            caller = plist.head(flatten)
-            args = plist.tail(flatten)
-            return postprocess(parser,
-                               nodes.node_2(parser.lex.NT_CALL,
-                                            nodes.node_token(caller),
-                                            caller, args))
-    else:
-        children = []
-        node_children = nodes.node_children(node)
-        if node_children is None:
-            return node
-
-        for c in node_children:
-            new_child = postprocess(parser, c)
-            children.append(new_child)
-        return nodes.newnode(nodes.node_type(node),
-                             nodes.node_token(node), children)
-
-
 def literal_expression(parser):
     # Override most operators in literals
     # because of prefix operators
@@ -702,7 +634,7 @@ class Parser:
         state = self.state
         self.state = None
         for parser in self.subparsers.values():
-            parser.close(state)
+            parser.close()
 
         return state
 
@@ -749,8 +681,7 @@ def _parse(parser, termination_tokens):
     return stmts, scope
 
 
-def parse_token_stream(parser, ts, lexicon):
-    print "LEXICON", lexicon
+def parse_token_stream(parser, ts):
     parser.open(ParseState(ts))
     parser.next_token()
     stmts, scope = _parse(parser, [parser.lex.TT_ENDSTREAM])
