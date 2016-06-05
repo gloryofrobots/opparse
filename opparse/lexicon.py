@@ -55,7 +55,7 @@ class Lexicon:
         self.rules.append(kw)
 
     def get_nt_for_node(self, node):
-        return self.get_nt_for_tt(nodes.node_token_type(node))
+        return self.get_nt_for_tt(node.token_type)
 
     def get_nt_for_tt(self, tt):
         """

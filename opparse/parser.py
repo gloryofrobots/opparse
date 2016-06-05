@@ -35,16 +35,16 @@ def parser_error_indentation(parser, msg, position, lineno, column):
 def parse_error(parser, message, node):
     print parser.ts.advanced_values()
     print parser.ts.layouts
-    if nodes.node_token_type(node) == parser.lex.TT_ENDSTREAM:
+    if node.token_type == parser.lex.TT_ENDSTREAM:
         line = "Unclosed top level statement"
     else:
-        line = get_line(parser.ts.src, nodes.node_line(node))
+        line = get_line(parser.ts.src, node.token_line)
 
     raise ParseError([
-        nodes.node_position(node),
-        nodes.node_line(node),
-        nodes.node_column(node),
-        nodes.node_to_string(node),
+        node.token_position,
+        node.token_line,
+        node.token_column,
+        str(node),
         message,
         line
     ])
@@ -71,56 +71,6 @@ def init_free_layout(parser, node, terminators):
 def skip_indent(parser):
     if parser.token_type == parser.lex.TT_INDENT:
         advance(parser)
-
-
-class ParserScope(object):
-    def __init__(self):
-        self.operators = {}
-        self.macro = {}
-
-
-class ParseState:
-    def __init__(self, ts):
-        self.ts = ts
-        self.scopes = plist.empty()
-
-
-def parser_enter_scope(parser):
-    parser.state.scopes = plist.cons(ParserScope(), parser.state.scopes)
-
-
-def parser_exit_scope(parser):
-    head = plist.head(parser.state.scopes)
-    parser.state.scopes = plist.tail(parser.state.scopes)
-    return head
-
-
-def parser_current_scope(parser):
-    return plist.head(parser.state.scopes)
-
-
-def parser_current_scope_add_operator(parser, op_name, op):
-    cur_scope = parser_current_scope(parser)
-    operator.setitem(cur_scope.operators, op_name, op)
-
-
-def parser_current_scope_find_operator_or_create_new(parser, op_name):
-    cur_scope = parser_current_scope(parser)
-    op = cur_scope.operators.get(op_name, None)
-    if op is None:
-        return Operator()
-    return op
-
-
-def parser_find_operator(parser, op_name):
-    undef = None
-    scopes = parser.state.scopes
-    for scope in scopes:
-        op = scope.operators.get(op_name, undef)
-        if op is not None:
-            return op
-
-    return None
 
 
 class Operator(object):
@@ -171,7 +121,129 @@ class Operator(object):
         return True
 
     def __str__(self):
-        return '<operator %s %s>' % (self.prefix_s(), self.infix_s())
+        return 'Operator(%s %s)' % (self.prefix_s(), self.infix_s())
+
+
+class ParserScope(object):
+    def __init__(self):
+        self.operators = {}
+        self.macro = {}
+
+
+class ParseState:
+    def __init__(self, ts):
+        self.ts = ts
+        self.scopes = plist.empty()
+
+
+class Parser:
+    def __init__(self, lexicon, allow_overloading=False,
+                 break_on_juxtaposition=False, allow_unknown=True,
+                 juxtaposition_as_list=False):
+
+        self.lexicon = lexicon
+        self.handlers = {}
+        self.state = None
+        self.allow_overloading = allow_overloading
+        self.break_on_juxtaposition = break_on_juxtaposition
+        self.allow_unknown = allow_unknown
+        self.juxtaposition_as_list = juxtaposition_as_list
+
+        self.subparsers = {}
+
+    def on_endofexpression(self):
+        raise NotImplementedError()
+
+    def add_subparser(self, parser_name, parser):
+        setattr(self, parser_name, parser)
+        self.subparsers[parser_name] = parser
+
+    def open(self, state):
+        assert self.state is None
+        self.state = state
+        for parser in self.subparsers.values():
+            parser.open(state)
+
+    def close(self):
+        state = self.state
+        self.state = None
+        for parser in self.subparsers.values():
+            parser.close()
+
+        return state
+
+    @property
+    def lex(self):
+        return self.lexicon
+
+    @property
+    def ts(self):
+        return self.state.ts
+
+    @property
+    def token_type(self):
+        return self.ts.token.type
+
+    # @property
+    # def is_newline_occurred(self):
+    #     return self.ts.is_newline_occurred
+
+    @property
+    def node(self):
+        return self.ts.node
+
+    @property
+    def token(self):
+        return self.ts.token
+
+    def next_token(self):
+        try:
+            return self.ts.next_token()
+        except InvalidIndentationError as e:
+            parser_error_indentation(self, e.msg, e.position, e.line, e.column)
+        except lexer.UnknownTokenError as e:
+            parser_error_unknown(self, e.position)
+
+    def isend(self):
+        return self.token_type == self.lex.TT_ENDSTREAM
+
+
+def parser_enter_scope(parser):
+    parser.state.scopes = plist.cons(ParserScope(), parser.state.scopes)
+
+
+def parser_exit_scope(parser):
+    head = plist.head(parser.state.scopes)
+    parser.state.scopes = plist.tail(parser.state.scopes)
+    return head
+
+
+def parser_current_scope(parser):
+    return plist.head(parser.state.scopes)
+
+
+def parser_current_scope_add_operator(parser, op_name, op):
+    cur_scope = parser_current_scope(parser)
+    operator.setitem(cur_scope.operators, op_name, op)
+
+
+def parser_current_scope_find_operator_or_create_new(parser, op_name):
+    cur_scope = parser_current_scope(parser)
+    op = cur_scope.operators.get(op_name, None)
+    if op is None:
+        return Operator()
+    return op
+
+
+def parser_find_operator(parser, op_name):
+    undef = None
+    scopes = parser.state.scopes
+    for scope in scopes:
+        op = scope.operators.get(op_name, undef)
+        if op is not None:
+            return op
+
+    return None
 
 
 def parser_has_operator(parser, ttype):
@@ -204,7 +276,7 @@ def parser_set_operator(parser, ttype, h):
 
 
 def node_operator(parser, node):
-    ttype = nodes.node_token_type(node)
+    ttype = node.token_type
     if not parser.allow_overloading:
         return parser_operator(parser, ttype)
 
@@ -212,7 +284,7 @@ def node_operator(parser, node):
         return parser_operator(parser, ttype)
 
     # in case of operator
-    op = parser_find_operator(parser, nodes.node_value(node))
+    op = parser_find_operator(parser, node.token_value)
     if op is None:
         return parse_error(parser, "Invalid operator", node)
     return op
@@ -341,14 +413,14 @@ def check_list_node_types(parser, node, expected_types):
 
 
 def check_node_type(parser, node, expected_type):
-    ntype = nodes.node_type(node)
+    ntype = node.node_type
     if ntype != expected_type:
         parse_error(parser, "Wrong node type, expected  %s, got %s" %
                     (expected_type, ntype), node)
 
 
 def check_node_types(parser, node, types):
-    ntype = nodes.node_type(node)
+    ntype = node.node_type
     if ntype not in types:
         parse_error(parser, "Wrong node type, expected one of %s, got %s" %
                     (str(types), ntype), node)
@@ -539,12 +611,12 @@ def stmt(parser, ttype, std):
 def prefix_nud(parser, op, node):
     exp = literal_expression(parser)
     return nodes.node_1(parser.lex.get_nt_for_node(node),
-                        nodes.node_token(node), exp)
+                        node.token, exp)
 
 
 def itself(parser, op, node):
     return nodes.node_0(parser.lex.get_nt_for_node(node),
-                        nodes.node_token(node))
+                        node.token)
 
 
 def literal(parser, ttype):
@@ -570,21 +642,21 @@ def empty(parser, op, node):
 def led_infix(parser, op, node, left):
     exp = expression(parser, op.lbp)
     return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        nodes.node_token(node),
+                        node.token,
                         left, exp)
 
 
 def led_infixr(parser, op, node, left):
     exp = expression(parser, op.lbp - 1)
     return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        nodes.node_token(node),
+                        node.token,
                         left, exp)
 
 
 def led_infixr_assign(parser, op, node, left):
     exp = expression(parser, 9)
     return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        nodes.node_token(node), left, exp)
+                        node.token, left, exp)
 
 
 def infixr(parser, ttype, lbp):
@@ -593,77 +665,6 @@ def infixr(parser, ttype, lbp):
 
 def assignment(parser, ttype, lbp):
     infix(parser, ttype, lbp, led_infixr_assign)
-
-
-class Parser:
-    def __init__(self, lexicon, allow_overloading=False,
-                 break_on_juxtaposition=False, allow_unknown=True,
-                 juxtaposition_as_list=False):
-        self.lexicon = lexicon
-        self.handlers = {}
-        self.state = None
-        self.allow_overloading = allow_overloading
-        self.break_on_juxtaposition = break_on_juxtaposition
-        self.allow_unknown = allow_unknown
-        self.juxtaposition_as_list = juxtaposition_as_list
-
-        self.subparsers = {}
-
-    def on_endofexpression(self):
-        raise NotImplementedError()
-
-    def add_subparser(self, parser_name, parser):
-        setattr(self, parser_name, parser)
-        self.subparsers[parser_name] = parser
-
-    def open(self, state):
-        assert self.state is None
-        self.state = state
-        for parser in self.subparsers.values():
-            parser.open(state)
-
-    def close(self):
-        state = self.state
-        self.state = None
-        for parser in self.subparsers.values():
-            parser.close()
-
-        return state
-
-    @property
-    def lex(self):
-        return self.lexicon
-
-    @property
-    def ts(self):
-        return self.state.ts
-
-    @property
-    def token_type(self):
-        return self.ts.token.type
-
-    # @property
-    # def is_newline_occurred(self):
-    #     return self.ts.is_newline_occurred
-
-    @property
-    def node(self):
-        return self.ts.node
-
-    @property
-    def token(self):
-        return self.ts.token
-
-    def next_token(self):
-        try:
-            return self.ts.next_token()
-        except InvalidIndentationError as e:
-            parser_error_indentation(self, e.msg, e.position, e.line, e.column)
-        except lexer.UnknownTokenError as e:
-            parser_error_unknown(self, e.position)
-
-    def isend(self):
-        return self.token_type == self.lex.TT_ENDSTREAM
 
 
 def _parse(parser, termination_tokens):

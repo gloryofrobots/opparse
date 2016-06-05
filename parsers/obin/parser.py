@@ -44,12 +44,13 @@ class ObinParser(Parser):
                 children.append(self.postprocess(c))
             return nodes.list_node(children)
 
-        ntype = nodes.node_type(node)
+        ntype = node.node_type
         if ntype == self.lex.NT_JUXTAPOSITION:
             flatten = flatten_juxtaposition(self, node)
             # probably overkill
             if len(flatten) < 2:
-                parse_error(self, "Invalid use of juxtaposition operator", node)
+                parse_error(self,
+                            "Invalid use of juxtaposition operator", node)
 
             if self.juxtaposition_as_list:
                 return self.postprocess(flatten)
@@ -58,19 +59,19 @@ class ObinParser(Parser):
                 args = plist.tail(flatten)
                 return self.postprocess(
                     nodes.node_2(self.lex.NT_CALL,
-                                 nodes.node_token(caller),
+                                 caller.token,
                                  caller, args))
         else:
             children = []
-            node_children = nodes.node_children(node)
+            node_children = node.children
             if node_children is None:
                 return node
 
             for c in node_children:
                 new_child = self.postprocess(c)
                 children.append(new_child)
-            return nodes.newnode(nodes.node_type(node),
-                                 nodes.node_token(node), children)
+            return nodes.Node(node.node_type,
+                                 node.token, children)
 
 
 def create_parser():
