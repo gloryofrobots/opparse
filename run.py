@@ -13,7 +13,7 @@ PARSERS = ["obin"]
 
 
 def execute_parser(parser_name):
-    path = "parsers.{0}.{0}_parser".format(parser_name)
+    path = "parsers.{0}.parser".format(parser_name)
     parser_module = importlib.import_module(path)
     # print dir(parser_module)
     # exit()

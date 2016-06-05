@@ -1,0 +1,629 @@
+"""
+SOME OF THE OPERATORS DEFINED INTERNALLY AND SOME BELOW
+JUXTAPOSITION means function calls like cons 2 []
+" ." is a juxtaposition with low precedence used to avoid parenthesis but not to produce partials like <|
+for example
+    OBIN                                        SOME OTHER LANGUAGE WITH USUAL INFIX CALL NOTATION (JavaScript, Python, Java, ...)
+    io:print 1 2 3                              io:print(1,2,3)
+    io:print 1 -2 3                             io:print(1, (negate(2(3))) // prefix operator applies to expression 2 3. to avoid it use
+    io:print 1 (-2) 3                           io:print(1, -2, 3) // or
+    io:print 1 . -2 . 3                         io:print(1, -2, 3)
+    io:print 1 . sqrt x . 3 + -5 . pow 2 4      io:print(1, sqrt(x), 3 + -5, pow(2,4) )
+
+
+Precedence    Operator
+    100           : . .{ .( .[
+    95           JUXTAPOSITION
+    60           :: :::
+    50           *  /
+    40           +  - ++
+    35           ==  !=  <  <=  >  >=
+    30           and
+    25           or << >>
+    20           |>
+    15           " ." @ as of <|
+    10           = :=
+"""
+from obin:lang:_types import (Bool, Char, Int, Float, Symbol, String, List, Vector, Tuple, Map,
+                             Function, Method, Fiber, Trait, Datatype, Union, LazyVal, Env)
+
+
+prefix - negate
+prefix ! !
+infixr := := 10
+infixl <| <| 15
+infixl |> |> 20
+infixl << << 25
+infixl >> >> 25
+infixl < < 35
+infixl > > 35
+infixl >= >= 35
+infixl <= <= 35
+infixl == == 35
+infixl != != 35
+infixl ++ ++ 40
+infixl + + 40
+infixl - - 40
+infixl * * 50
+infixl / / 50
+
+type Ordering
+    | LT | GT | EQ
+
+trait Eq for x
+    def == x y
+    def != x y -> not (x == y)
+
+trait Ord for x of Eq
+    def <= x y
+    def < x y -> (cmp x y) == LT
+    def >= x y -> (cmp x y) != LT
+    def > x y -> (cmp x y) == GT
+
+    def cmp x y ->
+                if x == y then EQ
+                elif x <= y then LT
+                else GT
+
+    def max x y -> if x <= y then y else x
+    def min x y -> if x <= y then x else y
+
+
+trait Num for x
+    def - x y
+    def + x y
+    def * x y
+    def / x y
+    def mod x y
+    // unary -
+    def negate x
+
+trait Str for self
+    def str self
+
+//YOU need kinds here
+//trait FromStr for self of ToStr
+//    def from_str self
+
+trait Repr for self of Str
+    def repr self -> str self
+
+trait Sized for self
+    def len self
+    def is_empty self -> len self == 0
+
+trait Collection for self
+    def put key value self
+    def at key self
+    def del obj self
+    def elem key self
+
+
+trait Seq for self
+    def first self
+    def rest self
+
+trait Emptiable for self
+    def empty self
+
+trait Consable for self
+    def cons value self
+
+trait Prependable for self
+    // prepend/cons operator
+    def prepend value self
+
+trait Appendable for self
+    //concat operator
+    def ++ self other
+    def append value self
+
+trait Dict for self of Collection
+    def keys self
+    def values self
+
+trait Indexed for self of Sized
+    def index_of obj self
+//    def indexes self
+//    def last_index self -> len self - 1
+//    def at_index idx self -> at idx self
+
+trait Seqable for self
+    def to_seq self
+//    def from_seq seq self
+
+trait Sliceable for self
+    def slice first . last . self
+    def drop count self
+    def take count self
+
+
+trait Bounded for self
+    def lower_bound self
+    def upper_bound self
+
+
+trait Range for self
+    def range self last
+    def range_by self last step
+
+    def range_from self
+    def range_from_by self step
+
+
+trait Ref for self
+    def ! self
+
+trait MutRef for self of Ref
+    def := self value
+
+type Option
+    | Some val
+    | None
+
+implement types:TestTrait for X
+    def f a of X b c -> 42
+    def f a of X b c -> 42
+
+
+implement types:TestTrait for X
+    def test_method_1 a1 of X a2 of X self -> a1.x a2.x self.x
+    def test_method_2 a1 self a2 -> a1.x a2.x self.x
+    def test_method_3 self a1 a2 -> a1.x a2.x self.x
+    def test_method_4 self
+        | x -> self.x
+        | y -> 42
+    def test_method_3 self a1 a2 -> a1.x a2.x self.x
+
+implement X:x for T:t
+
+extend Tuple with Eq
+
+extend Tuple
+    with Seq
+        def first self -> _list:head self
+        def rest self -> _list:tail self
+
+
+extend List
+    with Eq
+    with Seq
+        def first self ->
+            match x with
+                | 1 -> 2
+                | 3 -> 4
+            _list:head self
+        def rest self -> _list:tail self
+    with Consable
+        def cons value self -> _list:cons value self
+    with Seqable
+        def to_seq self ->
+            match x with
+                | 1 -> 2
+                | 3 -> 4
+    with Sized
+        def len self -> _list:length
+        def is_empty self -> _list:is_empty self
+    with Emptiable
+        def empty self -> []
+    with Collection
+        def put key value self -> _list:put key value self
+        def at key self -> _list:at key self
+        def del key self -> _list:del key self
+        def elem key self -> _list:elem key self
+    with Sliceable
+        def slice first last self -> _list:slice first last self
+        def drop count self -> _list:drop count self
+        def take count self -> _list:take count self
+
+type Maybe | Nothing
+           | Just v
+
+type Maybe
+    | Nothing
+    | Just v
+
+
+type None
+
+type Vec2 p1 p2
+
+type P4 x y z c
+
+type Shape
+    | X x
+    | Y y
+    | Point x y
+    | Square width height
+    | Rect left top right bottom
+    | Line point1 point2
+    | Empty
+
+fun not_elem x c -> not (elem x c)
+fun identity x -> x
+
+fun |> x f -> f x
+fun <| f x -> f x
+fun >> f g x -> g (f x)
+fun << f g x ->  f (g x)
+
+fun twice f -> f >> f
+fun flip f x y -> f y x
+fun even x -> mod x 2 == 0
+fun odd x -> not (even x)
+fun inc x -> x + 1
+fun dec x -> x - 1
+
+fst = at 0
+snd = at 1
+thrd = at 2
+frth = at 3
+fun last coll -> at ((len coll) - 1) coll
+
+
+fun foldl func accumulator coll
+    | f acc [] -> acc
+    | f acc hd::tl -> foldl f (f hd acc) tl
+
+fun foldr func accumulator coll
+    | f acc [] -> acc
+    | f acc hd::tl -> f hd (foldr f acc tl)
+
+fun reduce f l
+    | f x::xs -> foldl f x xs
+    | f [] -> throw EmptySeqError l
+
+fun sort f s ->
+    fun _merge s1 s2
+        | [] ys -> ys
+        | xs [] -> xs
+        | x::xs y::ys ->
+            if f x y then x :: _merge xs (y::ys)
+            else y :: _merge (x::xs) ys
+
+    fun _sort s
+        | [] -> []
+        | [x] -> s
+        | xs ->
+            (ys, zs) = split xs
+            _merge (_sort ys) (_sort zs)
+    ---------
+
+    _sort s
+
+
+fun range (first of Int) (last of Int) ->
+    step = if last < 0 then -1 else 1
+    range_by first last step
+
+fun range_by (first of Int) (last of Int) (step of Int) ->
+    fun _range_by N X D L
+        | N X D L when N >= 4 ->
+            Y = X - D
+            Z = Y - D
+            W = Z - D
+            _range_by (N - 4)  (W - D)  D  (W :: Z :: Y :: X :: L)
+
+        | N X D L when N >= 2 ->
+            Y = X - D
+            _range_by (N - 2) (Y - D) D (Y :: X :: L)
+
+        | 1 X _ L -> X :: L
+
+        | 0 _ _ L -> L
+
+
+    if step > 0 and first - step <= last or
+            step < 0 and first - step >= last then
+
+        n = ((last - first + step) / step) - 1
+        _range_by n (step * (n - 1) + first) step []
+
+    elif step == 0 and first == last then
+        _range_by 1  first step []
+    else
+        throw (#InvalidRange, first, last, step)
+
+// bogus code below demonstrates indentation rules
+
+import affirm
+import lib_az:abc:module_ab as ab
+import lib_az:efg:module_e as e
+//
+////unqualified names f_ab,f_ab_2,const
+from lib_az:abc:module_ab  import (f_ab, f_ab_2, CONST as const)
+//
+////ab2:f_ab
+import lib_az:abc:module_ab as ab2 (f_ab, f_ab_2)
+//
+////module_ab:f_ab, module_ab:f_ab_2
+import lib_az:abc:module_ab (f_ab, f_ab_2)
+//
+////all exported names imported
+from lib_az:efg:module_e import _
+
+//ab_3_f_ab
+from lib_az:abc:module_ab import (f_ab as ab_3_f_ab)
+//importing same names doesn't cause errors because names are equal
+from lib_az:abc:module_ab hide (CONST)
+//ab5:f_ab_2 only
+import lib_az:abc:module_ab as ab5 hiding (f_ab, CONST)
+
+fun f a
+    | a -> 1
+    | z -> 2
+    | x -> 3
+
+fun f a  | a -> 1
+         | z -> 2
+         | x -> 3
+fun f a b c
+    | a b c -> 42
+    | z e f -> 24
+    | x [x:xs] l -> 31
+
+fun f a b c | a b c -> 13
+
+fun f3 (()) -> 43
+fun f a b c -> [42,43,44]
+               (42,43,44)
+fun f a b c ->
+    a :: b :: c
+    tail (c :: f)
+    lam a b c -> 42
+
+fun f ((x of Int) y z) ->
+    lam x y z -> 42
+    lam x y z -> 123 end
+    lam x y z | [hd::tl] (1,2,3) {x=2, y=3} -> 24
+              | _ y z -> 23
+    lam x y z
+        | [hd::tl] (1,2,3) {x=2, y=3} -> 24
+        | _ y z -> 23
+
+    lam x y z -> 25 end 34
+    f 23 lam x y z -> 42 end 34
+
+    f lam x
+        | x -> 34
+        | x -> 4 end
+
+    f lam x
+        | x -> 34
+        | x -> 4 end (1,2,3) (4,5,6)
+    24
+
+    ( lam x
+        | x -> 1
+        | y -> 2
+      end
+               1
+                    2
+
+                     3)
+    (1,2, lam x | x -> 25
+                | y -> 13 end, 25)
+
+    (1,
+     lam x | x -> 25
+           | y -> 45 end,
+     lam x
+        | x -> 25
+        | y -> 45 end,
+     lam x -> 25 end,
+     25)
+
+    (1
+     ,2,
+        3)
+
+    (1
+    , lam x | x -> 25
+            | y -> 45
+    , lam x
+        | x -> 25
+        | y -> 45
+    , lam x -> 25
+    25)
+
+    (1,
+  2,
+3)
+    56
+
+    {
+        x = {
+            y = 1
+        },
+        z = 2
+    }
+    append impl .
+        (_t [self.methods.str,
+            _f (_s ""),
+            derived.str_,
+            1])
+
+    f (2;, 3)
+    f (
+        lam x ->
+            1
+        end
+        , 3
+        , 1
+        , 4
+        , 5
+    )
+    f (
+        lam x ->
+            1
+        end .
+            3
+      , 1
+      , 4
+      , 5
+    )
+    (lam x
+        | x -> 25
+        | y -> 45 end,
+                        lam x -> 25 end,
+     25)
+
+    {x=1,
+  x=2,
+
+ l=lam x y
+    | x y -> 1
+    | a v -> 2 end,
+    n = 1
+    }
+    if x then
+        2
+    else
+        4
+
+    5
+    if x :: 2 then
+                          42
+    elif (1,2,3) then
+        24
+    elif {x=1, y=2} then 35
+    else  15
+
+    match (1,2,3) with | (x,y,z) -> 2
+                       | _ -> 1
+
+    match (1,2,3)
+    with | (x,y,z) -> 2
+         | _ -> 1
+
+    match lam x ->
+              1
+          end
+    with
+        | x ->
+           lam () -> () end .
+               (1 + 1)
+        | y -> 2
+
+    match if x == 1 then
+             2
+             3
+             "fgfg"
+
+          else
+            3
+          end
+    with
+        | x -> 3
+        | y -> 2
+
+    match 1 with
+        | x -> 3
+        | y -> 2
+
+    match 1 with 3 -> 4
+    match 1 with
+        3 -> 4
+
+    match
+        if 1 then
+            1
+        else
+            3
+        end 3 .
+            4
+    with
+        | x -> 3
+        | y -> 2
+    try 1; catch 1 -> 1; end
+    if 1 then 1; else 2; end
+    try 1; catch 1 ->
+        1
+
+    try 42
+    catch 3 ->#first
+
+    try 42
+    catch 3 ->#first
+
+    try 42
+    catch 3 ->#first
+    finally -> 12
+
+    try 1
+    catch 2 ->
+        11
+        try
+            3
+        catch 4 ->12
+        finally ->
+            if 6 then 7
+            elif 7 then
+                if 9 then 14
+                else  15
+            else
+                try
+                    9
+                catch
+                    | 10 -> 11
+                    | 13 -> 14
+                finally ->
+                    24
+                8
+    finally ->
+        5
+    try
+        throw (1,2,"ERROR")
+    catch
+        | err @ (1, y, 3) -> #first
+        | (1,2, "ERROR@") -> #second
+        | err @ (1, 2, x) -> #third
+    finally ->
+        (#fourth, err, x)
+
+    f try 1 catch | x -> 1; | y -> 2; finally -> 4 end 42
+
+    try 1; catch
+        | x -> 1
+        | y -> 2
+    finally -> 4
+
+    try 1; catch
+        | x -> 1; | y -> 2; finally -> 4
+
+    try 1 catch | x -> 1 | y -> 2 finally -> 4
+
+
+    f try 1; catch | x -> 1; | y -> 2
+                   | y -> 2
+      finally -> 4 end .
+      42
+
+    try 1; catch
+        | x -> 1
+        | y -> 2; finally -> 4
+
+    co =
+        coroutine lam yield x ->
+                       _co1 =
+                            coroutine lam yield2 y ->
+                                           fun send () ->
+                                                yield2 (42 + y)
+
+                                           send ()
+    foo 2 .
+            3 .
+         4
+
+fun f x ->
+    f lam x ->
+        1
+      end .
+        3
+    2
+end
+fun x () ->
+    24
+end
+
+

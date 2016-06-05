@@ -344,14 +344,14 @@ def check_node_type(parser, node, expected_type):
     ntype = nodes.node_type(node)
     if ntype != expected_type:
         parse_error(parser, "Wrong node type, expected  %s, got %s" %
-                    expected_type, ntype, node)
+                    (expected_type, ntype), node)
 
 
 def check_node_types(parser, node, types):
     ntype = nodes.node_type(node)
     if ntype not in types:
         parse_error(parser, "Wrong node type, expected one of %s, got %s" %
-                    str(types), ntype, node)
+                    (str(types), ntype), node)
 
 
 def advance(parser):
@@ -598,7 +598,7 @@ def assignment(parser, ttype, lbp):
 class Parser:
     def __init__(self, lexicon, allow_overloading=False,
                  break_on_juxtaposition=False, allow_unknown=True,
-                 juxtaposition_as_list=True):
+                 juxtaposition_as_list=False):
         self.lexicon = lexicon
         self.handlers = {}
         self.state = None

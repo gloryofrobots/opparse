@@ -55,7 +55,7 @@ TERM_CONDITION_CONDITION = [lex.TT_ARROW]
 NODE_FOR_NAME = [lex.NT_NAME]
 NODE_FUNC_NAME = [lex.NT_NAME]
 NODE_DOT = [lex.NT_NAME, lex.NT_INT]
-NODE_IMPLEMENT_NAME = [lex.NT_NAME, lex.NT_IMPORTED_NAME]
+NODE_IMPLEMENT_NAME = [lex.NT_NAME, lex.NT_LOOKUP]
 
 LOOP_CONTROL_TOKENS = [lex.TT_END, lex.TT_ELSE, lex.TT_CASE]
 
@@ -881,10 +881,10 @@ def _symbols_to_args(parser, node, symbols):
 # DERIVE ################################
 def _parse_tuple_of_names(parser, term):
     exp = expect_expression_of_types(
-        parser, 0, [lex.NT_NAME, lex.NT_IMPORTED_NAME, lex.NT_TUPLE], term)
+        parser, 0, [lex.NT_NAME, lex.NT_LOOKUP, lex.NT_TUPLE], term)
     if nodes.node_type(exp) == lex.NT_TUPLE:
         check_list_node_types(
-            parser, nodes.node_first(exp), [lex.NT_NAME, lex.NT_IMPORTED_NAME])
+            parser, nodes.node_first(exp), [lex.NT_NAME, lex.NT_LOOKUP])
         return exp
     elif nodes.node_type(exp) != lex.NT_TUPLE:
         return helpers.create_tuple_node(exp, [exp])

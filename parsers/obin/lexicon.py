@@ -145,7 +145,6 @@ class ObinLexicon(Lexicon):
     NT_JUXTAPOSITION = "NT_JUXTAPOSITION"
     NT_UNDEFINE = "NT_UNDEFINE"
     NT_LOOKUP = "NT_LOOKUP"
-    NT_IMPORTED_NAME = "NT_IMPORTED_NAME"
     NT_HEAD = "NT_HEAD"
     NT_TAIL = "NT_TAIL"
     NT_DROP = "NT_DROP"
@@ -161,7 +160,6 @@ class ObinLexicon(Lexicon):
     NT_END = "NT_END"
 
     TT_TO_NT_MAPPING = {
-        TT_COLON: NT_IMPORTED_NAME,
         TT_TRUE: NT_TRUE,
         TT_FALSE: NT_FALSE,
         TT_INT: NT_INT,
@@ -188,6 +186,7 @@ class ObinLexicon(Lexicon):
         TT_SHARP: NT_SYMBOL,
         TT_OPERATOR: NT_NAME,
         TT_DOUBLE_COLON: NT_CONS,
+        TT_DOT: NT_LOOKUP,
         TT_CASE: NT_CASE,
     }
 
@@ -199,7 +198,6 @@ class ObinLexicon(Lexicon):
         (token('\.\('), TT_INFIX_DOT_LPAREN),
         (token('\.\['), TT_INFIX_DOT_LSQUARE),
         (token(' '), -1),
-        (token('-----[-]*'), -1),
         (token('//[^\n]*'), -1),
         (token('/\*[^\*\/]*\*/'), -1),
 

@@ -165,7 +165,7 @@ def name_parser_init(parser):
 
     prefix(parser, lex.TT_LPAREN, prefix_lparen, layout_lparen)
     symbol(parser, lex.TT_OPERATOR, symbol_operator_name)
-    infix(parser, lex.TT_COLON, 100, infix_name_pair)
+    infix(parser, lex.TT_DOT, 100, infix_name_pair)
     return parser
 
 
@@ -215,7 +215,7 @@ def import_parser_init(parser):
     symbol(parser, lex.TT_HIDE, None)
     symbol(parser, lex.TT_IMPORT, None)
     symbol(parser, lex.TT_WILDCARD, None)
-    infix(parser, lex.TT_COLON, 100, infix_name_pair)
+    infix(parser, lex.TT_DOT, 100, infix_name_pair)
     infix(parser, lex.TT_AS, 15, infix_name_pair)
     literal(parser, lex.TT_NAME)
 
