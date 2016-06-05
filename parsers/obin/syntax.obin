@@ -13,7 +13,7 @@ Precedence    Operator
     30           and
     25           or << >>
     20           |>
-    15           " ." @ as <|
+    15           @ as <|
     10           = :=
 """
 // Prelude
@@ -129,7 +129,7 @@ trait Seqable for self
 //    def from_seq seq self
 
 trait Sliceable for self
-    def slice first . last . self
+    def slice first last self
     def drop count self
     def take count self
 
@@ -335,7 +335,7 @@ fun t1() ->
     m1 = {name="XXX"}
     affirm.is_equal {name="XXX"}.name "XXX"
     affirm.is_equal m1.name "XXX"
-    affirm.is_not_equal m1.name . "YYY"
+    affirm.is_not_equal m1.name  "YYY"
 
     t2 = ((1,2, ["Alice", "Bob", (45,), 54.000000001]), {name="Alice", surname= "Bob"})
 
@@ -362,7 +362,7 @@ fun t1() ->
     affirm.is_equal if x == 13 then 1 + 1
                     elif x == 14 then 2 + 2
                     elif x == 15 then 3 + 3
-                    else 4 + 4 end .
+                    else 4 + 4 end <|
                     8
 
 
@@ -374,21 +374,57 @@ fun t1() ->
                         | err @ (1, 2, x) -> #third
                     finally ->
                         (#fourth, err, x)
-                    end .
+                    end <|
                     (#fourth, (1, 2, "ERROR"), "ERROR")
+
+    ////////////////////////////////////////////////
+
+    M1 = M.{
+        line = M.line.{
+            index_2 = M.line.index + 42,
+            data = [4, 3, 2, 1]
+        },
+        id = "ID M1"
+    }
+    affirm.is_equal M1 {line = {index = 1, index_2 = 43, data = [4, 3, 2, 1]}, id = "ID M1"}
+
+
+    fun f x y z -> reduce `+` [x, y, z]
+
+    //alternative call syntax
+    f.(1,2,f.(3,f.(6,7,8),5)) = (f 1 2 (f 3 (f 6 7 8) 5))
+
+
+    l = range 0 10
+    square = lam x -> x * x
+    triple = `*` 3
+    affirm.is_equal (
+        l |> filter even
+          |> map (`+` 1)
+          |> map (flip `-` 2)
+          |> map (triple >> square)
+     )  [9, 9, 81, 225, 441]
+
+    affirm.is_equal (
+         (filter even
+          >> map (`+` 1)
+          >> map (flip `-` 2)
+          >> map (triple >> square)) l
+     )  [9, 9, 81, 225, 441]
+
 fun t2 () ->
     fun id x -> x
     fun sum_list_3 list
         | [x,y,z] -> x + y + z
     fun sum x y -> x + y
 
-    V53 = sum 1 .
+    V53 = sum 1 <|
             (sum_list_3
                 [id 1,
                  id (id 2),
                  id (id (id 3))
                 ]) +
-        (sum 10 .
+        (sum 10 <|
             (sum_list_3
                 [lam x -> x end 11,
                  lam x
@@ -456,7 +492,7 @@ fun t4 () ->
     affirm.is_equal (lam x -> x + 1 end 34) 35
 
 
-    affirm.is_equal .
+    affirm.is_equal <|
         ( lam x y z
             | 1 2 3 -> 11
             | 2 4 5 -> 22
@@ -464,7 +500,7 @@ fun t4 () ->
                     1
                         2
 
-                         3) . 11
+                         3)  11
     T =
         (1,2, lam x | 1 -> 25
                     | 2 -> 13 end, 25)
@@ -536,8 +572,7 @@ fun t4 () ->
     affirm.is_equal (2;, 3) (2,3)
 
     T7 =
-        lam x -> x end .
-        (
+        lam x -> x end (
             lam x ->
                 1
             end
@@ -548,16 +583,14 @@ fun t4 () ->
         )
     affirm.is_equal (T7.0 12313123) 1
 
-    affirm.is_equal .
-         (
+    affirm.is_equal (
             lam x ->
                 x
-            end .
-                3
+            end 3
           , 1
           , 4
           , 5
-        ).0 . 3
+        ).0  3
 
     //////////////////////////////////////////////////////
     M1 =
@@ -613,7 +646,7 @@ fun t4 () ->
         with
             | Y ->
                lam t
-                    | (a,b) -> a + b end .
+                    | (a,b) -> a + b end <|
                     (1 + 1, 2 + 2)
             | _ -> 2
 
@@ -631,16 +664,16 @@ fun t4 () ->
 
     affirm.is_equal MT4 2
 
-    affirm.is_equal .
+    affirm.is_equal <|
         match 1 with
             | x -> 3
-            | _ -> 2 end . 3
+            | _ -> 2 end <| 3
 
     affirm.is_equal match 1 with 1 -> 4 end 4
-    affirm.is_equal .
+    affirm.is_equal <|
         match 1 with
             x -> 4
-        end . 4
+        end <| 4
 
     affirm.is_equal (
         match
@@ -648,7 +681,7 @@ fun t4 () ->
                 1
             else
                 lam x y -> x + y
-            end 3 .
+            end 3 <|
                 4
         with
             | 6 -> 3

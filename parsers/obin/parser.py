@@ -7,7 +7,7 @@ lex = ObinLexicon()
 
 def create_stream(parser, source):
     indenter_settings = dict(
-        operator_tokens=[parser.lex.TT_SPACE_DOT, lex.TT_DOUBLE_COLON,
+        operator_tokens=[lex.TT_DOUBLE_COLON,
                          parser.lex.TT_COLON, lex.TT_OPERATOR,
                          parser.lex.TT_DOT,
                          lex.TT_ASSIGN, lex.TT_OR, lex.TT_AND],
@@ -131,7 +131,6 @@ def create_parser():
     prefix(parser, lex.TT_LAMBDA, prefix_lambda)
 
     assignment(parser, lex.TT_ASSIGN, 10)
-    infix(parser, lex.TT_SPACE_DOT, 15, infix_spacedot)
     infix(parser, lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
     infix(parser, lex.TT_DOT, 100, infix_dot)
     infix(parser, lex.TT_COLON, 100, infix_name_pair)
@@ -182,7 +181,6 @@ def type_parser_init(parser):
     # infix(parser, lex.TT_CASE, 15, led_infixr)
     # infix(parser, lex.TT_ASSIGN, 10, led_infixr)
     infix(parser, lex.TT_JUXTAPOSITION, 5, infix_juxtaposition)
-    infix(parser, lex.TT_SPACE_DOT, 5, infix_juxtaposition)
     symbol(parser, lex.TT_CASE, None)
     return parser
 
@@ -193,7 +191,6 @@ def method_signature_parser_init(parser):
     symbol(parser, lex.TT_END, None)
     symbol(parser, lex.TT_ARROW, None)
     infix(parser, lex.TT_JUXTAPOSITION, 5, infix_juxtaposition)
-    infix(parser, lex.TT_SPACE_DOT, 5, infix_juxtaposition)
     return parser
 
 
@@ -237,8 +234,6 @@ def guard_parser_init(parser):
     prefix(parser, lex.TT_SHARP, prefix_sharp)
     prefix(parser, lex.TT_BACKTICK_OPERATOR, prefix_backtick_operator)
 
-    infix(parser, lex.TT_SPACE_DOT, 15, infix_spacedot)
-
     infix(parser, lex.TT_OR, 25, led_infix)
     infix(parser, lex.TT_AND, 30, led_infix)
     infix(parser, lex.TT_BACKTICK_NAME, 35, infix_backtick_name)
@@ -276,7 +271,6 @@ def pattern_parser_init(parser):
 def fun_pattern_parser_init(parser):
     parser = pattern_parser_init(parser)
     infix(parser, lex.TT_JUXTAPOSITION, 5, infix_juxtaposition)
-    infix(parser, lex.TT_SPACE_DOT, 5, infix_juxtaposition)
     return parser
 
 
@@ -296,7 +290,6 @@ def fun_signature_parser_init(parser):
     symbol(parser, lex.TT_ARROW)
     symbol(parser, lex.TT_CASE)
     infix(parser, lex.TT_JUXTAPOSITION, 5, infix_juxtaposition)
-    infix(parser, lex.TT_SPACE_DOT, 5, infix_juxtaposition)
     return parser
 
 
@@ -307,7 +300,6 @@ def set_parser_literals(parser):
     literal(parser, lex.TT_STR)
     literal(parser, lex.TT_MULTI_STR)
     literal(parser, lex.TT_NAME)
-    literal(parser, lex.TT_TYPENAME)
     literal(parser, lex.TT_TRUE)
     literal(parser, lex.TT_FALSE)
     literal(parser, lex.TT_WILDCARD)
@@ -377,7 +369,6 @@ def expression_parser_init(parser):
     prefix(parser, lex.TT_LET, prefix_let)
 
     assignment(parser, lex.TT_ASSIGN, 10)
-    infix(parser, lex.TT_SPACE_DOT, 15, infix_spacedot)
     infix(parser, lex.TT_OF, 15, led_infix)
     infix(parser, lex.TT_OR, 25, led_infix)
     infix(parser, lex.TT_AND, 30, led_infix)
@@ -390,8 +381,7 @@ def expression_parser_init(parser):
 
     infix(parser, lex.TT_INFIX_DOT_LCURLY, 100, infix_lcurly)
     infix(parser, lex.TT_INFIX_DOT_LSQUARE, 100, infix_lsquare)
-
-    # OTHER OPERATORS ARE DECLARED IN prelude.obn
+    infix(parser, lex.TT_INFIX_DOT_LPAREN, 100, infix_lparen)
 
     stmt(parser, lex.TT_THROW, prefix_throw)
     return parser

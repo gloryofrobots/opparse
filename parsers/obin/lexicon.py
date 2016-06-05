@@ -24,14 +24,11 @@ class ObinLexicon(Lexicon):
     TT_MULTI_STR = "TT_MULTI_STR"
     TT_CHAR = "TT_CHAR"
     TT_NAME = "TT_NAME"
-    TT_TYPENAME = "TT_TYPENAME"
     TT_OPERATOR = "TT_OPERATOR"
     TT_FUN = "TT_FUN"
     TT_MATCH = "TT_MATCH"
     TT_WITH = "TT_WITH"
     TT_CASE = "TT_CASE"
-    TT_BREAK = "TT_BREAK"
-    TT_CONTINUE = "TT_CONTINUE"
     TT_FOR = "TT_FOR"
     TT_WHILE = "TT_WHILE"
     TT_IMPLEMENT = "TT_IMPLEMENT"
@@ -52,11 +49,9 @@ class ObinLexicon(Lexicon):
     TT_TRUE = "TT_TRUE"
     TT_FALSE = "TT_FALSE"
     TT_TRY = "TT_TRY"
-    TT_ENSURE = "TT_ENSURE"
     TT_THROW = "TT_THROW"
     TT_CATCH = "TT_CATCH"
     TT_FINALLY = "TT_FINALLY"
-    TT_MODULE = "TT_MODULE"
     TT_IMPORT = "TT_IMPORT"
     TT_FROM = "TT_FROM"
     TT_HIDING = "TT_HIDING"
@@ -72,14 +67,11 @@ class ObinLexicon(Lexicon):
     TT_PREFIX = "TT_PREFIX"
     TT_ELLIPSIS = "TT_ELLIPSIS"
     TT_WILDCARD = "TT_WILDCARD"
-    TT_GOTO = "TT_GOTO"
     TT_ARROW = "TT_ARROW"
-    TT_BACKARROW = "TT_BACKARROW"
     TT_AT_SIGN = "TT_AT_SIGN"
     TT_SHARP = "TT_SHARP"
     TT_LAMBDA = "TT_LAMBDA"
     TT_JUXTAPOSITION = "TT_JUXTAPOSITION"
-    TT_SPACE_DOT = "TT_SPACE_DOT"
     TT_LCURLY = "TT_LCURLY"
     TT_RCURLY = "TT_RCURLY"
     TT_COMMA = "TT_COMMA"
@@ -94,15 +86,12 @@ class ObinLexicon(Lexicon):
     TT_DOT = "TT_DOT"
     TT_COLON = "TT_COLON"
     TT_DOUBLE_COLON = "TT_DOUBLE_COLON"
-    TT_DOUBLE_DOT = "TT_DOUBLE_DOT"
     TT_BACKTICK_NAME = "TT_BACKTICK_NAME"
     TT_BACKTICK_OPERATOR = "TT_BACKTICK_OPERATOR"
 
     # NODE_TYPES
-    NT_GOTO = "NT_GOTO"
     NT_TRUE = "NT_TRUE"
     NT_FALSE = "NT_FALSE"
-    NT_VOID = "NT_VOID"
     NT_INT = "NT_INT"
     NT_FLOAT = "NT_FLOAT"
     NT_STR = "NT_STR"
@@ -110,7 +99,6 @@ class ObinLexicon(Lexicon):
     NT_CHAR = "NT_CHAR"
     NT_WILDCARD = "NT_WILDCARD"
     NT_NAME = "NT_NAME"
-    NT_TEMPORARY = "NT_TEMPORARY"
     NT_SYMBOL = "NT_SYMBOL"
     NT_TYPE = "NT_TYPE"
     NT_UNION = "NT_UNION"
@@ -119,21 +107,16 @@ class ObinLexicon(Lexicon):
     NT_TUPLE = "NT_TUPLE"
     NT_UNIT = "NT_UNIT"
     NT_CONS = "NT_CONS"
-    NT_COMMA = "NT_COMMA"
-    NT_CASE = "NT_CASE"
     NT_FUN = "NT_FUN"
-    NT_FENV = "NT_FENV"
     NT_CONDITION = "NT_CONDITION"
     NT_WHEN = "NT_WHEN"
     NT_MATCH = "NT_MATCH"
     NT_TRY = "NT_TRY"
-    NT_MODULE = "NT_MODULE"
     NT_IMPORT = "NT_IMPORT"
     NT_IMPORT_HIDING = "NT_IMPORT_HIDING"
     NT_IMPORT_FROM = "NT_IMPORT_FROM"
     NT_IMPORT_FROM_HIDING = "NT_IMPORT_FROM_HIDING"
     NT_EXPORT = "NT_EXPORT"
-    NT_LOAD = "NT_LOAD"
     NT_TRAIT = "NT_TRAIT"
     NT_IMPLEMENT = "NT_IMPLEMENT"
     NT_EXTEND = "NT_EXTEND"
@@ -143,19 +126,16 @@ class ObinLexicon(Lexicon):
     NT_ASSIGN = "NT_ASSIGN"
     NT_CALL = "NT_CALL"
     NT_JUXTAPOSITION = "NT_JUXTAPOSITION"
-    NT_UNDEFINE = "NT_UNDEFINE"
     NT_LOOKUP = "NT_LOOKUP"
-    NT_HEAD = "NT_HEAD"
-    NT_TAIL = "NT_TAIL"
-    NT_DROP = "NT_DROP"
-    NT_RANGE = "NT_RANGE"
-    NT_MODIFY = "NT_MODIFY"
     NT_OF = "NT_OF"
     NT_AS = "NT_AS"
-    NT_DELAY = "NT_DELAY"
     NT_LET = "NT_LET"
     NT_AND = "NT_AND"
     NT_OR = "NT_OR"
+    NT_INFIXL = "NT_INFIXL"
+    NT_INFIXR = "NT_INFIXR"
+    NT_PREFIX = "NT_PREFIX"
+    NT_MODIFY = "NT_MODIFY"
     NT_END_EXPR = "NT_END_EXPR"
     NT_END = "NT_END"
 
@@ -169,7 +149,6 @@ class ObinLexicon(Lexicon):
         TT_CHAR: NT_CHAR,
         TT_WILDCARD: NT_WILDCARD,
         TT_NAME: NT_NAME,
-        TT_TYPENAME: NT_NAME,
         TT_IF: NT_CONDITION,
         TT_MATCH: NT_MATCH,
         TT_EXPORT: NT_EXPORT,
@@ -182,18 +161,15 @@ class ObinLexicon(Lexicon):
         TT_AS: NT_AS,
         TT_AND: NT_AND,
         TT_OR: NT_OR,
-        TT_DOUBLE_DOT: NT_RANGE,
         TT_SHARP: NT_SYMBOL,
         TT_OPERATOR: NT_NAME,
         TT_DOUBLE_COLON: NT_CONS,
         TT_DOT: NT_LOOKUP,
-        TT_CASE: NT_CASE,
     }
 
     RULES = [
         (token('\n'), TT_NEWLINE),
         (token('[ ]*\.\.\.'), TT_ELLIPSIS),
-        (token(' \.'), TT_SPACE_DOT),
         (token('\.\{'), TT_INFIX_DOT_LCURLY),
         (token('\.\('), TT_INFIX_DOT_LPAREN),
         (token('\.\['), TT_INFIX_DOT_LSQUARE),
@@ -217,7 +193,6 @@ class ObinLexicon(Lexicon):
         (keyword('False'), TT_FALSE),
         # (keyword('nil'), TT_NIL),
         (keyword('throw'), TT_THROW),
-        (keyword('ensure'), TT_ENSURE),
         (keyword('try'), TT_TRY),
         (keyword('catch'), TT_CATCH),
         (keyword('finally'), TT_FINALLY),
@@ -274,7 +249,6 @@ class ObinLexicon(Lexicon):
         (token('\['), TT_LSQUARE),
         (token('\]'), TT_RSQUARE),
         (token('\.'), TT_DOT),
-        (token('\.\.'), TT_DOUBLE_DOT),
         (token('@'), TT_AT_SIGN),
         (token('::'), TT_DOUBLE_COLON),
         (token('[:^:][%s]+' % operator_char), TT_OPERATOR),
