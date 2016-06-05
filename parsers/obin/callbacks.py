@@ -195,11 +195,11 @@ def advance_end(parser):
 
 
 def is_wildcard_node(n):
-    return node_type(n) == lex.NT_WILDCARD
+    return n.node_type == lex.NT_WILDCARD
 
 
 def tuple_node_length(n):
-    assert node_type(n) == lex.NT_TUPLE
+    assert n.node_type == lex.NT_TUPLE
     return len(n.first())
 
 

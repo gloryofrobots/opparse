@@ -124,6 +124,12 @@ class ListNode(BaseNode):
         elements = self.elements + other.elements
         return ListNode(elements)
 
+    def head(self):
+        return self.elements[0]
+
+    def tail(self):
+        return ListNode(self.elements[1:])
+
 __EMPTY__ = EmptyNode()
 
 

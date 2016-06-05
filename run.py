@@ -26,7 +26,7 @@ def execute_parser(parser_name):
     print "************************** OPERATORS **************"
     print scope.operators
     print "************************** AST *********************"
-    data = nodes.node_to_string(ast)
+    data = ast.to_json_string()
     fs.write_file(ast_path, data)
 
 

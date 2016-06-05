@@ -47,16 +47,13 @@ class ObinParser(Parser):
         ntype = node.node_type
         if ntype == self.lex.NT_JUXTAPOSITION:
             flatten = flatten_juxtaposition(self, node)
-            # probably overkill
-            if len(flatten) < 2:
-                parse_error(self,
-                            "Invalid use of juxtaposition operator", node)
+            assert len(flatten) >= 2
 
             if self.juxtaposition_as_list:
                 return self.postprocess(flatten)
             else:
-                caller = plist.head(flatten)
-                args = plist.tail(flatten)
+                caller = flatten.head()
+                args = flatten.tail()
                 return self.postprocess(
                     nodes.node_2(self.lex.NT_CALL,
                                  caller.token,
