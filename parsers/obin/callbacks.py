@@ -221,21 +221,6 @@ def expression_with_optional_end_of_expression(parser, _rbp, terminators):
     return exp
 
 
-def infix_operator(parser, ttype, lbp, infix_function):
-    op = get_or_create_operator(parser, ttype)
-    operator_infix(op, lbp, led_infix_function, infix_function)
-
-
-def infixr_operator(parser, ttype, lbp, infix_function):
-    op = get_or_create_operator(parser, ttype)
-    operator_infix(op, lbp, led_infixr_function, infix_function)
-
-
-def prefix_operator(parser, ttype, prefix_function):
-    op = get_or_create_operator(parser, ttype)
-    operator_prefix(op, prefix_nud_function, prefix_function)
-
-
 def prefix_nud_function(parser, op, node):
     exp = literal_expression(parser)
     # exp = expression(parser, 100)
@@ -1174,7 +1159,7 @@ def stmt_prefix(parser, op, node):
 
     scope = parser.current_scope()
     op = scope.get_custom_operator_or_create_new(op_value)
-    operator_prefix(op, prefix_nud_function, func_value)
+    parser.operators.set_prefix_function(op, prefix_nud_function, func_value)
 
 def stmt_infixl(parser, op, node):
     return _meta_infix(parser, node, led_infix_function)
@@ -1200,4 +1185,5 @@ def _meta_infix(parser, node, infix_function):
 
     scope = parser.current_scope()
     op = scope.get_custom_operator_or_create_new(op_value)
-    op = operator_infix(op, precedence, infix_function, func_value)
+    parser.operators.set_infix_function(op,
+                                        precedence, infix_function, func_value)

@@ -151,6 +151,58 @@ class ParserScope(object):
         return op
 
 
+class Operators:
+
+    def __init__(self):
+        self.__operators = {}
+
+    def set_nud(self, ttype, fn):
+        h = self.get_or_create(ttype)
+        h.nud = fn
+        return h
+
+    def set_layout(self, ttype, layout):
+        h = self.get_or_create(ttype)
+        h.layout = layout
+        return h
+
+    def set_std(self, ttype, fn):
+        h = self.get_or_create(ttype)
+        h.std = fn
+        return h
+
+    def set_led(self, ttype, lbp, fn):
+        h = self.get_or_create(ttype)
+        h.lbp = lbp
+        h.led = fn
+        return h
+
+    def set_lbp(self, ttype, lbp):
+        h = self.get_or_create(ttype)
+        h.lbp = lbp
+
+    def set_infix_function(self, h, lbp, led, infix_fn):
+        h.lbp = lbp
+        h.led = led
+        h.infix_function = infix_fn
+        return h
+
+    def set_prefix_function(self, h, nud, prefix_fn):
+        h.nud = nud
+        h.prefix_function = prefix_fn
+        return h
+
+    def has(self, ttype):
+        return ttype in self.__operators
+
+    def get(self, ttype):
+        return self.__operators[ttype]
+
+    def get_or_create(self, ttype):
+        if not self.has(ttype):
+            self.__operators[ttype] = Operator()
+        return self.get(ttype)
+
 
 class ParseState:
 
@@ -161,26 +213,31 @@ class ParseState:
 
 class Parser:
 
-    def __init__(self, lexicon, allow_overloading=False,
-                 break_on_juxtaposition=False, allow_unknown=True,
-                 juxtaposition_as_list=False):
+    def __init__(self, name, lexicon, operators, settings):
 
+        self.name = name
         self.lex = lexicon
-        self.operators = {}
-        self.state = None
-        self.allow_overloading = allow_overloading
-        self.break_on_juxtaposition = break_on_juxtaposition
-        self.allow_unknown = allow_unknown
-        self.juxtaposition_as_list = juxtaposition_as_list
+        self.operators = operators
+        self.allow_overloading = settings.get("allow_overloading", False)
+        self.break_on_juxtaposition = \
+            settings.get("break_on_juxtaposition", False)
+        self.allow_unknown = settings.get("allow_unknown", True)
+        self.juxtaposition_as_list = \
+            settings.get("juxtaposition_as_list", False)
 
         self.subparsers = {}
+        self.state = None
 
     def on_endofexpression(self):
         raise NotImplementedError()
 
-    def add_subparser(self, parser_name, parser):
-        setattr(self, parser_name, parser)
-        self.subparsers[parser_name] = parser
+    def add_builder(self, name, builder):
+        parser = builder.build(name)
+        self.add_subparser(parser)
+
+    def add_subparser(self, parser):
+        setattr(self, parser.name, parser)
+        self.subparsers[parser.name] = parser
 
     def open(self, state):
         assert self.state is None
@@ -245,43 +302,85 @@ class Parser:
 
         return None
 
+    def operator(self, ttype):
+        try:
+            return self.operators.get(ttype)
+        except:
+            if ttype == self.lex.TT_UNKNOWN:
+                return parse_error(self, "Invalid token", self.node)
 
-def parser_has_operator(parser, ttype):
-    return ttype in parser.operators
+            if self.allow_unknown is True:
+                return self.operator(self.lex.TT_UNKNOWN)
+            return parse_error(self,
+                               "Invalid token %s" % ttype,
+                               self.node)
 
-
-def parser_operator(parser, ttype):
-    try:
-        return parser.operators[ttype]
-    except:
-        if ttype == parser.lex.TT_UNKNOWN:
-            return parse_error(parser, "Invalid token", parser.node)
-
-        if parser.allow_unknown is True:
-            return parser_operator(parser, parser.lex.TT_UNKNOWN)
-        return parse_error(parser,
-                           "Invalid token %s" % ttype,
-                           parser.node)
+    # def parser_operator(parser, ttype):
 
 
-def get_or_create_operator(parser, ttype):
-    if not parser_has_operator(parser, ttype):
-        return parser_set_operator(parser, ttype, Operator())
-    return parser_operator(parser, ttype)
+class Builder:
+    DEFAULT_CLASS = Parser
+
+    def __init__(self, lexicon, settings, parser_class=None):
+        self.lexicon = lexicon
+        self.settings = settings
+        self.operators = Operators()
+        if parser_class is None:
+            self.parser_class = self.DEFAULT_CLASS
+        else:
+            assert issubclass(parser_class, Parser), parser_class
+            self.parser_class = parser_class
+
+    def layout(self, ttype, fn):
+        h = self.operators.get_or_create(ttype)
+        h.layout = fn
+        return self
+
+    def infix(self, ttype, lbp, led):
+        self.operators.set_led(ttype, lbp, led)
+        return self
+
+    def prefix(self, ttype, nud, layout=None):
+        self.operators.set_nud(ttype, nud)
+        self.operators.set_layout(ttype, layout)
+        return self
+
+    def stmt(self, ttype, std):
+        self.operators.set_std(ttype, std)
+        return self
+
+    def literal(self, ttype):
+        self.operators.set_nud(ttype, itself)
+        return self
+
+    def symbol(self, ttype, nud=None):
+        self.operators.set_lbp(ttype, 0)
+        self.operators.set_nud(ttype, nud)
+        return self
+
+    def infixr(self, ttype, lbp):
+        self.infix(ttype, lbp, led_infixr)
+
+    def assignment(self, ttype, lbp):
+        self.infix(ttype, lbp, led_infixr_assign)
+
+    def build(self, name):
+        return self.parser_class(name, self.lexicon,
+                                 self.operators, self.settings)
 
 
-def parser_set_operator(parser, ttype, h):
-    parser.operators[ttype] = h
-    return parser_operator(parser, ttype)
+def itself(parser, op, node):
+    return nodes.node_0(parser.lex.get_nt_for_node(node),
+                        node.token)
 
 
 def node_operator(parser, node):
     ttype = node.token_type
     if not parser.allow_overloading:
-        return parser_operator(parser, ttype)
+        return parser.operator(ttype)
 
     if ttype != parser.lex.TT_OPERATOR:
-        return parser_operator(parser, ttype)
+        return parser.operator(ttype)
 
     # in case of operator
     op = parser.find_custom_operator(node.token_value)
@@ -446,7 +545,7 @@ def base_expression(parser, _rbp, terminators=None):
             if parser.break_on_juxtaposition is True:
                 return left
 
-            op = parser_operator(parser, parser.lex.TT_JUXTAPOSITION)
+            op = parser.operator(parser.lex.TT_JUXTAPOSITION)
             _lbp = op.lbp
 
             if _rbp >= _lbp:
@@ -549,86 +648,6 @@ def statements(parser, endlist):
     return nodes.list_node(stmts)
 
 
-# def statements(parser, endlist):
-#     return _statements(parser, statement, endlist)
-#
-#
-# def module_statements(parser, endlist):
-#     return _statements(parser, statement_no_end_expr, endlist)
-
-def parser_set_layout(parser, ttype, fn):
-    h = get_or_create_operator(parser, ttype)
-    h.layout = fn
-    return h
-
-
-def parser_set_nud(parser, ttype, fn):
-    h = get_or_create_operator(parser, ttype)
-    h.nud = fn
-    return h
-
-
-def parser_set_std(parser, ttype, fn):
-    h = get_or_create_operator(parser, ttype)
-    h.std = fn
-    return h
-
-
-def parser_set_led(parser, ttype, lbp, fn):
-    h = get_or_create_operator(parser, ttype)
-    h.lbp = lbp
-    h.led = fn
-    return h
-
-
-def operator_infix(h, lbp, led, infix_fn):
-    h.lbp = lbp
-    h.led = led
-    h.infix_function = infix_fn
-    return h
-
-
-def operator_prefix(h, nud, prefix_fn):
-    h.nud = nud
-    h.prefix_function = prefix_fn
-    return h
-
-
-def infix(parser, ttype, lbp, led):
-    parser_set_led(parser, ttype, lbp, led)
-
-
-def prefix(parser, ttype, nud, layout=None):
-    parser_set_nud(parser, ttype, nud)
-    parser_set_layout(parser, ttype, layout)
-
-
-def stmt(parser, ttype, std):
-    parser_set_std(parser, ttype, std)
-
-
-def prefix_nud(parser, op, node):
-    exp = literal_expression(parser)
-    return nodes.node_1(parser.lex.get_nt_for_node(node),
-                        node.token, exp)
-
-
-def itself(parser, op, node):
-    return nodes.node_0(parser.lex.get_nt_for_node(node),
-                        node.token)
-
-
-def literal(parser, ttype):
-    parser_set_nud(parser, ttype, itself)
-
-
-def symbol(parser, ttype, nud=None):
-    h = get_or_create_operator(parser, ttype)
-    h.lbp = 0
-    parser_set_nud(parser, ttype, nud)
-    return h
-
-
 def skip(parser, ttype):
     while parser.token_type == ttype:
         advance(parser)
@@ -636,6 +655,12 @@ def skip(parser, ttype):
 
 def empty(parser, op, node):
     return expression(parser, 0)
+
+
+def prefix_nud(parser, op, node):
+    exp = literal_expression(parser)
+    return nodes.node_1(parser.lex.get_nt_for_node(node),
+                        node.token, exp)
 
 
 def led_infix(parser, op, node, left):
@@ -656,14 +681,6 @@ def led_infixr_assign(parser, op, node, left):
     exp = expression(parser, 9)
     return nodes.node_2(parser.lex.get_nt_for_node(node),
                         node.token, left, exp)
-
-
-def infixr(parser, ttype, lbp):
-    infix(parser, ttype, lbp, led_infixr)
-
-
-def assignment(parser, ttype, lbp):
-    infix(parser, ttype, lbp, led_infixr_assign)
 
 
 def _parse(parser, termination_tokens):
