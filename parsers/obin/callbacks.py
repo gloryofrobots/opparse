@@ -392,7 +392,7 @@ def prefix_backtick_operator(parser, op, node):
     if opname == "::":
         return create_name_node_s(node, "cons")
 
-    op = parser_find_operator(parser, opname)
+    op = parser.find_custom_operator(opname)
     if op is None:
         return parse_error(parser, "Invalid operator", node)
     if op.infix_function is None:
@@ -1172,11 +1172,9 @@ def stmt_prefix(parser, op, node):
     op_value = symbol_or_name_value(parser, op_node)
     func_value = symbol_or_name_value(parser, func_node)
 
-    op = parser_current_scope_find_operator_or_create_new(parser, op_value)
-    op = operator_prefix(op, prefix_nud_function, func_value)
-
-    parser_current_scope_add_operator(parser, op_value, op)
-
+    scope = parser.current_scope()
+    op = scope.get_custom_operator_or_create_new(op_value)
+    operator_prefix(op, prefix_nud_function, func_value)
 
 def stmt_infixl(parser, op, node):
     return _meta_infix(parser, node, led_infix_function)
@@ -1200,6 +1198,6 @@ def _meta_infix(parser, node, infix_function):
                            "Invalid infix operator precedence",
                            precedence_node)
 
-    op = parser_current_scope_find_operator_or_create_new(parser, op_value)
+    scope = parser.current_scope()
+    op = scope.get_custom_operator_or_create_new(op_value)
     op = operator_infix(op, precedence, infix_function, func_value)
-    parser_current_scope_add_operator(parser, op_value, op)

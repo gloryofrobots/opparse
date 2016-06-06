@@ -24,7 +24,7 @@ def execute_parser(parser_name):
     source = fs.load_file(syntax_path)
     ast, scope = parser_module.parse(source)
     print "************************** OPERATORS **************"
-    print scope.operators
+    print scope.custom_operators
     print "************************** AST *********************"
     data = ast.to_json_string()
     fs.write_file(ast_path, data)

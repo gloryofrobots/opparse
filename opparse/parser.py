@@ -74,6 +74,7 @@ def skip_indent(parser):
 
 
 class Operator(object):
+
     def __init__(self):
         self.nud = None
         self.led = None
@@ -125,18 +126,42 @@ class Operator(object):
 
 
 class ParserScope(object):
+
     def __init__(self):
-        self.operators = {}
+        self.custom_operators = {}
         self.macro = {}
+
+    def has_custom_operator(self, op_name):
+        return op_name in self.custom_operators
+
+    def new_custom_operator(self, op_name):
+        op = Operator()
+        self.custom_operators[op_name] = op
+        return op
+
+    def get_custom_operator(self, op_name):
+        op = self.custom_operators[op_name]
+        return op
+
+    def get_custom_operator_or_create_new(self, op_name):
+        if self.has_custom_operator(op_name):
+            op = self.get_custom_operator(op_name)
+        else:
+            op = self.new_custom_operator(op_name)
+
+        return op
+
 
 
 class ParseState:
+
     def __init__(self, ts):
         self.ts = ts
-        self.scopes = plist.empty()
+        self.scopes = []
 
 
 class Parser:
+
     def __init__(self, lexicon, allow_overloading=False,
                  break_on_juxtaposition=False, allow_unknown=True,
                  juxtaposition_as_list=False):
@@ -207,43 +232,23 @@ class Parser:
     def isend(self):
         return self.token_type == self.lex.TT_ENDSTREAM
 
+    def enter_scope(self):
+        self.state.scopes.append(ParserScope())
 
-def parser_enter_scope(parser):
-    parser.state.scopes = plist.cons(ParserScope(), parser.state.scopes)
+    def exit_scope(self):
+        return self.state.scopes.pop()
 
+    def current_scope(self):
+        return self.state.scopes[-1]
 
-def parser_exit_scope(parser):
-    head = plist.head(parser.state.scopes)
-    parser.state.scopes = plist.tail(parser.state.scopes)
-    return head
+    def find_custom_operator(self, op_name):
+        scopes = self.state.scopes
+        for scope in scopes:
+            op = scope.custom_operators.get(op_name, None)
+            if op is not None:
+                return op
 
-
-def parser_current_scope(parser):
-    return plist.head(parser.state.scopes)
-
-
-def parser_current_scope_add_operator(parser, op_name, op):
-    cur_scope = parser_current_scope(parser)
-    operator.setitem(cur_scope.operators, op_name, op)
-
-
-def parser_current_scope_find_operator_or_create_new(parser, op_name):
-    cur_scope = parser_current_scope(parser)
-    op = cur_scope.operators.get(op_name, None)
-    if op is None:
-        return Operator()
-    return op
-
-
-def parser_find_operator(parser, op_name):
-    undef = None
-    scopes = parser.state.scopes
-    for scope in scopes:
-        op = scope.operators.get(op_name, undef)
-        if op is not None:
-            return op
-
-    return None
+        return None
 
 
 def parser_has_operator(parser, ttype):
@@ -284,7 +289,7 @@ def node_operator(parser, node):
         return parser_operator(parser, ttype)
 
     # in case of operator
-    op = parser_find_operator(parser, node.token_value)
+    op = parser.find_custom_operator(node.token_value)
     if op is None:
         return parse_error(parser, "Invalid operator", node)
     return op
@@ -668,9 +673,9 @@ def assignment(parser, ttype, lbp):
 
 
 def _parse(parser, termination_tokens):
-    parser_enter_scope(parser)
+    parser.enter_scope()
     stmts = statements(parser, termination_tokens)
-    scope = parser_exit_scope(parser)
+    scope = parser.exit_scope()
     return stmts, scope
 
 
@@ -678,7 +683,7 @@ def parse_token_stream(parser, ts):
     parser.open(ParseState(ts))
     parser.next_token()
     stmts, scope = _parse(parser, [parser.lex.TT_ENDSTREAM])
-    assert plist.is_empty(parser.state.scopes)
+    assert len(parser.state.scopes) == 0
     check_token_type(parser, parser.lex.TT_ENDSTREAM)
     parser.close()
     return stmts, scope
