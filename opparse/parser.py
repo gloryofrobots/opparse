@@ -2,7 +2,6 @@ import operator
 
 from opparse import nodes, lexer
 from opparse.misc.strutil import get_line, get_line_for_position
-from opparse import plist
 from opparse.indenter import InvalidIndentationError
 
 
@@ -166,7 +165,7 @@ class Parser:
                  break_on_juxtaposition=False, allow_unknown=True,
                  juxtaposition_as_list=False):
 
-        self.lexicon = lexicon
+        self.lex = lexicon
         self.operators = {}
         self.state = None
         self.allow_overloading = allow_overloading
@@ -196,10 +195,6 @@ class Parser:
             parser.close()
 
         return state
-
-    @property
-    def lex(self):
-        return self.lexicon
 
     @property
     def ts(self):
@@ -353,44 +348,6 @@ def node_layout(parser, node):
         parse_error(parser, "Unknown token layout", node)
 
     return handler.layout(parser, handler, node)
-
-
-def parser_set_layout(parser, ttype, fn):
-    h = get_or_create_operator(parser, ttype)
-    h.layout = fn
-    return h
-
-
-def parser_set_nud(parser, ttype, fn):
-    h = get_or_create_operator(parser, ttype)
-    h.nud = fn
-    return h
-
-
-def parser_set_std(parser, ttype, fn):
-    h = get_or_create_operator(parser, ttype)
-    h.std = fn
-    return h
-
-
-def parser_set_led(parser, ttype, lbp, fn):
-    h = get_or_create_operator(parser, ttype)
-    h.lbp = lbp
-    h.led = fn
-    return h
-
-
-def operator_infix(h, lbp, led, infix_fn):
-    h.lbp = lbp
-    h.led = led
-    h.infix_function = infix_fn
-    return h
-
-
-def operator_prefix(h, nud, prefix_fn):
-    h.nud = nud
-    h.prefix_function = prefix_fn
-    return h
 
 
 def token_is_one_of(parser, types):
@@ -598,6 +555,43 @@ def statements(parser, endlist):
 #
 # def module_statements(parser, endlist):
 #     return _statements(parser, statement_no_end_expr, endlist)
+
+def parser_set_layout(parser, ttype, fn):
+    h = get_or_create_operator(parser, ttype)
+    h.layout = fn
+    return h
+
+
+def parser_set_nud(parser, ttype, fn):
+    h = get_or_create_operator(parser, ttype)
+    h.nud = fn
+    return h
+
+
+def parser_set_std(parser, ttype, fn):
+    h = get_or_create_operator(parser, ttype)
+    h.std = fn
+    return h
+
+
+def parser_set_led(parser, ttype, lbp, fn):
+    h = get_or_create_operator(parser, ttype)
+    h.lbp = lbp
+    h.led = fn
+    return h
+
+
+def operator_infix(h, lbp, led, infix_fn):
+    h.lbp = lbp
+    h.led = led
+    h.infix_function = infix_fn
+    return h
+
+
+def operator_prefix(h, nud, prefix_fn):
+    h.nud = nud
+    h.prefix_function = prefix_fn
+    return h
 
 
 def infix(parser, ttype, lbp, led):

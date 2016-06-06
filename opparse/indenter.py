@@ -1,4 +1,4 @@
-from opparse import plist, nodes
+from opparse import nodes
 import opparse.lexer
 from opparse.misc.fifo import Fifo
 
@@ -121,7 +121,7 @@ class IndentationTokenStream:
         self.produced_tokens = []
 
         level = self._find_level()
-        self.layouts = plist.plist([Layout(-1, level, MODULE, None, None)])
+        self.layouts = [Layout(-1, level, MODULE, None, None)]
 
     def create_end_token(self, token):
 
@@ -147,16 +147,17 @@ class IndentationTokenStream:
         return " ".join(t)
 
     def current_layout(self):
-        return plist.head(self.layouts)
+        return self.layouts[-1]
 
     def next_layout(self):
-        return plist.head(plist.tail(self.layouts))
+        return self.layouts[-2]
+        #return plist.head(plist.tail(self.layouts))
 
     def pop_layout(self):
         log("---- POP LAYOUT", self.current_layout())
         log(self.advanced_values())
         log(self.layouts)
-        self.layouts = plist.tail(self.layouts)
+        self.layouts.pop()
         return self.current_layout()
 
     def _find_level(self):
@@ -169,7 +170,7 @@ class IndentationTokenStream:
         layout = Layout(cur.level, token.level, layout_type, level_tokens, terminators)
 
         log("---- ADD LAYOUT", layout)
-        self.layouts = plist.cons(layout, self.layouts)
+        self.layouts.append(layout)
 
     def add_code_layout(self, node, terminators):
         # # support for f x y | x y -> 1 | x y -> 3
@@ -191,10 +192,10 @@ class IndentationTokenStream:
         self._add_layout(node, FREE, terminators=terminators)
 
     def has_layouts(self):
-        return not plist.is_empty(self.layouts)
+        return len(self.layouts) > 0
 
     def count_layouts(self):
-        return plist.length(self.layouts)
+        return len(self.layouts)
 
     def has_tokens(self):
         return len(self.tokens) > 0
@@ -266,8 +267,10 @@ class IndentationTokenStream:
         else:
             layouts = self.layouts
             while True:
-                layout = plist.head(layouts)
-                layouts = plist.tail(layouts)
+                layout = layouts[-1]
+                layouts = layouts[0:-1]
+                # layout = plist.head(layouts)
+                # layouts = plist.tail(layouts)
                 if layout is None:
                     return indentation_error("Indentation does not match"
                                              " with any of previous levels",
@@ -316,8 +319,10 @@ class IndentationTokenStream:
         layouts = self.layouts
         popped = []
         while True:
-            layout = plist.head(layouts)
-            layouts = plist.tail(layouts)
+            layout = layouts[-1]
+            layouts = layouts[0:-1]
+            # layout = plist.head(layouts)
+            # layouts = plist.tail(layouts)
             if layout.is_node():
                 log("---- POP NODE LAYOUT ON END TOKEN")
                 log("POPPED LAYOUTS", popped)
