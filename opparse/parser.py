@@ -233,11 +233,12 @@ class Parser:
 
     def add_builder(self, name, builder):
         parser = builder.build(name)
-        self.add_subparser(parser)
+        return self.add_subparser(parser)
 
     def add_subparser(self, parser):
         setattr(self, parser.name, parser)
         self.subparsers[parser.name] = parser
+        return self
 
     def open(self, state):
         assert self.state is None
@@ -332,8 +333,7 @@ class Builder:
             self.parser_class = parser_class
 
     def layout(self, ttype, fn):
-        h = self.operators.get_or_create(ttype)
-        h.layout = fn
+        self.operators.set_layout(ttype, fn)
         return self
 
     def infix(self, ttype, lbp, led):
@@ -359,10 +359,11 @@ class Builder:
         return self
 
     def infixr(self, ttype, lbp):
-        self.infix(ttype, lbp, led_infixr)
+        return self.infix(ttype, lbp, led_infixr)
 
     def assignment(self, ttype, lbp):
-        self.infix(ttype, lbp, led_infixr_assign)
+        return self.infix(ttype, lbp, led_infixr_assign)
+        
 
     def build(self, name):
         return self.parser_class(name, self.lexicon,
