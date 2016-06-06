@@ -167,7 +167,7 @@ class Parser:
                  juxtaposition_as_list=False):
 
         self.lexicon = lexicon
-        self.handlers = {}
+        self.operators = {}
         self.state = None
         self.allow_overloading = allow_overloading
         self.break_on_juxtaposition = break_on_juxtaposition
@@ -252,12 +252,12 @@ class Parser:
 
 
 def parser_has_operator(parser, ttype):
-    return ttype in parser.handlers
+    return ttype in parser.operators
 
 
 def parser_operator(parser, ttype):
     try:
-        return parser.handlers[ttype]
+        return parser.operators[ttype]
     except:
         if ttype == parser.lex.TT_UNKNOWN:
             return parse_error(parser, "Invalid token", parser.node)
@@ -276,7 +276,7 @@ def get_or_create_operator(parser, ttype):
 
 
 def parser_set_operator(parser, ttype, h):
-    parser.handlers[ttype] = h
+    parser.operators[ttype] = h
     return parser_operator(parser, ttype)
 
 
