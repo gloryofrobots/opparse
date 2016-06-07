@@ -1,8 +1,17 @@
 from opparse import nodes
 import opparse.lexer
 from opparse.misc.fifo import Fifo
+from opparse import log
 
-LOG_INDENTER = False
+logger = log.logger("indenter")
+
+
+MODULE = -1
+NODE = 0
+CODE = 1
+OFFSIDE = 2
+FREE = 3
+
 
 
 class InvalidIndentationError(Exception):
@@ -16,18 +25,6 @@ class InvalidIndentationError(Exception):
     def __str__(self):
         return self.msg
 
-
-MODULE = -1
-NODE = 0
-CODE = 1
-OFFSIDE = 2
-FREE = 3
-
-
-def log(*args):
-    if not LOG_INDENTER:
-        return
-    print ", ".join([str(arg) for arg in args])
 
 
 class Layout(object):
@@ -108,9 +105,6 @@ class IndentationTokenStream:
         self.new_line_token = tokens_options["new_line_token"]
         self.indent_token = tokens_options["indent_token"]
 
-        if LOG_INDENTER:
-            for token in self.tokens:
-                print str(token)
 
         self.index = 0
         self.length = len(self.tokens)
@@ -154,9 +148,9 @@ class IndentationTokenStream:
         #return plist.head(plist.tail(self.layouts))
 
     def pop_layout(self):
-        log("---- POP LAYOUT", self.current_layout())
-        log(self.advanced_values())
-        log(self.layouts)
+        logger.debug("---- POP LAYOUT %s", self.current_layout())
+        logger.debug("advanced_values %s", self.advanced_values())
+        logger.debug("layouts %s", self.layouts)
         self.layouts.pop()
         return self.current_layout()
 
@@ -164,12 +158,14 @@ class IndentationTokenStream:
         token = self._skip_newlines()
         return token.level
 
-    def _add_layout(self, node, layout_type, level_tokens=None, terminators=None):
+    def _add_layout(self, node, layout_type,
+                    level_tokens=None, terminators=None):
         token = node.token
         cur = self.current_layout()
-        layout = Layout(cur.level, token.level, layout_type, level_tokens, terminators)
+        layout = Layout(cur.level, token.level,
+                        layout_type, level_tokens, terminators)
 
-        log("---- ADD LAYOUT", layout)
+        logger.debug("---- ADD LAYOUT %s", layout)
         self.layouts.append(layout)
 
     def add_code_layout(self, node, terminators):
@@ -204,24 +200,24 @@ class IndentationTokenStream:
         return not self.logical_tokens.is_empty()
 
     def add_logical_token(self, token):
-        log("=*=* ADD LOGICAL", token)
+        logger.debug("=*=* ADD LOGICAL %s", token)
         self.logical_tokens.append(token)
 
     def next_logical(self):
         token = self.logical_tokens.pop()
-        # log("=*=* NEXT LOGICAL TOKEN", str(token))
+        # logger.debug("=*=* NEXT LOGICAL TOKEN %s", str(token))
         return self.attach_token(token)
 
     def next_physical(self):
         token = self.tokens[self.index]
-        # log( "++++ NEXT STREAM TOKEN", str(token))
+        # logger.debug( "++++ NEXT STREAM TOKEN %s", str(token))
         self.index += 1
         return token
 
     def _skip_newlines(self):
         token = self.next_physical()
         while token.type == self.new_line_token:
-            # log("++++ SKIP")
+            # logger.debug("++++ SKIP")
             token = self.next_physical()
 
         self.index -= 1
@@ -243,7 +239,7 @@ class IndentationTokenStream:
 
         layout = self.current_layout()
         level = token.level
-        log("----NEW LINE", level, layout, str(token))
+        logger.debug("----NEW LINE %s %s %s", level, layout, str(token))
 
         # TODO remove not layout.is_module() after implementing real pragmas
         # ![]
@@ -265,12 +261,8 @@ class IndentationTokenStream:
 
             return self.next_token()
         else:
-            layouts = self.layouts
-            while True:
-                layout = layouts[-1]
-                layouts = layouts[0:-1]
-                # layout = plist.head(layouts)
-                # layouts = plist.tail(layouts)
+            for index in reversed(range(self.count_layouts())):
+                layout = self.layouts[index]
                 if layout is None:
                     return indentation_error("Indentation does not match"
                                              " with any of previous levels",
@@ -304,12 +296,12 @@ class IndentationTokenStream:
                             self.pop_layout()
                     return self.next_token()
 
-                log("---- POP_LAYOUT", layout)
-                log(self.advanced_values())
-                self.layouts = layouts
+                logger.debug("---- POP_LAYOUT %s", layout)
+                logger.debug("advanced_values %s", self.advanced_values())
+                self.layouts = self.layouts[0:index]
 
     def attach_token(self, token):
-        log("^^^^^ATTACH", str(token))
+        logger.debug("^^^^^ATTACH %s", str(token))
         self.token = token
         self.node = nodes.node_blank(self.token)
         self.produced_tokens.append(self.token)
@@ -324,9 +316,9 @@ class IndentationTokenStream:
             # layout = plist.head(layouts)
             # layouts = plist.tail(layouts)
             if layout.is_node():
-                log("---- POP NODE LAYOUT ON END TOKEN")
-                log("POPPED LAYOUTS", popped)
-                log(self.advanced_values())
+                logger.debug("---- POP NODE LAYOUT ON END TOKEN")
+                logger.debug("POPPED LAYOUTS %d", popped)
+                logger.debug("advanced_values %s", self.advanced_values())
                 break
             elif layout.is_module():
                 indentation_error("Invalid end keyword", token)

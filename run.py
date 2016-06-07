@@ -1,9 +1,3 @@
-# Trigger emacs to run this script using the "compile" command
-# ;;; Local Variables: ***
-# ;;; compile-command: "run.py" ***
-# ;;; end: ***
-#import os
-#print os.getcwd()
 import importlib
 
 from opparse import nodes
@@ -19,7 +13,7 @@ def execute_parser(parser_name):
     # exit()
     parser_dir = fs.join("parsers", parser_name)
     syntax_path = fs.join(parser_dir,  "syntax." + parser_name)
-    ast_path = fs.join(parser_dir, parser_name + ".json")
+    ast_path = fs.join(parser_dir, "ast.json")
 
     source = fs.load_file(syntax_path)
     ast, scope = parser_module.parse(source)
@@ -30,10 +24,12 @@ def execute_parser(parser_name):
     fs.write_file(ast_path, data)
 
 
-def execute_parsers(parsers):
+def main(parsers):
     with timer.Timer("All parsers time") as tm_all:
         for parser_name in parsers:
             with timer.Timer("%s  parser time" % parser_name) as tm:
                 execute_parser(parser_name)
 
-execute_parsers(PARSERS)
+
+if __name__ == "__main__":
+    main(PARSERS)

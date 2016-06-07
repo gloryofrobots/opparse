@@ -46,6 +46,44 @@ def parse_error(parser, message, node):
         line
     ])
 
+##########################################################################
+## COMMON CALLBACKS #######################################################
+##########################################################################
+
+def prefix_itself(parser, op, node):
+    return nodes.node_0(parser.lex.get_nt_for_node(node),
+                        node.token)
+
+
+def prefix_empty(parser, op, node):
+    return parser.expression(0)
+
+
+def prefix_nud(parser, op, node):
+    exp = parser.literal_expression()
+    return nodes.node_1(parser.lex.get_nt_for_node(node),
+                        node.token, exp)
+
+
+def infix_led(parser, op, node, left):
+    exp = parser.expression(op.lbp)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        node.token,
+                        left, exp)
+
+
+def infixr_led(parser, op, node, left):
+    exp = parser.rexpression(op)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        node.token,
+                        left, exp)
+
+
+def infixr_led_assign(parser, op, node, left):
+    exp = parser.expression(9)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        node.token, left, exp)
+# LAYOUT
 
 def init_code_layout(parser, node, terminators=None):
     skip_indent(parser)
@@ -209,22 +247,22 @@ class ParseState:
         self.scopes = []
 
 
-class Parser:
+class Parser(object):
 
     def __init__(self, name, lexicon, operators, settings):
 
         self.name = name
         self.lex = lexicon
         self.operators = operators
-        self.allow_overloading = settings.get("allow_overloading", False)
-        self.break_on_juxtaposition = \
-            settings.get("break_on_juxtaposition", False)
-        self.allow_unknown = settings.get("allow_unknown", True)
-        self.juxtaposition_as_list = \
-            settings.get("juxtaposition_as_list", False)
+
+        self.interrupted = False
 
         self.subparsers = {}
         self.state = None
+
+        self.allow_overloading = settings.get("allow_overloading", False)
+        self.allow_unknown = settings.get("allow_unknown", True)
+
 
     def add_builder(self, name, builder):
         parser = builder.build(name)
@@ -289,7 +327,7 @@ class Parser:
     def current_scope(self):
         return self.state.scopes[-1]
 
-    ## OPERATORS
+    # OPERATORS
 
     def find_custom_operator(self, op_name):
         scopes = self.state.scopes
@@ -313,7 +351,6 @@ class Parser:
                                "Invalid token %s" % ttype,
                                self.node)
 
-    
     def node_operator(self, node):
         ttype = node.token_type
         if not self.allow_overloading:
@@ -328,13 +365,11 @@ class Parser:
             return parse_error(self, "Invalid operator", node)
         return op
 
-
     def node_nud(self, node):
         handler = self.node_operator(node)
         if not handler.nud:
             parse_error(self, "Unknown token nud", node)
         return handler.nud(self, handler, node)
-
 
     def node_std(self, node):
         handler = self.node_operator(node)
@@ -343,35 +378,29 @@ class Parser:
 
         return handler.std(self, handler, node)
 
-
     def node_has_nud(self, node):
         handler = self.node_operator(node)
         return handler.nud is not None
-
 
     def node_has_layout(self, node):
         handler = self.node_operator(node)
         return handler.layout is not None
 
-
     def node_has_led(self, node):
         handler = self.node_operator(node)
         return handler.led is not None
-
 
     def node_has_std(self, node):
         handler = self.node_operator(node)
         return handler.std is not None
 
-
     def node_lbp(self, node):
         handler = self.node_operator(node)
         lbp = handler.lbp
-        # if lbp < 0:
-        #   parse_error(self, "Left binding power error", node)
+        if lbp < 0:
+          parse_error(self, "Left binding power error", node)
 
         return lbp
-
 
     def node_led(self, node, left):
         handler = self.node_operator(node)
@@ -380,7 +409,6 @@ class Parser:
 
         return handler.led(self, handler, node, left)
 
-
     def node_layout(self, node):
         handler = self.node_operator(node)
         if not handler.layout:
@@ -388,12 +416,10 @@ class Parser:
 
         return handler.layout(self, handler, node)
 
-
     # ASSERTIONS
-    
+
     def token_is_one_of(self, types):
         return self.token_type in types
-
 
     def assert_token_type(self, type):
         if self.token_type != type:
@@ -402,18 +428,15 @@ class Parser:
                         (type, self.token_type),
                         self.node)
 
-
     def assert_token_types(self, types):
         if self.token_type not in types:
             parse_error(self, "Wrong token type, expected one of %s, got %s" %
                         (unicode([type for type in types]),
-                        self.token_type), parser.node)
-
+                         self.token_type), parser.node)
 
     def assert_types_in_nodes_list(self, node, expected_types):
         for child in node:
             self.assert_node_types(child, expected_types)
-
 
     def assert_node_type(self, node, expected_type):
         ntype = node.node_type
@@ -421,9 +444,8 @@ class Parser:
             parse_error(self, "Wrong node type, expected  %s, got %s" %
                         (expected_type, ntype), node)
 
-
     # MOVEMENTS
-    
+
     def assert_node_types(self, node, types):
         ntype = node.node_type
         if ntype not in types:
@@ -438,12 +460,10 @@ class Parser:
         # print "ADVANCE", node
         return node
 
-
     def advance_expected(self, ttype):
         self.assert_token_type(ttype)
 
         return self.advance()
-
 
     def advance_expected_one_of(self, ttypes):
         self.assert_token_types(ttypes)
@@ -478,8 +498,8 @@ class Parser:
 
         left = self.node_nud(previous)
         while True:
-            # if self.is_newline_occurred:
-            #     break
+            if self.interrupted:
+                break
 
             if terminators is not None:
                 if self.token_type in terminators:
@@ -487,48 +507,28 @@ class Parser:
 
             _lbp = self.node_lbp(self.node)
 
-            # juxtaposition support
-            if _lbp < 0:
-                if self.break_on_juxtaposition is True:
-                    return left
+            if _rbp >= _lbp:
+                break
+            previous = self.node
+            self.advance()
 
-                op = self.operator(self.lex.TT_JUXTAPOSITION)
-                _lbp = op.lbp
-
-                if _rbp >= _lbp:
-                    break
-                previous = self.node
-                # self.advance()
-                if not op.led:
-                    parse_error(self, "Unknown token led", previous)
-
-                left = op.led(self, op, previous, left)
-            else:
-                if _rbp >= _lbp:
-                    break
-                previous = self.node
-                self.advance()
-
-                left = self.node_led(previous, left)
+            left = self.node_led(previous, left)
 
         assert left is not None
         return left
 
     # TODO mandatory terminators
     def expression(self, _rbp, terminators=None):
-        if not terminators:
-            terminators = [self.lex.TT_END_EXPR]
+        # if not terminators:
+        #     terminators = [self.lex.TT_END_EXPR]
         expr = self.base_expression(_rbp, terminators)
         expr = self.postprocess(expr)
         return expr
-
-
 
     def expect_expression_of(self, _rbp, expected_type, terminators=None):
         exp = self.expression(_rbp, terminators=terminators)
         self.assert_node_type(exp, expected_type)
         return exp
-
 
     def expect_expression_of_types(self,
                                    _rbp, expected_types, terminators=None):
@@ -539,12 +539,10 @@ class Parser:
     def rexpression(self, op, terminators=None):
         return self.expression(op.lbp - 1, terminators)
 
-
     def literal_expression(self):
         # Override most operators in literals
         # because of prefix operators
         return self.expression(70)
-
 
     def statement(self):
         node = self.node
@@ -555,7 +553,6 @@ class Parser:
 
         value = self.expression(0)
         return value
-
 
     def statements(self, endlist):
         stmts = []
@@ -573,48 +570,118 @@ class Parser:
         length = len(stmts)
         if length == 0:
             return parse_error(self,
-                            "Expected one or more expressions", self.node)
+                               "Expected one or more expressions", self.node)
 
         return nodes.list_node(stmts)
 
+class JuxtapositionParser(Parser):
+    def __init__(self, name, lexicon, operators, settings):
+        super(JuxtapositionParser, self).__init__(
+            name, lexicon, operators, settings)
 
+        self.allow_overloading = settings.get("allow_overloading", False)
+        self.allow_unknown = settings.get("allow_unknown", True)
 
-##########################################################################
-## COMMON CALLBACKS #######################################################
-##########################################################################
+        self.juxtaposition_as_list = \
+            settings.get("juxtaposition_as_list", False)
+        self.break_on_juxtaposition = \
+            settings.get("break_on_juxtaposition", False)
 
-def prefix_itself(parser, op, node):
-    return nodes.node_0(parser.lex.get_nt_for_node(node),
-                        node.token)
+    def node_lbp(self, node):
+        handler = self.node_operator(node)
+        lbp = handler.lbp
+        # if lbp < 0:
+        #   parse_error(self, "Left binding power error", node)
 
-def prefix_empty(parser, op, node):
-    return parser.expression(0)
+        return lbp
 
+    def flatten_juxtaposition(self, node):
+        ntype = node.node_type
+        if ntype == self.lex.NT_JUXTAPOSITION:
+            first = node.first()
+            second = node.second()
+            head = self.flatten_juxtaposition(first)
+            tail = self.flatten_juxtaposition(second)
+            return head.concat(tail)
+        else:
+            return nodes.list_node([node])
 
-def prefix_nud(parser, op, node):
-    exp = parser.literal_expression()
-    return nodes.node_1(parser.lex.get_nt_for_node(node),
-                        node.token, exp)
+    def base_expression(self, _rbp, terminators):
+        previous = self.node
+        if self.node_has_layout(previous):
+            self.node_layout(previous)
 
+        self.advance()
 
-def infix_led(parser, op, node, left):
-    exp = parser.expression(op.lbp)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token,
-                        left, exp)
+        left = self.node_nud(previous)
+        while True:
+            if terminators is not None:
+                if self.token_type in terminators:
+                    return left
 
+            _lbp = self.node_lbp(self.node)
 
-def infixr_led(parser, op, node, left):
-    exp = parser.rexpression(op)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token,
-                        left, exp)
+            # juxtaposition support
+            if _lbp < 0:
+                if self.break_on_juxtaposition is True:
+                    return left
 
+                op = self.operator(self.lex.TT_JUXTAPOSITION)
+                _lbp = op.lbp
 
-def infixr_led_assign(parser, op, node, left):
-    exp = parser.expression(9)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token, left, exp)
+                if _rbp >= _lbp:
+                    break
+                previous = self.node
+                if not op.led:
+                    parse_error(self, "Unknown token led", previous)
+
+                left = op.led(self, op, previous, left)
+            else:
+                if _rbp >= _lbp:
+                    break
+                previous = self.node
+                self.advance()
+
+                left = self.node_led(previous, left)
+
+        assert left is not None
+        return left
+
+    def postprocess(self, node):
+        if nodes.is_empty_node(node):
+            return node
+
+        elif nodes.is_list_node(node):
+            children = []
+            for c in node:
+                children.append(self.postprocess(c))
+            return nodes.list_node(children)
+
+        ntype = node.node_type
+        if ntype == self.lex.NT_JUXTAPOSITION:
+            flatten = self.flatten_juxtaposition(node)
+            assert len(flatten) >= 2
+
+            if self.juxtaposition_as_list:
+                return self.postprocess(flatten)
+            else:
+                caller = flatten.head()
+                args = flatten.tail()
+                return self.postprocess(
+                    nodes.node_2(self.lex.NT_CALL,
+                                 caller.token,
+                                 caller, args))
+        else:
+            children = []
+            node_children = node.children
+            if node_children is None:
+                return node
+
+            for c in node_children:
+                new_child = self.postprocess(c)
+                children.append(new_child)
+            return nodes.Node(node.node_type, node.token, children)
+
 
 ##############################################################
 
@@ -663,12 +730,10 @@ class Builder:
 
     def assignment(self, ttype, lbp):
         return self.infix(ttype, lbp, infixr_led_assign)
-        
 
     def build(self, name):
         return self.parser_class(name, self.lexicon,
                                  self.operators, self.settings)
-
 
 
 def _parse(parser, termination_tokens):
