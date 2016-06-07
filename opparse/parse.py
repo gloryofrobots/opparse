@@ -506,13 +506,13 @@ class Parser:
         assert left is not None
         return left
 
-# TODO mandatory terminators
-def expression(parser, _rbp, terminators=None):
-    if not terminators:
-        terminators = [parser.lex.TT_END_EXPR]
-    expr = parser.base_expression(_rbp, terminators)
-    expr = parser.postprocess(expr)
-    return expr
+    # TODO mandatory terminators
+    def expression(self, _rbp, terminators=None):
+        if not terminators:
+            terminators = [self.lex.TT_END_EXPR]
+        expr = self.base_expression(_rbp, terminators)
+        expr = self.postprocess(expr)
+        return expr
 
 
 
