@@ -517,13 +517,13 @@ def expression(parser, _rbp, terminators=None):
 
 
 def expect_expression_of(parser, _rbp, expected_type, terminators=None):
-    exp = expression(parser, _rbp, terminators=terminators)
+    exp = parser.expression(_rbp, terminators=terminators)
     parser.assert_node_type(exp, expected_type)
     return exp
 
 
 def expect_expression_of_types(parser, _rbp, expected_types, terminators=None):
-    exp = expression(parser, _rbp, terminators=terminators)
+    exp = parser.expression(_rbp, terminators=terminators)
     parser.assert_node_types(exp, expected_types)
     return exp
 
@@ -533,13 +533,13 @@ def expect_expression_of_types(parser, _rbp, expected_types, terminators=None):
 
 # INFIXR
 def rexpression(parser, op, terminators):
-    return expression(parser, op.lbp - 1, terminators)
+    return parser.expression(op.lbp - 1, terminators)
 
 
 def literal_expression(parser):
     # Override most operators in literals
     # because of prefix operators
-    return expression(parser, 70)
+    return parser.expression(70)
 
 
 def statement(parser):
@@ -549,7 +549,7 @@ def statement(parser):
         value = parser.node_std(node)
         return value
 
-    value = expression(parser, 0)
+    value = parser.expression(0)
     return value
 
 
@@ -560,7 +560,7 @@ def statement_no_end_expr(parser):
         value = parser.node_std(node)
         return value
 
-    value = expression(parser, 0)
+    value = parser.expression(0)
     return value
 
 
@@ -602,7 +602,7 @@ def prefix_itself(parser, op, node):
                         node.token)
 
 def prefix_empty(parser, op, node):
-    return expression(parser, 0)
+    return parser.expression(0)
 
 
 def prefix_nud(parser, op, node):
@@ -612,21 +612,21 @@ def prefix_nud(parser, op, node):
 
 
 def infix_led(parser, op, node, left):
-    exp = expression(parser, op.lbp)
+    exp = parser.expression(op.lbp)
     return nodes.node_2(parser.lex.get_nt_for_node(node),
                         node.token,
                         left, exp)
 
 
 def infixr_led(parser, op, node, left):
-    exp = expression(parser, op.lbp - 1)
+    exp = parser.expression(op.lbp - 1)
     return nodes.node_2(parser.lex.get_nt_for_node(node),
                         node.token,
                         left, exp)
 
 
 def infixr_led_assign(parser, op, node, left):
-    exp = expression(parser, 9)
+    exp = parser.expression(9)
     return nodes.node_2(parser.lex.get_nt_for_node(node),
                         node.token, left, exp)
 
