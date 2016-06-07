@@ -927,9 +927,11 @@ def _symbols_to_args(parser, node, symbols):
 
 # DERIVE ################################
 def _parse_tuple_of_names(parser, term):
-    exp = parser.expect_expression_of_types(0, [lex.NT_NAME, lex.NT_LOOKUP, lex.NT_TUPLE], term)
+    exp = parser.assert_any_of_expressions(
+        0, [lex.NT_NAME, lex.NT_LOOKUP, lex.NT_TUPLE], term)
     if exp.node_type == lex.NT_TUPLE:
-        parser.assert_types_in_nodes_list(exp.first(), [lex.NT_NAME, lex.NT_LOOKUP])
+        parser.assert_types_in_nodes_list(
+            exp.first(), [lex.NT_NAME, lex.NT_LOOKUP])
         return exp
     elif exp.node_type != lex.NT_TUPLE:
         return create_tuple_node(exp, [exp])
@@ -1052,10 +1054,10 @@ def stmt_trait(parser, op, node):
 
 
 def _parser_implement_header(parser):
-    trait_name = parser.name_parser.expect_expression_of_types(
+    trait_name = parser.name_parser.assert_any_of_expressions(
         0, NODE_IMPLEMENT_NAME, TERM_BEFORE_FOR)
     parser.advance_expected(lex.TT_FOR)
-    type_name = parser.name_parser.expect_expression_of_types(
+    type_name = parser.name_parser.assert_any_of_expressions(
         0, NODE_IMPLEMENT_NAME, TERM_IMPL_HEADER)
     skip_indent(parser)
     return trait_name, type_name
@@ -1077,7 +1079,7 @@ def stmt_implement(parser, op, node):
         parser.advance_expected(lex.TT_DEF)
         # creating converting method names to symbols
         # method_name = grab_name_or_operator(parser.name_parser)
-        method_name = parser.name_parser.expect_expression_of(0, lex.NT_NAME)
+        method_name = parser.name_parser.assert_expression(0, lex.NT_NAME)
         method_name = create_symbol_node_s(
             method_name, method_name.token_value)
 
@@ -1093,7 +1095,7 @@ def stmt_implement(parser, op, node):
 
 def stmt_extend(parser, op, node):
     init_node_layout(parser, node)
-    type_name = parser.name_parser.expect_expression_of_types(
+    type_name = parser.name_parser.assert_any_of_expressions(
         0, NODE_IMPLEMENT_NAME, TERM_BEFORE_WITH)
     skip_indent(parser)
     traits = []
@@ -1101,7 +1103,7 @@ def stmt_extend(parser, op, node):
     while parser.token_type == lex.TT_WITH:
         init_offside_layout(parser, parser.node)
         parser.advance_expected(lex.TT_WITH)
-        trait_name = parser.name_parser.expect_expression_of_types(
+        trait_name = parser.name_parser.assert_any_of_expressions(
             0, NODE_IMPLEMENT_NAME, TERM_EXTEND_TRAIT)
         skip_indent(parser)
         if parser.token_type == lex.TT_ASSIGN:
@@ -1113,7 +1115,7 @@ def stmt_extend(parser, op, node):
 
             while parser.token_type == lex.TT_DEF:
                 parser.advance_expected(lex.TT_DEF)
-                method_name = parser.name_parser.expect_expression_of(0, lex.NT_NAME)
+                method_name = parser.name_parser.assert_expression(0, lex.NT_NAME)
                 method_name = create_symbol_node_s(
                     method_name, method_name.token_value)
 
@@ -1135,8 +1137,8 @@ def stmt_extend(parser, op, node):
 # OPERATORS
 
 def stmt_prefix(parser, op, node):
-    op_node = parser.name_parser.expect_expression_of(0, lex.NT_NAME)
-    func_node = parser.name_parser.expect_expression_of(0, lex.NT_NAME)
+    op_node = parser.name_parser.assert_expression(0, lex.NT_NAME)
+    func_node = parser.name_parser.assert_expression(0, lex.NT_NAME)
 
     op_value = symbol_or_name_value(parser, op_node)
     func_value = symbol_or_name_value(parser, func_node)
@@ -1154,9 +1156,9 @@ def stmt_infixr(parser, op, node):
 
 
 def _meta_infix(parser, node, infix_function):
-    op_node = parser.name_parser.expect_expression_of(0, lex.NT_NAME)
-    func_node = parser.name_parser.expect_expression_of(0, lex.NT_NAME)
-    precedence_node = parser.name_parser.expect_expression_of(0, lex.NT_INT)
+    op_node = parser.name_parser.assert_expression(0, lex.NT_NAME)
+    func_node = parser.name_parser.assert_expression(0, lex.NT_NAME)
+    precedence_node = parser.name_parser.assert_expression(0, lex.NT_INT)
 
     op_value = symbol_or_name_value(parser, op_node)
     func_value = symbol_or_name_value(parser, func_node)

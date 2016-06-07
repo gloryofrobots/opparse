@@ -50,6 +50,7 @@ def parse_error(parser, message, node):
 ## COMMON CALLBACKS #######################################################
 ##########################################################################
 
+
 def prefix_itself(parser, op, node):
     return nodes.node_0(parser.lex.get_nt_for_node(node),
                         node.token)
@@ -84,6 +85,7 @@ def infixr_led_assign(parser, op, node, left):
     return nodes.node_2(parser.lex.get_nt_for_node(node),
                         node.token, left, exp)
 # LAYOUT
+
 
 def init_code_layout(parser, node, terminators=None):
     skip_indent(parser)
@@ -263,7 +265,6 @@ class Parser(object):
         self.allow_overloading = settings.get("allow_overloading", False)
         self.allow_unknown = settings.get("allow_unknown", True)
 
-
     def add_builder(self, name, builder):
         parser = builder.build(name)
         return self.add_subparser(parser)
@@ -398,7 +399,7 @@ class Parser(object):
         handler = self.node_operator(node)
         lbp = handler.lbp
         if lbp < 0:
-          parse_error(self, "Left binding power error", node)
+            parse_error(self, "Left binding power error", node)
 
         return lbp
 
@@ -517,27 +518,41 @@ class Parser(object):
         assert left is not None
         return left
 
-    # TODO mandatory terminators
-    def expression(self, _rbp, terminators=None):
+    def expression(self, rbp):
+        return self.terminated_expression(rbp, None)
+
+    def terminated_expression(self, rbp, terminators):
         # if not terminators:
         #     terminators = [self.lex.TT_END_EXPR]
-        expr = self.base_expression(_rbp, terminators)
+        expr = self.base_expression(rbp, terminators)
         expr = self.postprocess(expr)
         return expr
 
-    def expect_expression_of(self, _rbp, expected_type, terminators=None):
-        exp = self.expression(_rbp, terminators=terminators)
+    def assert_expression(self, rbp, expected_type):
+        return self.assert_terminated_expression(rbp, expected_type, None)
+
+    def assert_terminated_expression(
+            self, rbp, expected_type, terminators):
+        exp = self.terminated_expression(rbp, terminators)
         self.assert_node_type(exp, expected_type)
         return exp
 
-    def expect_expression_of_types(self,
-                                   _rbp, expected_types, terminators=None):
-        exp = self.expression(_rbp, terminators=terminators)
+    def assert_any_of_terminated_expressions(
+            self, rbp, expected_types, terminators):
+
+        exp = self.terminated_expression(_rbp, terminators)
         self.assert_node_types(exp, expected_types)
         return exp
 
-    def rexpression(self, op, terminators=None):
-        return self.expression(op.lbp - 1, terminators)
+    def assert_any_of_expressions(self, rbp, expected_types):
+        return self.assert_any_of_terminated_expressions(
+            rbp, expected_type, None)
+
+    def rexpression(self, op):
+        return self.expression(op.lbp - 1)
+
+    def termianted_rexpression(self, op, terminators):
+        return self.terminated_expression(op.lbp - 1, terminators)
 
     def literal_expression(self):
         # Override most operators in literals
@@ -574,7 +589,9 @@ class Parser(object):
 
         return nodes.list_node(stmts)
 
+
 class JuxtapositionParser(Parser):
+
     def __init__(self, name, lexicon, operators, settings):
         super(JuxtapositionParser, self).__init__(
             name, lexicon, operators, settings)
