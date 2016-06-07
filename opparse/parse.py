@@ -67,7 +67,7 @@ def init_free_layout(parser, node, terminators):
 
 def skip_indent(parser):
     if parser.token_type == parser.lex.TT_INDENT:
-        advance(parser)
+        parser.advance()
 
 
 class Operator(object):
@@ -431,29 +431,28 @@ class Parser:
             parse_error(self, "Wrong node type, expected one of %s, got %s" %
                         (str(types), ntype), node)
 
+    def advance(self):
+        if self.isend():
+            return None
 
-def advance(parser):
-    if parser.isend():
-        return None
-
-    node = parser.next_token()
-    # print "ADVANCE", node
-    return node
-
-
-def advance_expected(parser, ttype):
-    parser.assert_token_type(ttype)
-
-    return advance(parser)
+        node = self.next_token()
+        # print "ADVANCE", node
+        return node
 
 
-def advance_expected_one_of(parser, ttypes):
-    parser.assert_token_types(ttypes)
+    def advance_expected(self, ttype):
+        self.assert_token_type(ttype)
 
-    if parser.isend():
-        return None
+        return self.advance()
 
-    return parser.next_token()
+
+    def advance_expected_one_of(self, ttypes):
+        self.assert_token_types(ttypes)
+
+        if self.isend():
+            return None
+
+        return self.next_token()
 
 
 def endofexpression(parser):
@@ -472,7 +471,7 @@ def base_expression(parser, _rbp, terminators=None):
     if parser.node_has_layout(previous):
         parser.node_layout(previous)
 
-    advance(parser)
+    parser.advance()
 
     left = parser.node_nud(previous)
     while True:
@@ -496,7 +495,7 @@ def base_expression(parser, _rbp, terminators=None):
             if _rbp >= _lbp:
                 break
             previous = parser.node
-            # advance(parser)
+            # parser.advance()
             if not op.led:
                 parse_error(parser, "Unknown token led", previous)
 
@@ -505,7 +504,7 @@ def base_expression(parser, _rbp, terminators=None):
             if _rbp >= _lbp:
                 break
             previous = parser.node
-            advance(parser)
+            parser.advance()
 
             left = parser.node_led(previous, left)
 
@@ -550,7 +549,7 @@ def literal_expression(parser):
 def statement(parser):
     node = parser.node
     if parser.node_has_std(node):
-        advance(parser)
+        parser.advance()
         value = parser.node_std(node)
         return value
 
@@ -561,7 +560,7 @@ def statement(parser):
 def statement_no_end_expr(parser):
     node = parser.node
     if parser.node_has_std(node):
-        advance(parser)
+        parser.advance()
         value = parser.node_std(node)
         return value
 
@@ -592,11 +591,11 @@ def statements(parser, endlist):
 
 def skip_token(parser, token_type):
     if parser.token_type == token_type:
-        advance(parser)
+        parser.advance()
 
 def skip(parser, ttype):
     while parser.token_type == ttype:
-        advance(parser)
+        parser.advance()
 
 ##########################################################################
 ## COMMON CALLBACKS #######################################################

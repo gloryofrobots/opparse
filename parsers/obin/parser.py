@@ -32,7 +32,7 @@ class ObinParser(Parser):
         if self.token_type in TERM_BLOCK:
             return self.node
         if self.token_type == self.lex.TT_END_EXPR:
-            return advance(self)
+            return self.advance()
         return False
 
     def postprocess(self, node):

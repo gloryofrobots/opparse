@@ -191,7 +191,7 @@ def flatten_juxtaposition(parser, node):
 #####################
 
 def advance_end(parser):
-    advance_expected_one_of(parser, TERM_BLOCK)
+    parser.advance_expected_one_of(TERM_BLOCK)
 
 
 def is_wildcard_node(n):
@@ -266,7 +266,7 @@ def infix_juxtaposition(parser, op, node, left):
 def infix_dot(parser, op, node, left):
     if parser.token_type == lex.TT_INT:
         idx = _init_default_current_0(parser)
-        advance(parser)
+        parser.advance()
         return node_2(lex.NT_LOOKUP, node.token, left, idx)
 
     symbol = grab_name(parser)
@@ -287,7 +287,7 @@ def infix_lcurly(parser, op, node, left):
             # WE NEED LBP=10 TO OVERRIDE ASSIGNMENT LBP(9)
             key = expression(parser, 10)
 
-            advance_expected(parser, lex.TT_ASSIGN)
+            parser.advance_expected(lex.TT_ASSIGN)
             value = expression(parser, 0)
 
             items.append(list_node([key, value]))
@@ -295,16 +295,16 @@ def infix_lcurly(parser, op, node, left):
             if parser.token_type != lex.TT_COMMA:
                 break
 
-            advance_expected(parser, lex.TT_COMMA)
+            parser.advance_expected(lex.TT_COMMA)
 
-    advance_expected(parser, lex.TT_RCURLY)
+    parser.advance_expected(lex.TT_RCURLY)
     return node_2(lex.NT_MODIFY, node.token, left, list_node(items))
 
 
 def infix_lsquare(parser, op, node, left):
     init_free_layout(parser, node, [lex.TT_RSQUARE])
     exp = expression(parser, 0)
-    advance_expected(parser, lex.TT_RSQUARE)
+    parser.advance_expected(lex.TT_RSQUARE)
     return node_2(lex.NT_LOOKUP, node.token, left, exp)
 
 
@@ -320,16 +320,16 @@ def infix_lparen(parser, op, node, left):
             if parser.token_type != lex.TT_COMMA:
                 break
 
-            advance_expected(parser, lex.TT_COMMA)
+            parser.advance_expected(lex.TT_COMMA)
 
-    advance_expected(parser, lex.TT_RPAREN)
+    parser.advance_expected(lex.TT_RPAREN)
     return node_2(lex.NT_CALL, node.token, left, list_node(items))
 
 
 def infix_name_pair(parser, op, node, left):
     parser.assert_token_type(lex.TT_NAME)
     name = _init_default_current_0(parser)
-    advance(parser)
+    parser.advance()
     return node_2(parser.lex.get_nt_for_node(node), node.token, left, name)
 
 
@@ -354,12 +354,12 @@ def prefix_indent(parser, op, node):
 def _parse_name(parser):
     if parser.token_type == lex.TT_SHARP:
         node = parser.node
-        advance(parser)
+        parser.advance()
         return _parse_symbol(parser, node)
 
     parser.assert_token_types([lex.TT_STR, lex.TT_MULTI_STR, lex.TT_NAME])
     node = parser.node
-    advance(parser)
+    parser.advance()
     return node_0(parser.lex.get_nt_for_node(node), node.token)
 
 
@@ -367,7 +367,7 @@ def _parse_symbol(parser, node):
     parser.assert_token_types(
         [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
     exp = node_0(parser.lex.get_nt_for_node(parser.node), parser.node.token)
-    advance(parser)
+    parser.advance()
     return node_1(parser.lex.get_nt_for_node(node), node.token, exp)
 
 
@@ -409,18 +409,18 @@ def layout_lparen(parser, op, node):
 
 def prefix_lparen(parser, op, node):
     if parser.token_type == lex.TT_RPAREN:
-        advance_expected(parser, lex.TT_RPAREN)
+        parser.advance_expected(lex.TT_RPAREN)
         return node_0(lex.NT_UNIT, node.token)
 
     e = expression(parser, 0, [lex.TT_RPAREN])
     skip_end_expression(parser)
 
     if parser.token_type == lex.TT_RPAREN:
-        advance_expected(parser, lex.TT_RPAREN)
+        parser.advance_expected(lex.TT_RPAREN)
         return e
 
     items = [e]
-    advance_expected(parser, lex.TT_COMMA)
+    parser.advance_expected(lex.TT_COMMA)
 
     if parser.token_type != lex.TT_RPAREN:
         while True:
@@ -428,9 +428,9 @@ def prefix_lparen(parser, op, node):
             skip_end_expression(parser)
             if parser.token_type == lex.TT_RPAREN:
                 break
-            advance_expected(parser, lex.TT_COMMA)
+            parser.advance_expected(lex.TT_COMMA)
 
-    advance_expected(parser, lex.TT_RPAREN)
+    parser.advance_expected(lex.TT_RPAREN)
     return node_1(lex.NT_TUPLE, node.token, list_node(items))
 
 
@@ -448,9 +448,9 @@ def prefix_lsquare(parser, op, node):
             if parser.token_type != lex.TT_COMMA:
                 break
 
-            advance_expected(parser, lex.TT_COMMA)
+            parser.advance_expected(lex.TT_COMMA)
 
-    advance_expected(parser, lex.TT_RSQUARE)
+    parser.advance_expected(lex.TT_RSQUARE)
     return node_1(lex.NT_LIST, node.token, list_node(items))
 
 
@@ -458,14 +458,14 @@ def on_bind_node(parser, key):
     if key.node_type != lex.NT_NAME:
         parse_error(parser, "Invalid bind name", key)
     if parser.token_type == lex.TT_OF:
-        advance_expected(parser, lex.TT_OF)
+        parser.advance_expected(lex.TT_OF)
         parser.assert_token_type(lex.TT_NAME)
         typename = grab_name(parser)
         return node_2(lex.NT_OF,
                       key.token,
                       key, typename), empty_node()
 
-    advance_expected(parser, lex.TT_AT_SIGN)
+    parser.advance_expected(lex.TT_AT_SIGN)
     real_key, value = _parse_map_key_pair(
         parser, [lex.TT_NAME,
                  lex.TT_SHARP, lex.TT_STR,
@@ -492,9 +492,9 @@ def prefix_lcurly_type(parser, op, node):
             if parser.token_type != lex.TT_COMMA:
                 break
 
-            advance_expected(parser, lex.TT_COMMA)
+            parser.advance_expected(lex.TT_COMMA)
 
-    advance_expected(parser, lex.TT_RCURLY)
+    parser.advance_expected(lex.TT_RCURLY)
     return node_1(lex.NT_LIST, node.token, list_node(items))
 
 
@@ -529,7 +529,7 @@ def _parse_map_key_pair(parser, types, on_unknown):
     elif parser.token_type == lex.TT_RCURLY:
         value = empty_node()
     elif parser.token_type == lex.TT_ASSIGN:
-        advance_expected(parser, lex.TT_ASSIGN)
+        parser.advance_expected(lex.TT_ASSIGN)
         value = expression(parser, 0)
         skip_end_expression(parser)
     else:
@@ -552,9 +552,9 @@ def _prefix_lcurly(parser, op, node, types, on_unknown):
             if parser.token_type != lex.TT_COMMA:
                 break
 
-            advance_expected(parser, lex.TT_COMMA)
+            parser.advance_expected(lex.TT_COMMA)
 
-    advance_expected(parser, lex.TT_RCURLY)
+    parser.advance_expected(lex.TT_RCURLY)
     return node_1(lex.NT_MAP, node.token, list_node(items))
 
 
@@ -563,7 +563,7 @@ def prefix_if(parser, op, node):
     branches = []
 
     cond = expression(parser, 0, TERM_IF_CONDITION)
-    advance_expected_one_of(parser, TERM_IF_CONDITION)
+    parser.advance_expected_one_of(TERM_IF_CONDITION)
     init_code_layout(parser, parser.node, TERM_IF_BODY)
 
     body = statements(parser, TERM_IF_BODY)
@@ -572,17 +572,17 @@ def prefix_if(parser, op, node):
     parser.assert_token_types(TERM_IF_BODY)
 
     while parser.token_type == lex.TT_ELIF:
-        advance_expected(parser, lex.TT_ELIF)
+        parser.advance_expected(lex.TT_ELIF)
 
         cond = expression(parser, 0, TERM_IF_CONDITION)
-        advance_expected_one_of(parser, TERM_IF_CONDITION)
+        parser.advance_expected_one_of(TERM_IF_CONDITION)
         init_code_layout(parser, parser.node, TERM_IF_BODY)
 
         body = statements(parser, TERM_IF_BODY)
         parser.assert_token_types(TERM_IF_BODY)
         branches.append(list_node([cond, body]))
 
-    advance_expected(parser, lex.TT_ELSE)
+    parser.advance_expected(lex.TT_ELSE)
     init_code_layout(parser, parser.node, TERM_BLOCK)
 
     body = statements(parser, TERM_BLOCK)
@@ -595,7 +595,7 @@ def prefix_let(parser, op, node):
     init_node_layout(parser, node, LEVELS_LET)
     init_code_layout(parser, parser.node, TERM_LET)
     letblock = statements(parser, TERM_LET)
-    advance_expected(parser, lex.TT_IN)
+    parser.advance_expected(lex.TT_IN)
     skip_indent(parser)
     init_code_layout(parser, parser.node)
     inblock = statements(parser, TERM_BLOCK)
@@ -611,29 +611,29 @@ def prefix_try(parser, op, node):
     catches = []
 
     parser.assert_token_type(lex.TT_CATCH)
-    advance(parser)
+    parser.advance()
     skip_indent(parser)
 
     if parser.token_type == lex.TT_CASE:
         init_offside_layout(parser, parser.node)
         while parser.token_type == lex.TT_CASE:
-            advance_expected(parser, lex.TT_CASE)
+            parser.advance_expected(lex.TT_CASE)
             # pattern = expressions(parser.pattern_parser, 0)
             pattern = _parse_pattern(parser)
-            advance_expected(parser, lex.TT_ARROW)
+            parser.advance_expected(lex.TT_ARROW)
             init_code_layout(parser, parser.node, TERM_CATCH_CASE)
             body = statements(parser, TERM_CATCH_CASE)
             catches.append(list_node([pattern, body]))
     else:
         pattern = _parse_pattern(parser)
-        advance_expected(parser, lex.TT_ARROW)
+        parser.advance_expected(lex.TT_ARROW)
         init_code_layout(parser, parser.node, TERM_SINGLE_CATCH)
         body = statements(parser, TERM_SINGLE_CATCH)
         catches.append(list_node([pattern, body]))
 
     if parser.token_type == lex.TT_FINALLY:
-        advance_expected(parser, lex.TT_FINALLY)
-        advance_expected(parser, lex.TT_ARROW)
+        parser.advance_expected(lex.TT_FINALLY)
+        parser.advance_expected(lex.TT_ARROW)
         init_code_layout(parser, parser.node)
         finallybody = statements(parser, TERM_BLOCK)
     else:
@@ -648,7 +648,7 @@ def prefix_try(parser, op, node):
 def _parse_pattern(parser):
     pattern = expression(parser.pattern_parser, 0, TERM_PATTERN)
     if parser.token_type == lex.TT_WHEN:
-        advance(parser)
+        parser.advance()
         guard = expression(parser.guard_parser, 0, TERM_FUN_GUARD)
         pattern = node_2(lex.NT_WHEN, guard.token, pattern, guard)
 
@@ -663,7 +663,7 @@ def prefix_match(parser, op, node):
         parser, 0, TERM_MATCH_PATTERN)
     # skip_indent(parser)
     parser.assert_token_type(lex.TT_WITH)
-    advance(parser)
+    parser.advance()
     skip_indent(parser)
 
     pattern_parser = parser.pattern_parser
@@ -674,17 +674,17 @@ def prefix_match(parser, op, node):
     if parser.token_type == lex.TT_CASE:
         init_offside_layout(parser, parser.node)
         while pattern_parser.token_type == lex.TT_CASE:
-            advance_expected(pattern_parser, lex.TT_CASE)
+            parser.advance_expected(lex.TT_CASE)
             pattern = _parse_pattern(parser)
 
-            advance_expected(parser, lex.TT_ARROW)
+            parser.advance_expected(lex.TT_ARROW)
             init_code_layout(parser, parser.node, TERM_CASE)
             body = statements(parser, TERM_CASE)
 
             branches.append(list_node([pattern, body]))
     else:
         pattern = _parse_pattern(parser)
-        advance_expected(parser, lex.TT_ARROW)
+        parser.advance_expected(lex.TT_ARROW)
         init_code_layout(parser, parser.node)
         body = statements(parser, TERM_BLOCK)
         branches.append(list_node([pattern, body]))
@@ -712,7 +712,7 @@ def _parse_func_pattern(parser, arg_terminator, guard_terminator):
         parse_error(parser, "Invalid  syntax in function arguments", pattern)
 
     if parser.token_type == lex.TT_WHEN:
-        advance(parser)
+        parser.advance()
         guard = expression(parser.guard_parser, 0, guard_terminator)
         pattern = node_2(lex.NT_WHEN, guard.token, pattern, guard)
 
@@ -741,7 +741,7 @@ def _parse_function_variants(parser, signature,
                              term_pattern, term_guard,
                              term_case_body, term_single_body):
     if parser.token_type == lex.TT_ARROW:
-        advance(parser)
+        parser.advance()
         init_code_layout(parser, parser.node, term_single_body)
         body = statements(parser, term_single_body)
         return create_function_variants(signature, body)
@@ -758,7 +758,7 @@ def _parse_function_variants(parser, signature,
     sig_arity = len(sig_args)
 
     while parser.token_type == lex.TT_CASE:
-        advance_expected(parser, lex.TT_CASE)
+        parser.advance_expected(lex.TT_CASE)
         args = _parse_func_pattern(parser, term_pattern, term_guard)
         if args.node_type == lex.NT_WHEN:
             args_sig = args.first()
@@ -770,7 +770,7 @@ def _parse_function_variants(parser, signature,
                                "with function signature",
                                args)
 
-        advance_expected(parser, lex.TT_ARROW)
+        parser.advance_expected(lex.TT_ARROW)
         init_code_layout(parser, parser.node, term_case_body)
         body = statements(parser, term_case_body)
         funcs.append(list_node([args, body]))
@@ -834,7 +834,7 @@ def stmt_from(parser, op, node):
         hiding = True
         ntype = lex.NT_IMPORT_FROM_HIDING
 
-    advance(parser)
+    parser.advance()
     if parser.token_type == lex.TT_WILDCARD:
         if hiding is True:
             return parse_error(parser,
@@ -843,7 +843,7 @@ def stmt_from(parser, op, node):
                                node)
 
         names = empty_node()
-        advance(parser)
+        parser.advance()
     else:
         names = expression(parser.import_names_parser, 0)
         parser.assert_node_types(names, [lex.NT_TUPLE, lex.NT_NAME, lex.NT_AS])
@@ -862,7 +862,7 @@ def stmt_import(parser, op, node):
     if parser.token_type == lex.TT_HIDING:
         ntype = lex.NT_IMPORT_HIDING
         hiding = True
-        advance(parser)
+        parser.advance()
     else:
         hiding = False
         ntype = lex.NT_IMPORT
@@ -952,7 +952,7 @@ def _parse_union(parser, node, union_name):
     init_offside_layout(parser, parser.node)
     parser.assert_token_type(lex.TT_CASE)
     while parser.token_type == lex.TT_CASE:
-        advance(parser)
+        parser.advance()
         _typename = grab_name(parser.type_parser)
         _type = _parse_type(parser, node, _typename, TERM_UNION_TYPE_ARGS)
         types.append(_type)
@@ -1000,7 +1000,7 @@ def symbol_operator_name(parser, op, node):
 def grab_name(parser):
     parser.assert_token_type(lex.TT_NAME)
     name = _init_default_current_0(parser)
-    advance(parser)
+    parser.advance()
     return name
 
 
@@ -1013,7 +1013,7 @@ def grab_name_or_operator(parser):
     elif parser.token_type == lex.TT_DOUBLE_COLON:
         name = create_name_node_s(name, "cons")
 
-    advance(parser)
+    parser.advance()
     return name
 
 
@@ -1021,10 +1021,10 @@ def _parser_trait_header(parser, node):
     type_parser = parser.type_parser
     name = grab_name(type_parser)
     parser.assert_token_type(lex.TT_FOR)
-    advance(parser)
+    parser.advance()
     instance_name = grab_name(type_parser)
     if parser.token_type == lex.TT_OF:
-        advance(parser)
+        parser.advance()
         constraints = _parse_tuple_of_names(
             parser.name_parser, TERM_METHOD_CONSTRAINTS)
     else:
@@ -1039,7 +1039,7 @@ def stmt_trait(parser, op, node):
     methods = []
     init_offside_layout(parser, parser.node)
     while parser.token_type == lex.TT_DEF:
-        advance_expected(parser, lex.TT_DEF)
+        parser.advance_expected(lex.TT_DEF)
         method_name = grab_name_or_operator(parser)
         parser.assert_token_type(lex.TT_NAME)
 
@@ -1047,7 +1047,7 @@ def stmt_trait(parser, op, node):
             parser.method_signature_parser, TERM_METHOD_SIG)
         parser.assert_node_type(sig, lex.NT_LIST)
         if parser.token_type == lex.TT_ARROW:
-            advance(parser)
+            parser.advance()
             init_code_layout(parser, parser.node, TERM_METHOD_DEFAULT_BODY)
             args = symbol_list_to_arg_tuple(parser, node, sig)
             body = statements(
@@ -1066,7 +1066,7 @@ def stmt_trait(parser, op, node):
 def _parser_implement_header(parser):
     trait_name = expect_expression_of_types(
         parser.name_parser, 0, NODE_IMPLEMENT_NAME, TERM_BEFORE_FOR)
-    advance_expected(parser, lex.TT_FOR)
+    parser.advance_expected(lex.TT_FOR)
     type_name = expect_expression_of_types(
         parser.name_parser, 0, NODE_IMPLEMENT_NAME, TERM_IMPL_HEADER)
     skip_indent(parser)
@@ -1086,7 +1086,7 @@ def stmt_implement(parser, op, node):
 
     init_offside_layout(parser, parser.node)
     while parser.token_type == lex.TT_DEF:
-        advance_expected(parser, lex.TT_DEF)
+        parser.advance_expected(lex.TT_DEF)
         # creating converting method names to symbols
         # method_name = grab_name_or_operator(parser.name_parser)
         method_name = expect_expression_of(parser.name_parser, 0, lex.NT_NAME)
@@ -1112,19 +1112,19 @@ def stmt_extend(parser, op, node):
 
     while parser.token_type == lex.TT_WITH:
         init_offside_layout(parser, parser.node)
-        advance_expected(parser, lex.TT_WITH)
+        parser.advance_expected(lex.TT_WITH)
         trait_name = expect_expression_of_types(
             parser.name_parser, 0, NODE_IMPLEMENT_NAME, TERM_EXTEND_TRAIT)
         skip_indent(parser)
         if parser.token_type == lex.TT_ASSIGN:
-            advance(parser)
+            parser.advance()
             implementation = expression(parser, 0, TERM_EXTEND_MIXIN_TRAIT)
         elif parser.token_type == lex.TT_DEF:
             init_offside_layout(parser, parser.node)
             methods = []
 
             while parser.token_type == lex.TT_DEF:
-                advance_expected(parser, lex.TT_DEF)
+                parser.advance_expected(lex.TT_DEF)
                 method_name = expect_expression_of(
                     parser.name_parser, 0, lex.NT_NAME)
                 method_name = create_symbol_node_s(
