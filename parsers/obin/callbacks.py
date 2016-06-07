@@ -1,4 +1,4 @@
-from opparse.parser import *
+from opparse.parse import *
 from opparse import nodes, lexer
 from opparse.misc import strutil
 from lexicon import ObinLexicon as lex
@@ -227,12 +227,12 @@ def prefix_nud_function(parser, op, node):
     return create_call_node(node, op.prefix_function, [exp])
 
 
-def led_infix_function(parser, op, node, left):
+def infix_led_function(parser, op, node, left):
     exp = expression(parser, op.lbp)
     return create_call_node(node, op.infix_function, [left, exp])
 
 
-def led_infixr_function(parser, op, node, left):
+def infixr_led_function(parser, op, node, left):
     exp = expression(parser, op.lbp - 1)
     return create_call_node(node, op.infix_function, [left, exp])
 
@@ -280,8 +280,7 @@ def infix_lcurly(parser, op, node, left):
     if parser.token_type != lex.TT_RCURLY:
         while True:
             # TODO check it
-            check_token_types(
-                parser,
+            parser.assert_token_types(
                 [lex.TT_NAME, lex.TT_SHARP, lex.TT_INT,
                  lex.TT_STR, lex.TT_MULTI_STR, lex.TT_CHAR, lex.TT_FLOAT])
 
@@ -328,7 +327,7 @@ def infix_lparen(parser, op, node, left):
 
 
 def infix_name_pair(parser, op, node, left):
-    check_token_type(parser, lex.TT_NAME)
+    parser.assert_token_type(lex.TT_NAME)
     name = _init_default_current_0(parser)
     advance(parser)
     return node_2(parser.lex.get_nt_for_node(node), node.token, left, name)
@@ -358,15 +357,15 @@ def _parse_name(parser):
         advance(parser)
         return _parse_symbol(parser, node)
 
-    check_token_types(parser, [lex.TT_STR, lex.TT_MULTI_STR, lex.TT_NAME])
+    parser.assert_token_types([lex.TT_STR, lex.TT_MULTI_STR, lex.TT_NAME])
     node = parser.node
     advance(parser)
     return node_0(parser.lex.get_nt_for_node(node), node.token)
 
 
 def _parse_symbol(parser, node):
-    check_token_types(
-        parser, [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
+    parser.assert_token_types(
+        [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
     exp = node_0(parser.lex.get_nt_for_node(parser.node), parser.node.token)
     advance(parser)
     return node_1(parser.lex.get_nt_for_node(node), node.token, exp)
@@ -460,7 +459,7 @@ def on_bind_node(parser, key):
         parse_error(parser, "Invalid bind name", key)
     if parser.token_type == lex.TT_OF:
         advance_expected(parser, lex.TT_OF)
-        check_token_type(parser, lex.TT_NAME)
+        parser.assert_token_type(lex.TT_NAME)
         typename = grab_name(parser)
         return node_2(lex.NT_OF,
                       key.token,
@@ -487,7 +486,7 @@ def prefix_lcurly_type(parser, op, node):
         while True:
             name = expression(parser, 0)
             skip_end_expression(parser)
-            check_node_type(parser, name, lex.NT_SYMBOL)
+            parser.assert_node_type(name, lex.NT_SYMBOL)
 
             items.append(name)
             if parser.token_type != lex.TT_COMMA:
@@ -521,7 +520,7 @@ def prefix_lcurly(parser, op, node):
 
 
 def _parse_map_key_pair(parser, types, on_unknown):
-    check_token_types(parser, types)
+    parser.assert_token_types(types)
     # WE NEED LBP=10 TO OVERRIDE ASSIGNMENT LBP(9)
     key = expression(parser, 10)
 
@@ -570,7 +569,7 @@ def prefix_if(parser, op, node):
     body = statements(parser, TERM_IF_BODY)
 
     branches.append(list_node([cond, body]))
-    check_token_types(parser, TERM_IF_BODY)
+    parser.assert_token_types(TERM_IF_BODY)
 
     while parser.token_type == lex.TT_ELIF:
         advance_expected(parser, lex.TT_ELIF)
@@ -580,7 +579,7 @@ def prefix_if(parser, op, node):
         init_code_layout(parser, parser.node, TERM_IF_BODY)
 
         body = statements(parser, TERM_IF_BODY)
-        check_token_types(parser, TERM_IF_BODY)
+        parser.assert_token_types(TERM_IF_BODY)
         branches.append(list_node([cond, body]))
 
     advance_expected(parser, lex.TT_ELSE)
@@ -611,7 +610,7 @@ def prefix_try(parser, op, node):
     trybody = statements(parser, TERM_TRY)
     catches = []
 
-    check_token_type(parser, lex.TT_CATCH)
+    parser.assert_token_type(lex.TT_CATCH)
     advance(parser)
     skip_indent(parser)
 
@@ -663,13 +662,13 @@ def prefix_match(parser, op, node):
     exp = expression_with_optional_end_of_expression(
         parser, 0, TERM_MATCH_PATTERN)
     # skip_indent(parser)
-    check_token_type(parser, lex.TT_WITH)
+    parser.assert_token_type(lex.TT_WITH)
     advance(parser)
     skip_indent(parser)
 
     pattern_parser = parser.pattern_parser
     branches = []
-    # check_token_type(parser, lex.TT_CASE)
+    # parser.assert_token_type(lex.TT_CASE)
 
     # TODO COMMON PATTERN MAKE ONE FUNC with try/fun/match
     if parser.token_type == lex.TT_CASE:
@@ -750,7 +749,7 @@ def _parse_function_variants(parser, signature,
     # bind to different name for not confusing reading code
     # it serves as basenode for node factory functions
     node = signature
-    check_token_type(parser, lex.TT_CASE)
+    parser.assert_token_type(lex.TT_CASE)
 
     init_offside_layout(parser, parser.node)
 
@@ -827,7 +826,7 @@ def ensure_tuple(t):
 
 def stmt_from(parser, op, node):
     imported = expression(parser.import_parser, 0, TERM_FROM_IMPORTED)
-    check_token_types(parser, [lex.TT_IMPORT, lex.TT_HIDE])
+    parser.assert_token_types([lex.TT_IMPORT, lex.TT_HIDE])
     if parser.token_type == lex.TT_IMPORT:
         hiding = False
         ntype = lex.NT_IMPORT_FROM
@@ -847,12 +846,11 @@ def stmt_from(parser, op, node):
         advance(parser)
     else:
         names = expression(parser.import_names_parser, 0)
-        check_node_types(parser, names, [lex.NT_TUPLE, lex.NT_NAME, lex.NT_AS])
+        parser.assert_node_types(names, [lex.NT_TUPLE, lex.NT_NAME, lex.NT_AS])
         names = ensure_tuple(names)
         if hiding is True:
             # hiding names can't have as binding
-            check_list_node_types(
-                parser, names.first(), [lex.NT_NAME])
+            parser.assert_types_in_nodes_list(names.first(), [lex.NT_NAME])
 
     return node_2(ntype, node.token, imported, names)
 
@@ -871,12 +869,11 @@ def stmt_import(parser, op, node):
 
     if parser.token_type == lex.TT_LPAREN:
         names = expression(parser.import_names_parser, 0)
-        check_node_types(parser, names, [lex.NT_TUPLE, lex.NT_NAME, lex.NT_AS])
+        parser.assert_node_types(names, [lex.NT_TUPLE, lex.NT_NAME, lex.NT_AS])
         names = ensure_tuple(names)
         if hiding is True:
             # hiding names can't have as binding
-            check_list_node_types(
-                parser, names.first(), [lex.NT_NAME])
+            parser.assert_types_in_nodes_list(names.first(), [lex.NT_NAME])
     else:
         if hiding is True:
             return parse_error(parser,
@@ -888,11 +885,11 @@ def stmt_import(parser, op, node):
 
 
 def stmt_export(parser, op, node):
-    check_token_types(parser, [lex.TT_LPAREN, lex.TT_NAME])
+    parser.assert_token_types([lex.TT_LPAREN, lex.TT_NAME])
     names = expression(parser.import_names_parser, 0)
-    check_node_types(parser, names, [lex.NT_TUPLE, lex.NT_NAME])
+    parser.assert_node_types(names, [lex.NT_TUPLE, lex.NT_NAME])
     names = ensure_tuple(names)
-    check_list_node_types(parser, names.first(), [lex.NT_NAME])
+    parser.assert_types_in_nodes_list(names.first(), [lex.NT_NAME])
     return node_1(lex.NT_EXPORT, node.token, names)
 
 
@@ -913,7 +910,8 @@ def symbol_or_name_value(parser, name):
 
 # TYPES ************************
 def prefix_name_as_symbol(parser, op, node):
-    name = itself(parser, op, node)
+    name = node_0(parser.lex.get_nt_for_node(node),
+                        node.token)
     return create_symbol_node(name, name)
 
 
@@ -943,8 +941,7 @@ def _parse_tuple_of_names(parser, term):
     exp = expect_expression_of_types(
         parser, 0, [lex.NT_NAME, lex.NT_LOOKUP, lex.NT_TUPLE], term)
     if exp.node_type == lex.NT_TUPLE:
-        check_list_node_types(
-            parser, exp.first(), [lex.NT_NAME, lex.NT_LOOKUP])
+        parser.assert_types_in_nodes_list(exp.first(), [lex.NT_NAME, lex.NT_LOOKUP])
         return exp
     elif exp.node_type != lex.NT_TUPLE:
         return create_tuple_node(exp, [exp])
@@ -953,7 +950,7 @@ def _parse_tuple_of_names(parser, term):
 def _parse_union(parser, node, union_name):
     types = []
     init_offside_layout(parser, parser.node)
-    check_token_type(parser, lex.TT_CASE)
+    parser.assert_token_type(lex.TT_CASE)
     while parser.token_type == lex.TT_CASE:
         advance(parser)
         _typename = grab_name(parser.type_parser)
@@ -996,20 +993,20 @@ def stmt_type(parser, op, node):
 
 # TRAIT*************************
 def symbol_operator_name(parser, op, node):
-    name = itself(parser, op, node)
+    name = node_0(parser.lex.get_nt_for_node(node), node.token)
     return create_name_from_operator(node, name)
 
 
 def grab_name(parser):
-    check_token_type(parser, lex.TT_NAME)
+    parser.assert_token_type(lex.TT_NAME)
     name = _init_default_current_0(parser)
     advance(parser)
     return name
 
 
 def grab_name_or_operator(parser):
-    check_token_types(
-        parser, [lex.TT_NAME, lex.TT_OPERATOR, lex.TT_DOUBLE_COLON])
+    parser.assert_token_types(
+        [lex.TT_NAME, lex.TT_OPERATOR, lex.TT_DOUBLE_COLON])
     name = _init_default_current_0(parser)
     if parser.token_type == lex.TT_OPERATOR:
         name = create_name_from_operator(name, name)
@@ -1023,7 +1020,7 @@ def grab_name_or_operator(parser):
 def _parser_trait_header(parser, node):
     type_parser = parser.type_parser
     name = grab_name(type_parser)
-    check_token_type(parser, lex.TT_FOR)
+    parser.assert_token_type(lex.TT_FOR)
     advance(parser)
     instance_name = grab_name(type_parser)
     if parser.token_type == lex.TT_OF:
@@ -1044,11 +1041,11 @@ def stmt_trait(parser, op, node):
     while parser.token_type == lex.TT_DEF:
         advance_expected(parser, lex.TT_DEF)
         method_name = grab_name_or_operator(parser)
-        check_token_type(parser, lex.TT_NAME)
+        parser.assert_token_type(lex.TT_NAME)
 
         sig = juxtaposition_as_list(
             parser.method_signature_parser, TERM_METHOD_SIG)
-        check_node_type(parser, sig, lex.NT_LIST)
+        parser.assert_node_type(sig, lex.NT_LIST)
         if parser.token_type == lex.TT_ARROW:
             advance(parser)
             init_code_layout(parser, parser.node, TERM_METHOD_DEFAULT_BODY)
@@ -1162,11 +1159,11 @@ def stmt_prefix(parser, op, node):
     parser.operators.set_prefix_function(op, prefix_nud_function, func_value)
 
 def stmt_infixl(parser, op, node):
-    return _meta_infix(parser, node, led_infix_function)
+    return _meta_infix(parser, node, infix_led_function)
 
 
 def stmt_infixr(parser, op, node):
-    return _meta_infix(parser, node, led_infixr_function)
+    return _meta_infix(parser, node, infixr_led_function)
 
 
 def _meta_infix(parser, node, infix_function):

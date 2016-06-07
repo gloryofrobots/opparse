@@ -1,5 +1,3 @@
-import operator
-
 from opparse import nodes, lexer
 from opparse.misc.strutil import get_line, get_line_for_position
 from opparse.indenter import InvalidIndentationError
@@ -294,6 +292,8 @@ class Parser:
     def current_scope(self):
         return self.state.scopes[-1]
 
+    ## OPERATORS
+
     def find_custom_operator(self, op_name):
         scopes = self.state.scopes
         for scope in scopes:
@@ -316,7 +316,326 @@ class Parser:
                                "Invalid token %s" % ttype,
                                self.node)
 
-    # def parser_operator(parser, ttype):
+    
+    def node_operator(self, node):
+        ttype = node.token_type
+        if not self.allow_overloading:
+            return self.operator(ttype)
+
+        if ttype != self.lex.TT_OPERATOR:
+            return self.operator(ttype)
+
+        # in case of custom operator
+        op = self.find_custom_operator(node.token_value)
+        if op is None:
+            return parse_error(self, "Invalid operator", node)
+        return op
+
+
+    def node_nud(self, node):
+        handler = self.node_operator(node)
+        if not handler.nud:
+            parse_error(self, "Unknown token nud", node)
+        return handler.nud(self, handler, node)
+
+
+    def node_std(self, node):
+        handler = self.node_operator(node)
+        if not handler.std:
+            parse_error(self, "Unknown token std", node)
+
+        return handler.std(self, handler, node)
+
+
+    def node_has_nud(self, node):
+        handler = self.node_operator(node)
+        return handler.nud is not None
+
+
+    def node_has_layout(self, node):
+        handler = self.node_operator(node)
+        return handler.layout is not None
+
+
+    def node_has_led(self, node):
+        handler = self.node_operator(node)
+        return handler.led is not None
+
+
+    def node_has_std(self, node):
+        handler = self.node_operator(node)
+        return handler.std is not None
+
+
+    def node_lbp(self, node):
+        handler = self.node_operator(node)
+        lbp = handler.lbp
+        # if lbp < 0:
+        #   parse_error(self, "Left binding power error", node)
+
+        return lbp
+
+
+    def node_led(self, node, left):
+        handler = self.node_operator(node)
+        if not handler.led:
+            parse_error(self, "Unknown token led", node)
+
+        return handler.led(self, handler, node, left)
+
+
+    def node_layout(self, node):
+        handler = self.node_operator(node)
+        if not handler.layout:
+            parse_error(self, "Unknown token layout", node)
+
+        return handler.layout(self, handler, node)
+
+
+    # ASSERTIONS
+    
+    def token_is_one_of(self, types):
+        return self.token_type in types
+
+
+    def assert_token_type(self, type):
+        if self.token_type != type:
+            parse_error(self,
+                        "Wrong token type, expected %s, got %s" %
+                        (type, self.token_type),
+                        self.node)
+
+
+    def assert_token_types(self, types):
+        if self.token_type not in types:
+            parse_error(self, "Wrong token type, expected one of %s, got %s" %
+                        (unicode([type for type in types]),
+                        self.token_type), parser.node)
+
+
+    def assert_types_in_nodes_list(self, node, expected_types):
+        for child in node:
+            self.assert_node_types(child, expected_types)
+
+
+    def assert_node_type(self, node, expected_type):
+        ntype = node.node_type
+        if ntype != expected_type:
+            parse_error(self, "Wrong node type, expected  %s, got %s" %
+                        (expected_type, ntype), node)
+
+
+    def assert_node_types(self, node, types):
+        ntype = node.node_type
+        if ntype not in types:
+            parse_error(self, "Wrong node type, expected one of %s, got %s" %
+                        (str(types), ntype), node)
+
+
+def advance(parser):
+    if parser.isend():
+        return None
+
+    node = parser.next_token()
+    # print "ADVANCE", node
+    return node
+
+
+def advance_expected(parser, ttype):
+    parser.assert_token_type(ttype)
+
+    return advance(parser)
+
+
+def advance_expected_one_of(parser, ttypes):
+    parser.assert_token_types(ttypes)
+
+    if parser.isend():
+        return None
+
+    return parser.next_token()
+
+
+def endofexpression(parser):
+    res = parser.on_endofexpression()
+    if res is False:
+        parse_error(parser,
+                    "Expected end of expression mark got '%s'" %
+                    parser.token.value,
+                    parser.node)
+
+    return res
+
+
+def base_expression(parser, _rbp, terminators=None):
+    previous = parser.node
+    if parser.node_has_layout(previous):
+        parser.node_layout(previous)
+
+    advance(parser)
+
+    left = parser.node_nud(previous)
+    while True:
+        # if parser.is_newline_occurred:
+        #     break
+
+        if terminators is not None:
+            if parser.token_type in terminators:
+                return left
+
+        _lbp = parser.node_lbp(parser.node)
+
+        # juxtaposition support
+        if _lbp < 0:
+            if parser.break_on_juxtaposition is True:
+                return left
+
+            op = parser.operator(parser.lex.TT_JUXTAPOSITION)
+            _lbp = op.lbp
+
+            if _rbp >= _lbp:
+                break
+            previous = parser.node
+            # advance(parser)
+            if not op.led:
+                parse_error(parser, "Unknown token led", previous)
+
+            left = op.led(parser, op, previous, left)
+        else:
+            if _rbp >= _lbp:
+                break
+            previous = parser.node
+            advance(parser)
+
+            left = parser.node_led(previous, left)
+
+    assert left is not None
+    return left
+
+
+def expect_expression_of(parser, _rbp, expected_type, terminators=None):
+    exp = expression(parser, _rbp, terminators=terminators)
+    parser.assert_node_type(exp, expected_type)
+    return exp
+
+
+def expect_expression_of_types(parser, _rbp, expected_types, terminators=None):
+    exp = expression(parser, _rbp, terminators=terminators)
+    parser.assert_node_types(exp, expected_types)
+    return exp
+
+
+
+
+# TODO mandatory terminators
+def expression(parser, _rbp, terminators=None):
+    if not terminators:
+        terminators = [parser.lex.TT_END_EXPR]
+    expr = base_expression(parser, _rbp, terminators)
+    expr = parser.postprocess(expr)
+    return expr
+
+
+# INFIXR
+def rexpression(parser, op, terminators):
+    return expression(parser, op.lbp - 1, terminators)
+
+
+def literal_expression(parser):
+    # Override most operators in literals
+    # because of prefix operators
+    return expression(parser, 70)
+
+
+def statement(parser):
+    node = parser.node
+    if parser.node_has_std(node):
+        advance(parser)
+        value = parser.node_std(node)
+        return value
+
+    value = expression(parser, 0)
+    return value
+
+
+def statement_no_end_expr(parser):
+    node = parser.node
+    if parser.node_has_std(node):
+        advance(parser)
+        value = parser.node_std(node)
+        return value
+
+    value = expression(parser, 0)
+    return value
+
+
+def statements(parser, endlist):
+    stmts = []
+    while True:
+        if parser.token_is_one_of(endlist):
+            break
+        s = statement(parser)
+        end_exp = parser.on_endofexpression()
+        if s is None:
+            continue
+        stmts.append(s)
+        if end_exp is False:
+            break
+
+    length = len(stmts)
+    if length == 0:
+        return parse_error(parser,
+                           "Expected one or more expressions", parser.node)
+
+    return nodes.list_node(stmts)
+
+
+def skip_token(parser, token_type):
+    if parser.token_type == token_type:
+        advance(parser)
+
+def skip(parser, ttype):
+    while parser.token_type == ttype:
+        advance(parser)
+
+##########################################################################
+## COMMON CALLBACKS #######################################################
+##########################################################################
+
+def prefix_itself(parser, op, node):
+    return nodes.node_0(parser.lex.get_nt_for_node(node),
+                        node.token)
+
+def prefix_empty(parser, op, node):
+    return expression(parser, 0)
+
+
+def prefix_nud(parser, op, node):
+    exp = literal_expression(parser)
+    return nodes.node_1(parser.lex.get_nt_for_node(node),
+                        node.token, exp)
+
+
+def infix_led(parser, op, node, left):
+    exp = expression(parser, op.lbp)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        node.token,
+                        left, exp)
+
+
+def infixr_led(parser, op, node, left):
+    exp = expression(parser, op.lbp - 1)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        node.token,
+                        left, exp)
+
+
+def infixr_led_assign(parser, op, node, left):
+    exp = expression(parser, 9)
+    return nodes.node_2(parser.lex.get_nt_for_node(node),
+                        node.token, left, exp)
+
+##############################################################
 
 
 class Builder:
@@ -350,7 +669,7 @@ class Builder:
         return self
 
     def literal(self, ttype):
-        self.operators.set_nud(ttype, itself)
+        self.operators.set_nud(ttype, prefix_itself)
         return self
 
     def symbol(self, ttype, nud=None):
@@ -359,329 +678,16 @@ class Builder:
         return self
 
     def infixr(self, ttype, lbp):
-        return self.infix(ttype, lbp, led_infixr)
+        return self.infix(ttype, lbp, infixr_led)
 
     def assignment(self, ttype, lbp):
-        return self.infix(ttype, lbp, led_infixr_assign)
+        return self.infix(ttype, lbp, infixr_led_assign)
         
 
     def build(self, name):
         return self.parser_class(name, self.lexicon,
                                  self.operators, self.settings)
 
-
-def itself(parser, op, node):
-    return nodes.node_0(parser.lex.get_nt_for_node(node),
-                        node.token)
-
-
-def node_operator(parser, node):
-    ttype = node.token_type
-    if not parser.allow_overloading:
-        return parser.operator(ttype)
-
-    if ttype != parser.lex.TT_OPERATOR:
-        return parser.operator(ttype)
-
-    # in case of operator
-    op = parser.find_custom_operator(node.token_value)
-    if op is None:
-        return parse_error(parser, "Invalid operator", node)
-    return op
-
-
-def node_nud(parser, node):
-    handler = node_operator(parser, node)
-    if not handler.nud:
-        parse_error(parser, "Unknown token nud", node)
-    return handler.nud(parser, handler, node)
-
-
-def node_std(parser, node):
-    handler = node_operator(parser, node)
-    if not handler.std:
-        parse_error(parser, "Unknown token std", node)
-
-    return handler.std(parser, handler, node)
-
-
-def node_has_nud(parser, node):
-    handler = node_operator(parser, node)
-    return handler.nud is not None
-
-
-def node_has_layout(parser, node):
-    handler = node_operator(parser, node)
-    return handler.layout is not None
-
-
-def node_has_led(parser, node):
-    handler = node_operator(parser, node)
-    return handler.led is not None
-
-
-def node_has_std(parser, node):
-    handler = node_operator(parser, node)
-    return handler.std is not None
-
-
-def node_lbp(parser, node):
-    handler = node_operator(parser, node)
-    lbp = handler.lbp
-    # if lbp < 0:
-    #   parse_error(parser, "Left binding power error", node)
-
-    return lbp
-
-
-def node_led(parser, node, left):
-    handler = node_operator(parser, node)
-    if not handler.led:
-        parse_error(parser, "Unknown token led", node)
-
-    return handler.led(parser, handler, node, left)
-
-
-def node_layout(parser, node):
-    handler = node_operator(parser, node)
-    if not handler.layout:
-        parse_error(parser, "Unknown token layout", node)
-
-    return handler.layout(parser, handler, node)
-
-
-def token_is_one_of(parser, types):
-    return parser.token_type in types
-
-
-def check_token_type(parser, type):
-    if parser.token_type != type:
-        parse_error(parser,
-                    "Wrong token type, expected %s, got %s" %
-                    (type, parser.token_type),
-                    parser.node)
-
-
-def check_token_types(parser, types):
-    if parser.token_type not in types:
-        parse_error(parser, "Wrong token type, expected one of %s, got %s" %
-                    (unicode([type for type in types]),
-                     parser.token_type), parser.node)
-
-
-def check_list_node_types(parser, node, expected_types):
-    for child in node:
-        check_node_types(parser, child, expected_types)
-
-
-def check_node_type(parser, node, expected_type):
-    ntype = node.node_type
-    if ntype != expected_type:
-        parse_error(parser, "Wrong node type, expected  %s, got %s" %
-                    (expected_type, ntype), node)
-
-
-def check_node_types(parser, node, types):
-    ntype = node.node_type
-    if ntype not in types:
-        parse_error(parser, "Wrong node type, expected one of %s, got %s" %
-                    (str(types), ntype), node)
-
-
-def advance(parser):
-    if parser.isend():
-        return None
-
-    node = parser.next_token()
-    # print "ADVANCE", node
-    return node
-
-
-def advance_expected(parser, ttype):
-    check_token_type(parser, ttype)
-
-    return advance(parser)
-
-
-def advance_expected_one_of(parser, ttypes):
-    check_token_types(parser, ttypes)
-
-    if parser.isend():
-        return None
-
-    return parser.next_token()
-
-
-def endofexpression(parser):
-    res = parser.on_endofexpression()
-    if res is False:
-        parse_error(parser,
-                    "Expected end of expression mark got '%s'" %
-                    parser.token.value,
-                    parser.node)
-
-    return res
-
-
-def base_expression(parser, _rbp, terminators=None):
-    previous = parser.node
-    if node_has_layout(parser, previous):
-        node_layout(parser, previous)
-
-    advance(parser)
-
-    left = node_nud(parser, previous)
-    while True:
-        # if parser.is_newline_occurred:
-        #     break
-
-        if terminators is not None:
-            if parser.token_type in terminators:
-                return left
-
-        _lbp = node_lbp(parser, parser.node)
-
-        # juxtaposition support
-        if _lbp < 0:
-            if parser.break_on_juxtaposition is True:
-                return left
-
-            op = parser.operator(parser.lex.TT_JUXTAPOSITION)
-            _lbp = op.lbp
-
-            if _rbp >= _lbp:
-                break
-            previous = parser.node
-            # advance(parser)
-            if not op.led:
-                parse_error(parser, "Unknown token led", previous)
-
-            left = op.led(parser, op, previous, left)
-        else:
-            if _rbp >= _lbp:
-                break
-            previous = parser.node
-            advance(parser)
-
-            left = node_led(parser, previous, left)
-
-    assert left is not None
-    return left
-
-
-def expect_expression_of(parser, _rbp, expected_type, terminators=None):
-    exp = expression(parser, _rbp, terminators=terminators)
-    check_node_type(parser, exp, expected_type)
-    return exp
-
-
-def expect_expression_of_types(parser, _rbp, expected_types, terminators=None):
-    exp = expression(parser, _rbp, terminators=terminators)
-    check_node_types(parser, exp, expected_types)
-    return exp
-
-
-def skip_token(parser, token_type):
-    if parser.token_type == token_type:
-        advance(parser)
-
-
-# TODO mandatory terminators
-def expression(parser, _rbp, terminators=None):
-    if not terminators:
-        terminators = [parser.lex.TT_END_EXPR]
-    expr = base_expression(parser, _rbp, terminators)
-    expr = parser.postprocess(expr)
-    return expr
-
-
-# INFIXR
-def rexpression(parser, op, terminators):
-    return expression(parser, op.lbp - 1, terminators)
-
-
-def literal_expression(parser):
-    # Override most operators in literals
-    # because of prefix operators
-    return expression(parser, 70)
-
-
-def statement(parser):
-    node = parser.node
-    if node_has_std(parser, node):
-        advance(parser)
-        value = node_std(parser, node)
-        return value
-
-    value = expression(parser, 0)
-    return value
-
-
-def statement_no_end_expr(parser):
-    node = parser.node
-    if node_has_std(parser, node):
-        advance(parser)
-        value = node_std(parser, node)
-        return value
-
-    value = expression(parser, 0)
-    return value
-
-
-def statements(parser, endlist):
-    stmts = []
-    while True:
-        if token_is_one_of(parser, endlist):
-            break
-        s = statement(parser)
-        end_exp = parser.on_endofexpression()
-        if s is None:
-            continue
-        stmts.append(s)
-        if end_exp is False:
-            break
-
-    length = len(stmts)
-    if length == 0:
-        return parse_error(parser,
-                           "Expected one or more expressions", parser.node)
-
-    return nodes.list_node(stmts)
-
-
-def skip(parser, ttype):
-    while parser.token_type == ttype:
-        advance(parser)
-
-
-def empty(parser, op, node):
-    return expression(parser, 0)
-
-
-def prefix_nud(parser, op, node):
-    exp = literal_expression(parser)
-    return nodes.node_1(parser.lex.get_nt_for_node(node),
-                        node.token, exp)
-
-
-def led_infix(parser, op, node, left):
-    exp = expression(parser, op.lbp)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token,
-                        left, exp)
-
-
-def led_infixr(parser, op, node, left):
-    exp = expression(parser, op.lbp - 1)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token,
-                        left, exp)
-
-
-def led_infixr_assign(parser, op, node, left):
-    exp = expression(parser, 9)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token, left, exp)
 
 
 def _parse(parser, termination_tokens):
@@ -696,6 +702,6 @@ def parse_token_stream(parser, ts):
     parser.next_token()
     stmts, scope = _parse(parser, [parser.lex.TT_ENDSTREAM])
     assert len(parser.state.scopes) == 0
-    check_token_type(parser, parser.lex.TT_ENDSTREAM)
+    parser.assert_token_type(parser.lex.TT_ENDSTREAM)
     parser.close()
     return stmts, scope

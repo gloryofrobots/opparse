@@ -179,8 +179,8 @@ def guard_parser():
         .prefix(lex.TT_SHARP, prefix_sharp)
         .prefix(lex.TT_BACKTICK_OPERATOR, prefix_backtick_operator)
 
-        .infix(lex.TT_OR, 25, led_infix)
-        .infix(lex.TT_AND, 30, led_infix)
+        .infix(lex.TT_OR, 25, infix_led)
+        .infix(lex.TT_AND, 30, infix_led)
         .infix(lex.TT_BACKTICK_NAME, 35, infix_backtick_name)
         .infix(lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
         .infix(lex.TT_DOT, 100, infix_dot)
@@ -197,9 +197,9 @@ def setup_pattern_parser(parser_builder):
         .prefix(lex.TT_SHARP, prefix_sharp)
         .prefix(lex.TT_ELLIPSIS, prefix_nud)
 
-        .infix(lex.TT_OF, 10, led_infix)
+        .infix(lex.TT_OF, 10, infix_led)
         .infix(lex.TT_AT_SIGN, 10, infix_at)
-        .infix(lex.TT_DOUBLE_COLON, 60, led_infixr)
+        .infix(lex.TT_DOUBLE_COLON, 60, infixr_led)
         .infix(lex.TT_COLON, 100, infix_name_pair)
 
         .symbol(lex.TT_WHEN)
@@ -237,7 +237,7 @@ def fun_signature_parser():
         .symbol(lex.TT_INDENT)
         .prefix(lex.TT_ELLIPSIS, prefix_nud)
 
-        .infix(lex.TT_OF, 15, led_infix)
+        .infix(lex.TT_OF, 15, infix_led)
         .infix(lex.TT_COLON, 100, infix_name_pair)
 
         .literal(lex.TT_WILDCARD)
@@ -287,11 +287,11 @@ def expression_parser():
         .prefix(lex.TT_LET, prefix_let)
 
         .assignment(lex.TT_ASSIGN, 10)
-        .infix(lex.TT_OF, 15, led_infix)
-        .infix(lex.TT_OR, 25, led_infix)
-        .infix(lex.TT_AND, 30, led_infix)
+        .infix(lex.TT_OF, 15, infix_led)
+        .infix(lex.TT_OR, 25, infix_led)
+        .infix(lex.TT_AND, 30, infix_led)
         .infix(lex.TT_BACKTICK_NAME, 35, infix_backtick_name)
-        .infix(lex.TT_DOUBLE_COLON, 70, led_infixr)
+        .infix(lex.TT_DOUBLE_COLON, 70, infixr_led)
 
         .infix(lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
         .infix(lex.TT_COLON, 100, infix_name_pair)
