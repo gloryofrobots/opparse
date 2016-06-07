@@ -259,7 +259,7 @@ def infix_spacedot(parser, op, node, left):
 
 
 def infix_juxtaposition(parser, op, node, left):
-    right = base_expression(parser, op.lbp)
+    right = parser.base_expression(op.lbp, None)
     return nodes.node_2(lex.NT_JUXTAPOSITION, node.token, left, right)
 
 

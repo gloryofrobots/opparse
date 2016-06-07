@@ -226,9 +226,6 @@ class Parser:
         self.subparsers = {}
         self.state = None
 
-    def on_endofexpression(self):
-        raise NotImplementedError()
-
     def add_builder(self, name, builder):
         parser = builder.build(name)
         return self.add_subparser(parser)
@@ -454,62 +451,60 @@ class Parser:
 
         return self.next_token()
 
-
-def endofexpression(parser):
-    res = parser.on_endofexpression()
-    if res is False:
-        parse_error(parser,
-                    "Expected end of expression mark got '%s'" %
-                    parser.token.value,
-                    parser.node)
-
-    return res
+    # PARSING
+    def endofexpression(self):
+        if self.isend():
+            return None
+        if self.token_type == self.lex.TT_END_EXPR:
+            return self.advance()
+        return False
 
 
-def base_expression(parser, _rbp, terminators=None):
-    previous = parser.node
-    if parser.node_has_layout(previous):
-        parser.node_layout(previous)
 
-    parser.advance()
+    def base_expression(self, _rbp, terminators):
+        previous = self.node
+        if self.node_has_layout(previous):
+            self.node_layout(previous)
 
-    left = parser.node_nud(previous)
-    while True:
-        # if parser.is_newline_occurred:
-        #     break
+        self.advance()
 
-        if terminators is not None:
-            if parser.token_type in terminators:
-                return left
+        left = self.node_nud(previous)
+        while True:
+            # if self.is_newline_occurred:
+            #     break
 
-        _lbp = parser.node_lbp(parser.node)
+            if terminators is not None:
+                if self.token_type in terminators:
+                    return left
 
-        # juxtaposition support
-        if _lbp < 0:
-            if parser.break_on_juxtaposition is True:
-                return left
+            _lbp = self.node_lbp(self.node)
 
-            op = parser.operator(parser.lex.TT_JUXTAPOSITION)
-            _lbp = op.lbp
+            # juxtaposition support
+            if _lbp < 0:
+                if self.break_on_juxtaposition is True:
+                    return left
 
-            if _rbp >= _lbp:
-                break
-            previous = parser.node
-            # parser.advance()
-            if not op.led:
-                parse_error(parser, "Unknown token led", previous)
+                op = self.operator(self.lex.TT_JUXTAPOSITION)
+                _lbp = op.lbp
 
-            left = op.led(parser, op, previous, left)
-        else:
-            if _rbp >= _lbp:
-                break
-            previous = parser.node
-            parser.advance()
+                if _rbp >= _lbp:
+                    break
+                previous = self.node
+                # self.advance()
+                if not op.led:
+                    parse_error(self, "Unknown token led", previous)
 
-            left = parser.node_led(previous, left)
+                left = op.led(self, op, previous, left)
+            else:
+                if _rbp >= _lbp:
+                    break
+                previous = self.node
+                self.advance()
 
-    assert left is not None
-    return left
+                left = self.node_led(previous, left)
+
+        assert left is not None
+        return left
 
 
 def expect_expression_of(parser, _rbp, expected_type, terminators=None):
@@ -530,7 +525,7 @@ def expect_expression_of_types(parser, _rbp, expected_types, terminators=None):
 def expression(parser, _rbp, terminators=None):
     if not terminators:
         terminators = [parser.lex.TT_END_EXPR]
-    expr = base_expression(parser, _rbp, terminators)
+    expr = parser.base_expression(_rbp, terminators)
     expr = parser.postprocess(expr)
     return expr
 
@@ -574,7 +569,7 @@ def statements(parser, endlist):
         if parser.token_is_one_of(endlist):
             break
         s = statement(parser)
-        end_exp = parser.on_endofexpression()
+        end_exp = parser.endofexpression()
         if s is None:
             continue
         stmts.append(s)

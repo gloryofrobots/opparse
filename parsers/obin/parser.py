@@ -26,7 +26,7 @@ def create_stream(parser, source):
 
 class ObinParser(Parser):
 
-    def on_endofexpression(self):
+    def endofexpression(self):
         if self.isend():
             return None
         if self.token_type in TERM_BLOCK:
