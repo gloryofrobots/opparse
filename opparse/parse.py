@@ -540,7 +540,7 @@ class Parser(object):
     def assert_any_of_terminated_expressions(
             self, rbp, expected_types, terminators):
 
-        exp = self.terminated_expression(_rbp, terminators)
+        exp = self.terminated_expression(rbp, terminators)
         self.assert_node_types(exp, expected_types)
         return exp
 
@@ -551,7 +551,7 @@ class Parser(object):
     def rexpression(self, op):
         return self.expression(op.lbp - 1)
 
-    def termianted_rexpression(self, op, terminators):
+    def terminated_rexpression(self, op, terminators):
         return self.terminated_expression(op.lbp - 1, terminators)
 
     def literal_expression(self):

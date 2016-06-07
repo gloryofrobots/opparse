@@ -160,7 +160,7 @@ def create_call_node(basenode, funcname, exps):
 
 def juxtaposition_as_list(parser, terminators):
     node = parser.node
-    exp = parser.expression(0, terminators)
+    exp = parser.terminated_expression(0, terminators)
     if not nodes.is_list_node(exp):
         return create_list_node(node, [exp])
 
@@ -169,7 +169,7 @@ def juxtaposition_as_list(parser, terminators):
 
 def juxtaposition_as_tuple(parser, terminators):
     node = parser.node
-    exp = parser.expression(0, terminators)
+    exp = parser.terminated_expression(0, terminators)
     if not nodes.is_list_node(exp):
         return create_tuple_node(node, [exp])
 
@@ -206,7 +206,7 @@ def skip_end_expression(parser):
 
 
 def expression_with_optional_end_of_expression(parser, _rbp, terminators):
-    exp = parser.expression(_rbp, terminators)
+    exp = parser.terminated_expression(_rbp, terminators)
     skip_end_expression(parser)
     return exp
 
@@ -402,7 +402,7 @@ def prefix_lparen(parser, op, node):
         parser.advance_expected(lex.TT_RPAREN)
         return node_0(lex.NT_UNIT, node.token)
 
-    e = parser.expression(0, [lex.TT_RPAREN])
+    e = parser.terminated_expression(0, [lex.TT_RPAREN])
     skip_end_expression(parser)
 
     if parser.token_type == lex.TT_RPAREN:
@@ -414,7 +414,7 @@ def prefix_lparen(parser, op, node):
 
     if parser.token_type != lex.TT_RPAREN:
         while True:
-            items.append(parser.expression(0, [lex.TT_COMMA]))
+            items.append(parser.terminated_expression(0, [lex.TT_COMMA]))
             skip_end_expression(parser)
             if parser.token_type == lex.TT_RPAREN:
                 break
@@ -552,7 +552,7 @@ def prefix_if(parser, op, node):
     init_node_layout(parser, node, LEVELS_IF)
     branches = []
 
-    cond = parser.expression(0, TERM_IF_CONDITION)
+    cond = parser.terminated_expression(0, TERM_IF_CONDITION)
     parser.advance_expected_one_of(TERM_IF_CONDITION)
     init_code_layout(parser, parser.node, TERM_IF_BODY)
 
@@ -564,7 +564,7 @@ def prefix_if(parser, op, node):
     while parser.token_type == lex.TT_ELIF:
         parser.advance_expected(lex.TT_ELIF)
 
-        cond = parser.expression(0, TERM_IF_CONDITION)
+        cond = parser.terminated_expression(0, TERM_IF_CONDITION)
         parser.advance_expected_one_of(TERM_IF_CONDITION)
         init_code_layout(parser, parser.node, TERM_IF_BODY)
 
@@ -636,10 +636,10 @@ def prefix_try(parser, op, node):
 
 
 def _parse_pattern(parser):
-    pattern = parser.pattern_parser.expression(0, TERM_PATTERN)
+    pattern = parser.pattern_parser.terminated_expression(0, TERM_PATTERN)
     if parser.token_type == lex.TT_WHEN:
         parser.advance()
-        guard = parser.guard_parser.expression(0, TERM_FUN_GUARD)
+        guard = parser.guard_parser.terminated_expression(0, TERM_FUN_GUARD)
         pattern = node_2(lex.NT_WHEN, guard.token, pattern, guard)
 
     return pattern
@@ -703,7 +703,7 @@ def _parse_func_pattern(parser, arg_terminator, guard_terminator):
 
     if parser.token_type == lex.TT_WHEN:
         parser.advance()
-        guard = parser.guard_parser.expression(0, guard_terminator)
+        guard = parser.guard_parser.terminated_expression(0, guard_terminator)
         pattern = node_2(lex.NT_WHEN, guard.token, pattern, guard)
 
     return pattern
@@ -815,7 +815,8 @@ def ensure_tuple(t):
 
 
 def stmt_from(parser, op, node):
-    imported = parser.import_parser.expression(0, TERM_FROM_IMPORTED)
+    imported = parser.import_parser.terminated_expression(
+        0, TERM_FROM_IMPORTED)
     parser.assert_token_types([lex.TT_IMPORT, lex.TT_HIDE])
     if parser.token_type == lex.TT_IMPORT:
         hiding = False
@@ -846,7 +847,8 @@ def stmt_from(parser, op, node):
 
 
 def stmt_import(parser, op, node):
-    imported = parser.import_parser.expression(0, [lex.TT_LPAREN, lex.TT_HIDING])
+    imported = parser.import_parser.terminated_expression(
+        0, [lex.TT_LPAREN, lex.TT_HIDING])
 
     if parser.token_type == lex.TT_HIDING:
         ntype = lex.NT_IMPORT_HIDING
@@ -927,7 +929,7 @@ def _symbols_to_args(parser, node, symbols):
 
 # DERIVE ################################
 def _parse_tuple_of_names(parser, term):
-    exp = parser.assert_any_of_expressions(
+    exp = parser.assert_any_of_terminated_expressions(
         0, [lex.NT_NAME, lex.NT_LOOKUP, lex.NT_TUPLE], term)
     if exp.node_type == lex.NT_TUPLE:
         parser.assert_types_in_nodes_list(
@@ -1054,10 +1056,10 @@ def stmt_trait(parser, op, node):
 
 
 def _parser_implement_header(parser):
-    trait_name = parser.name_parser.assert_any_of_expressions(
+    trait_name = parser.name_parser.assert_any_of_terminated_expressions(
         0, NODE_IMPLEMENT_NAME, TERM_BEFORE_FOR)
     parser.advance_expected(lex.TT_FOR)
-    type_name = parser.name_parser.assert_any_of_expressions(
+    type_name = parser.name_parser.assert_any_of_terminated_expressions(
         0, NODE_IMPLEMENT_NAME, TERM_IMPL_HEADER)
     skip_indent(parser)
     return trait_name, type_name
@@ -1095,7 +1097,7 @@ def stmt_implement(parser, op, node):
 
 def stmt_extend(parser, op, node):
     init_node_layout(parser, node)
-    type_name = parser.name_parser.assert_any_of_expressions(
+    type_name = parser.name_parser.assert_any_of_terminated_expressions(
         0, NODE_IMPLEMENT_NAME, TERM_BEFORE_WITH)
     skip_indent(parser)
     traits = []
@@ -1103,12 +1105,13 @@ def stmt_extend(parser, op, node):
     while parser.token_type == lex.TT_WITH:
         init_offside_layout(parser, parser.node)
         parser.advance_expected(lex.TT_WITH)
-        trait_name = parser.name_parser.assert_any_of_expressions(
+        trait_name = parser.name_parser.assert_any_of_terminated_expressions(
             0, NODE_IMPLEMENT_NAME, TERM_EXTEND_TRAIT)
         skip_indent(parser)
         if parser.token_type == lex.TT_ASSIGN:
             parser.advance()
-            implementation = parser.expression(0, TERM_EXTEND_MIXIN_TRAIT)
+            implementation = parser.terminated_expression(
+                0, TERM_EXTEND_MIXIN_TRAIT)
         elif parser.token_type == lex.TT_DEF:
             init_offside_layout(parser, parser.node)
             methods = []
