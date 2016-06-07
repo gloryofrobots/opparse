@@ -506,6 +506,15 @@ class Parser:
         assert left is not None
         return left
 
+# TODO mandatory terminators
+def expression(parser, _rbp, terminators=None):
+    if not terminators:
+        terminators = [parser.lex.TT_END_EXPR]
+    expr = parser.base_expression(_rbp, terminators)
+    expr = parser.postprocess(expr)
+    return expr
+
+
 
 def expect_expression_of(parser, _rbp, expected_type, terminators=None):
     exp = expression(parser, _rbp, terminators=terminators)
@@ -520,14 +529,6 @@ def expect_expression_of_types(parser, _rbp, expected_types, terminators=None):
 
 
 
-
-# TODO mandatory terminators
-def expression(parser, _rbp, terminators=None):
-    if not terminators:
-        terminators = [parser.lex.TT_END_EXPR]
-    expr = parser.base_expression(_rbp, terminators)
-    expr = parser.postprocess(expr)
-    return expr
 
 
 # INFIXR
