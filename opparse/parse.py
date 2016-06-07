@@ -422,6 +422,8 @@ class Parser:
                         (expected_type, ntype), node)
 
 
+    # MOVEMENTS
+    
     def assert_node_types(self, node, types):
         ntype = node.node_type
         if ntype not in types:
@@ -451,6 +453,14 @@ class Parser:
 
         return self.next_token()
 
+    def skip_while(parser, ttype):
+        while parser.token_type == ttype:
+            parser.advance()
+
+    def skip_once(parser, token_type):
+        if parser.token_type == token_type:
+            parser.advance()
+
     # PARSING
     def endofexpression(self):
         if self.isend():
@@ -458,8 +468,6 @@ class Parser:
         if self.token_type == self.lex.TT_END_EXPR:
             return self.advance()
         return False
-
-
 
     def base_expression(self, _rbp, terminators):
         previous = self.node
@@ -516,82 +524,60 @@ class Parser:
 
 
 
-def expect_expression_of(parser, _rbp, expected_type, terminators=None):
-    exp = parser.expression(_rbp, terminators=terminators)
-    parser.assert_node_type(exp, expected_type)
-    return exp
+    def expect_expression_of(self, _rbp, expected_type, terminators=None):
+        exp = self.expression(_rbp, terminators=terminators)
+        self.assert_node_type(exp, expected_type)
+        return exp
 
 
-def expect_expression_of_types(parser, _rbp, expected_types, terminators=None):
-    exp = parser.expression(_rbp, terminators=terminators)
-    parser.assert_node_types(exp, expected_types)
-    return exp
+    def expect_expression_of_types(self,
+                                   _rbp, expected_types, terminators=None):
+        exp = self.expression(_rbp, terminators=terminators)
+        self.assert_node_types(exp, expected_types)
+        return exp
+
+    def rexpression(self, op, terminators=None):
+        return self.expression(op.lbp - 1, terminators)
 
 
+    def literal_expression(self):
+        # Override most operators in literals
+        # because of prefix operators
+        return self.expression(70)
 
 
+    def statement(self):
+        node = self.node
+        if self.node_has_std(node):
+            self.advance()
+            value = self.node_std(node)
+            return value
 
-# INFIXR
-def rexpression(parser, op, terminators):
-    return parser.expression(op.lbp - 1, terminators)
-
-
-def literal_expression(parser):
-    # Override most operators in literals
-    # because of prefix operators
-    return parser.expression(70)
-
-
-def statement(parser):
-    node = parser.node
-    if parser.node_has_std(node):
-        parser.advance()
-        value = parser.node_std(node)
+        value = self.expression(0)
         return value
 
-    value = parser.expression(0)
-    return value
+
+    def statements(self, endlist):
+        stmts = []
+        while True:
+            if self.token_is_one_of(endlist):
+                break
+            s = self.statement()
+            end_exp = self.endofexpression()
+            if s is None:
+                continue
+            stmts.append(s)
+            if end_exp is False:
+                break
+
+        length = len(stmts)
+        if length == 0:
+            return parse_error(self,
+                            "Expected one or more expressions", self.node)
+
+        return nodes.list_node(stmts)
 
 
-def statement_no_end_expr(parser):
-    node = parser.node
-    if parser.node_has_std(node):
-        parser.advance()
-        value = parser.node_std(node)
-        return value
-
-    value = parser.expression(0)
-    return value
-
-
-def statements(parser, endlist):
-    stmts = []
-    while True:
-        if parser.token_is_one_of(endlist):
-            break
-        s = statement(parser)
-        end_exp = parser.endofexpression()
-        if s is None:
-            continue
-        stmts.append(s)
-        if end_exp is False:
-            break
-
-    length = len(stmts)
-    if length == 0:
-        return parse_error(parser,
-                           "Expected one or more expressions", parser.node)
-
-    return nodes.list_node(stmts)
-
-
-def skip_token(parser, token_type):
-    if parser.token_type == token_type:
-        parser.advance()
-
-def skip(parser, ttype):
-    while parser.token_type == ttype:
-        parser.advance()
 
 ##########################################################################
 ## COMMON CALLBACKS #######################################################
@@ -606,7 +592,7 @@ def prefix_empty(parser, op, node):
 
 
 def prefix_nud(parser, op, node):
-    exp = literal_expression(parser)
+    exp = parser.literal_expression()
     return nodes.node_1(parser.lex.get_nt_for_node(node),
                         node.token, exp)
 
@@ -619,7 +605,7 @@ def infix_led(parser, op, node, left):
 
 
 def infixr_led(parser, op, node, left):
-    exp = parser.expression(op.lbp - 1)
+    exp = parser.rexpression(op)
     return nodes.node_2(parser.lex.get_nt_for_node(node),
                         node.token,
                         left, exp)
@@ -687,7 +673,7 @@ class Builder:
 
 def _parse(parser, termination_tokens):
     parser.enter_scope()
-    stmts = statements(parser, termination_tokens)
+    stmts = parser.statements(termination_tokens)
     scope = parser.exit_scope()
     return stmts, scope
 
