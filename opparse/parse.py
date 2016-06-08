@@ -52,7 +52,7 @@ def parse_error(parser, message, token):
 
 
 def prefix_itself(parser, op, token):
-    return nodes.node_0(parser.lex.get_nt_for_token(token), token)
+    return nodes.node_0(parser.lex.token_node_type(token), token)
 
 
 def prefix_empty(parser, op, token):
@@ -61,27 +61,27 @@ def prefix_empty(parser, op, token):
 
 def prefix_nud(parser, op, token):
     exp = parser.literal_expression()
-    return nodes.node_1(parser.lex.get_nt_for_token(token),
+    return nodes.node_1(parser.lex.token_node_type(token),
                         token, exp)
 
 
 def infix_led(parser, op, token, left):
     exp = parser.expression(op.lbp)
-    return nodes.node_2(parser.lex.get_nt_for_token(token),
+    return nodes.node_2(parser.lex.token_node_type(token),
                         token,
                         left, exp)
 
 
 def infixr_led(parser, op, token, left):
     exp = parser.rexpression(op)
-    return nodes.node_2(parser.lex.get_nt_for_token(token),
+    return nodes.node_2(parser.lex.token_node_type(token),
                         token,
                         left, exp)
 
 
 def infixr_led_assign(parser, op, token, left):
     exp = parser.expression(9)
-    return nodes.node_2(parser.lex.get_nt_for_token(token),
+    return nodes.node_2(parser.lex.token_node_type(token),
                         token, left, exp)
 # LAYOUT
 

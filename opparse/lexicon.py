@@ -46,18 +46,10 @@ class Lexicon:
     def __init(self):
         self.rules = []
 
-    def add_keyword(self, literal, token_type):
-        kw = keyword(literal)
-        self.rules.append(kw)
+    def token_node_type(self, token):
+        return self.node_type_for_token_type(token.type)
 
-    def add_token(self, literal, token_type):
-        kw = token(literal)
-        self.rules.append(kw)
-
-    def get_nt_for_token(self, token):
-        return self.get_nt_for_tt(token.type)
-
-    def get_nt_for_tt(self, tt):
+    def node_type_for_token_type(self, tt):
         """
         get node type for token type according to class
         variable TT_TO_NT_MAPPING

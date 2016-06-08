@@ -115,7 +115,7 @@ def tuple_node_length(n):
 
 
 def _init_default_current_0(parser):
-    return nodes.node_0(parser.lex.get_nt_for_tt(parser.token.type),
+    return nodes.node_0(parser.lex.node_type_for_token_type(parser.token.type),
                         parser.token)
 
 
@@ -237,7 +237,7 @@ def infix_name_pair(parser, op, token, left):
     parser.assert_token_type(lex.TT_NAME)
     name = _init_default_current_0(parser)
     parser.advance()
-    return node_2(parser.lex.get_nt_for_token(token), token, left, name)
+    return node_2(parser.lex.token_node_type(token), token, left, name)
 
 
 def infix_at(parser, op, token, left):
@@ -267,15 +267,15 @@ def _parse_name(parser):
     parser.assert_token_types([lex.TT_STR, lex.TT_MULTI_STR, lex.TT_NAME])
     token = parser.token
     parser.advance()
-    return node_0(parser.lex.get_nt_for_token(token), token)
+    return node_0(parser.lex.token_node_type(token), token)
 
 
 def _parse_symbol(parser, token):
     parser.assert_token_types(
         [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
-    exp = node_0(parser.lex.get_nt_for_token(parser.token), parser.token)
+    exp = node_0(parser.lex.token_node_type(parser.token), parser.token)
     parser.advance()
-    return node_1(parser.lex.get_nt_for_token(token), token, exp)
+    return node_1(parser.lex.token_node_type(token), token, exp)
 
 
 def prefix_backtick_operator(parser, op, token):
@@ -599,7 +599,7 @@ def prefix_match(parser, op, token):
 
 def prefix_throw(parser, op, token):
     exp = parser.expression(0)
-    return node_1(parser.lex.get_nt_for_token(token), token, exp)
+    return node_1(parser.lex.token_node_type(token), token, exp)
 
 
 # FUNCTION STUFF################################
@@ -811,7 +811,7 @@ def symbol_or_name_value(parser, name):
 
 # TYPES ************************
 def prefix_name_as_symbol(parser, op, token):
-    name = node_0(parser.lex.get_nt_for_token(token),
+    name = node_0(parser.lex.token_node_type(token),
                         token)
     return create_symbol_node(token, name)
 
@@ -895,7 +895,7 @@ def stmt_type(parser, op, token):
 
 # TRAIT*************************
 def symbol_operator_name(parser, op, token):
-    name = node_0(parser.lex.get_nt_for_token(token), token)
+    name = node_0(parser.lex.token_node_type(token), token)
     return create_name_from_operator(token, name)
 
 
