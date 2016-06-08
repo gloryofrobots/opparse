@@ -26,5 +26,3 @@ class TokenStream:
         self.token = token
         self.node = nodes.node_blank(self.token)
         return self.node
-
-

@@ -325,7 +325,8 @@ class IndentationTokenStream:
     def attach_token(self, token):
         logger.debug("^^^^^ATTACH %s", str(token))
         self.token = token
-        self.node = nodes.node_blank(self.token)
+        self.node = token
+        # self.node = nodes.node_blank(self.token)
         self.produced_tokens.append(self.token)
         return self.node
 
