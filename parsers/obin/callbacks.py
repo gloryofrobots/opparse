@@ -13,12 +13,6 @@ from opparse.nodes import (
 
 # CONSTRUCTORS
 
-def create_token_from_node(type, value, node):
-    return lexer.Token(type, value,
-                       node.token_position,
-                       node.token_line, node.token_column)
-
-
 def create_function_variants(args, body):
     # print "ARGS", args
     # print "BODY", body
@@ -159,7 +153,7 @@ def infixr_led_function(parser, op, token, left):
 ##############################################################
 
 def infix_backtick_name(parser, op, token, left):
-    funcname = strutil.cat_both_ends(token.token_value)
+    funcname = strutil.cat_both_ends(token.value)
     if not funcname:
         return parse_error(parser,
                            "invalid variable name in backtick expression",
@@ -285,7 +279,7 @@ def _parse_symbol(parser, token):
 
 
 def prefix_backtick_operator(parser, op, token):
-    opname = strutil.cat_both_ends(token.token_value)
+    opname = strutil.cat_both_ends(token.value)
     if opname == "::":
         return create_name_node_s(token, "cons")
 

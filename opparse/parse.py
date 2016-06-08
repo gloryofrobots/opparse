@@ -320,7 +320,7 @@ class Parser(object):
 
     def token_operator(self, token):
         assert isinstance(token, lexer.Token)
-        ttype = token.token_type
+        ttype = token.type
         if not self.allow_overloading:
             return self.operator(ttype)
 
@@ -328,7 +328,7 @@ class Parser(object):
             return self.operator(ttype)
 
         # in case of custom operator
-        op = self.find_custom_operator(token.token_value)
+        op = self.find_custom_operator(token.value)
         if op is None:
             return parse_error(self, "Invalid operator", token)
         return op

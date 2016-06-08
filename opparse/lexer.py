@@ -13,12 +13,6 @@ class Token:
         self.line = line
         self.column = column
 
-        self.token_position = pos
-        self.token_line = line
-        self.token_column = column
-        self.token_value = val
-        self.token_type = type
-        self.token = self
 
         # indentation level
         self.level = self.column - 1
