@@ -1,4 +1,7 @@
 from opparse.parse import *
+from opparse.indenter import (skip_indent, init_code_layout, init_free_layout,
+                              init_node_layout, init_offside_layout)
+
 from opparse import nodes, lexer
 from opparse.misc import strutil
 from lexicon import ObinLexicon as lex
@@ -6,66 +9,6 @@ from lexicon import ObinLexicon as lex
 from opparse.nodes import (
     node_0, node_1, node_2, node_3, empty_node,
     is_list_node, list_node)
-
-# TERMINATORS AND LEVELS
-
-TERM_BLOCK = [lex.TT_END]
-TERM_EXP = [lex.TT_END_EXPR]
-
-TERM_IF_BODY = [lex.TT_ELSE, lex.TT_ELIF]
-TERM_IF_CONDITION = [lex.TT_THEN]
-
-TERM_MATCH_EXPR = [lex.TT_WITH]
-TERM_MATCH_PATTERN = [lex.TT_WITH]
-TERM_CASE = [lex.TT_CASE] + TERM_BLOCK
-# TERM_CATCH = [lex.TT_CATCH, lex.TT_FINALLY] + TERM_BLOCK
-TERM_TRY = [lex.TT_CATCH, lex.TT_FINALLY]
-TERM_CATCH_CASE = [lex.TT_CASE, lex.TT_FINALLY] + TERM_BLOCK
-TERM_SINGLE_CATCH = [lex.TT_FINALLY] + TERM_BLOCK
-
-TERM_LET = [lex.TT_IN]
-
-TERM_PATTERN = [lex.TT_WHEN]
-TERM_FUN_GUARD = [lex.TT_ARROW]
-TERM_FUN_PATTERN = [lex.TT_WHEN, lex.TT_ARROW]
-TERM_FUN_SIGNATURE = [lex.TT_ARROW, lex.TT_CASE]
-
-TERM_CONDITION_BODY = [lex.TT_CASE] + TERM_BLOCK
-TERM_BEFORE_FOR = [lex.TT_FOR]
-
-TERM_BEFORE_WITH = [lex.TT_WITH]
-
-TERM_TYPE_ARGS = TERM_BLOCK
-TERM_UNION_TYPE_ARGS = [lex.TT_CASE] + TERM_BLOCK
-
-TERM_METHOD_SIG = [lex.TT_DEF, lex.TT_ARROW] + TERM_BLOCK
-TERM_METHOD_DEFAULT_BODY = [lex.TT_DEF] + TERM_BLOCK
-TERM_METHOD_CONSTRAINTS = [lex.TT_DEF] + TERM_BLOCK
-TERM_IMPL_BODY = [lex.TT_CASE, lex.TT_DEF] + TERM_BLOCK
-TERM_IMPL_HEADER = [lex.TT_DEF] + TERM_BLOCK
-
-TERM_EXTEND_TRAIT = [lex.TT_DEF, lex.TT_ASSIGN] + TERM_BLOCK
-TERM_EXTEND_MIXIN_TRAIT = [lex.TT_WITH] + TERM_BLOCK
-
-TERM_EXTEND_BODY = [lex.TT_CASE, lex.TT_DEF, lex.TT_WITH] + TERM_BLOCK
-
-TERM_FROM_IMPORTED = [lex.TT_IMPORT, lex.TT_HIDE]
-
-TERM_CONDITION_CONDITION = [lex.TT_ARROW]
-
-NODE_FOR_NAME = [lex.NT_NAME]
-NODE_FUNC_NAME = [lex.NT_NAME]
-NODE_DOT = [lex.NT_NAME, lex.NT_INT]
-NODE_IMPLEMENT_NAME = [lex.NT_NAME, lex.NT_LOOKUP]
-
-LOOP_CONTROL_TOKENS = [lex.TT_END, lex.TT_ELSE, lex.TT_CASE]
-
-LEVELS_MATCH = TERM_MATCH_EXPR
-LEVELS_IF = [lex.TT_ELSE, lex.TT_ELIF]
-LEVELS_TRY = [lex.TT_CATCH, lex.TT_FINALLY]
-LEVELS_LET = [lex.TT_IN]
-
-SKIP_JUXTAPOSITION = [lex.TT_JUXTAPOSITION]
 
 
 # CONSTRUCTORS
@@ -181,7 +124,7 @@ def juxtaposition_as_tuple(parser, terminators):
 #####################
 
 def advance_end(parser):
-    parser.advance_expected_one_of(TERM_BLOCK)
+    parser.advance_expected_one_of(parser.lex.TERM_BLOCK)
 
 
 def is_wildcard_node(n):
@@ -549,55 +492,55 @@ def _prefix_lcurly(parser, op, node, types, on_unknown):
 
 
 def prefix_if(parser, op, node):
-    init_node_layout(parser, node, LEVELS_IF)
+    init_node_layout(parser, node, parser.lex.LEVELS_IF)
     branches = []
 
-    cond = parser.terminated_expression(0, TERM_IF_CONDITION)
-    parser.advance_expected_one_of(TERM_IF_CONDITION)
-    init_code_layout(parser, parser.node, TERM_IF_BODY)
+    cond = parser.terminated_expression(0, parser.lex.TERM_IF_CONDITION)
+    parser.advance_expected_one_of(parser.lex.TERM_IF_CONDITION)
+    init_code_layout(parser, parser.node, parser.lex.TERM_IF_BODY)
 
-    body = parser.statements(TERM_IF_BODY)
+    body = parser.statements(parser.lex.TERM_IF_BODY)
 
     branches.append(list_node([cond, body]))
-    parser.assert_token_types(TERM_IF_BODY)
+    parser.assert_token_types(parser.lex.TERM_IF_BODY)
 
     while parser.token_type == lex.TT_ELIF:
         parser.advance_expected(lex.TT_ELIF)
 
-        cond = parser.terminated_expression(0, TERM_IF_CONDITION)
-        parser.advance_expected_one_of(TERM_IF_CONDITION)
-        init_code_layout(parser, parser.node, TERM_IF_BODY)
+        cond = parser.terminated_expression(0, parser.lex.TERM_IF_CONDITION)
+        parser.advance_expected_one_of(parser.lex.TERM_IF_CONDITION)
+        init_code_layout(parser, parser.node, parser.lex.TERM_IF_BODY)
 
-        body = parser.statements(TERM_IF_BODY)
-        parser.assert_token_types(TERM_IF_BODY)
+        body = parser.statements(parser.lex.TERM_IF_BODY)
+        parser.assert_token_types(parser.lex.TERM_IF_BODY)
         branches.append(list_node([cond, body]))
 
     parser.advance_expected(lex.TT_ELSE)
-    init_code_layout(parser, parser.node, TERM_BLOCK)
+    init_code_layout(parser, parser.node, parser.lex.TERM_BLOCK)
 
-    body = parser.statements(TERM_BLOCK)
+    body = parser.statements(parser.lex.TERM_BLOCK)
     branches.append(list_node([empty_node(), body]))
     advance_end(parser)
     return node_1(lex.NT_CONDITION, node.token, list_node(branches))
 
 
 def prefix_let(parser, op, node):
-    init_node_layout(parser, node, LEVELS_LET)
-    init_code_layout(parser, parser.node, TERM_LET)
-    letblock = parser.statements(TERM_LET)
+    init_node_layout(parser, node, parser.lex.LEVELS_LET)
+    init_code_layout(parser, parser.node, parser.lex.TERM_LET)
+    letblock = parser.statements(parser.lex.TERM_LET)
     parser.advance_expected(lex.TT_IN)
     skip_indent(parser)
     init_code_layout(parser, parser.node)
-    inblock = parser.statements(TERM_BLOCK)
+    inblock = parser.statements(parser.lex.TERM_BLOCK)
     advance_end(parser)
     return node_2(lex.NT_LET, node.token, letblock, inblock)
 
 
 def prefix_try(parser, op, node):
-    init_node_layout(parser, node, LEVELS_TRY)
-    init_code_layout(parser, parser.node, TERM_TRY)
+    init_node_layout(parser, node, parser.lex.LEVELS_TRY)
+    init_code_layout(parser, parser.node, parser.lex.TERM_TRY)
 
-    trybody = parser.statements(TERM_TRY)
+    trybody = parser.statements(parser.lex.TERM_TRY)
     catches = []
 
     parser.assert_token_type(lex.TT_CATCH)
@@ -611,21 +554,21 @@ def prefix_try(parser, op, node):
             # pattern = expressions(parser.pattern_parser, 0)
             pattern = _parse_pattern(parser)
             parser.advance_expected(lex.TT_ARROW)
-            init_code_layout(parser, parser.node, TERM_CATCH_CASE)
-            body = parser.statements(TERM_CATCH_CASE)
+            init_code_layout(parser, parser.node, parser.lex.TERM_CATCH_CASE)
+            body = parser.statements(parser.lex.TERM_CATCH_CASE)
             catches.append(list_node([pattern, body]))
     else:
         pattern = _parse_pattern(parser)
         parser.advance_expected(lex.TT_ARROW)
-        init_code_layout(parser, parser.node, TERM_SINGLE_CATCH)
-        body = parser.statements(TERM_SINGLE_CATCH)
+        init_code_layout(parser, parser.node, parser.lex.TERM_SINGLE_CATCH)
+        body = parser.statements(parser.lex.TERM_SINGLE_CATCH)
         catches.append(list_node([pattern, body]))
 
     if parser.token_type == lex.TT_FINALLY:
         parser.advance_expected(lex.TT_FINALLY)
         parser.advance_expected(lex.TT_ARROW)
         init_code_layout(parser, parser.node)
-        finallybody = parser.statements(TERM_BLOCK)
+        finallybody = parser.statements(parser.lex.TERM_BLOCK)
     else:
         finallybody = empty_node()
 
@@ -636,21 +579,21 @@ def prefix_try(parser, op, node):
 
 
 def _parse_pattern(parser):
-    pattern = parser.pattern_parser.terminated_expression(0, TERM_PATTERN)
+    pattern = parser.pattern_parser.terminated_expression(0, parser.lex.TERM_PATTERN)
     if parser.token_type == lex.TT_WHEN:
         parser.advance()
-        guard = parser.guard_parser.terminated_expression(0, TERM_FUN_GUARD)
+        guard = parser.guard_parser.terminated_expression(0, parser.lex.TERM_FUN_GUARD)
         pattern = node_2(lex.NT_WHEN, guard.token, pattern, guard)
 
     return pattern
 
 
 def prefix_match(parser, op, node):
-    init_node_layout(parser, node, LEVELS_MATCH)
-    init_code_layout(parser, parser.node, TERM_MATCH_EXPR)
+    init_node_layout(parser, node, parser.lex.LEVELS_MATCH)
+    init_code_layout(parser, parser.node, parser.lex.TERM_MATCH_EXPR)
 
     exp = expression_with_optional_end_of_expression(
-        parser, 0, TERM_MATCH_PATTERN)
+        parser, 0, parser.lex.TERM_MATCH_PATTERN)
     # skip_indent(parser)
     parser.assert_token_type(lex.TT_WITH)
     parser.advance()
@@ -668,15 +611,15 @@ def prefix_match(parser, op, node):
             pattern = _parse_pattern(parser)
 
             parser.advance_expected(lex.TT_ARROW)
-            init_code_layout(parser, parser.node, TERM_CASE)
-            body = parser.statements(TERM_CASE)
+            init_code_layout(parser, parser.node, parser.lex.TERM_CASE)
+            body = parser.statements(parser.lex.TERM_CASE)
 
             branches.append(list_node([pattern, body]))
     else:
         pattern = _parse_pattern(parser)
         parser.advance_expected(lex.TT_ARROW)
         init_code_layout(parser, parser.node)
-        body = parser.statements(TERM_BLOCK)
+        body = parser.statements(parser.lex.TERM_BLOCK)
         branches.append(list_node([pattern, body]))
 
     advance_end(parser)
@@ -719,7 +662,7 @@ def _parse_function_signature(parser):
         (arg1 arg2 of T ...arg3)
     """
     pattern = juxtaposition_as_tuple(
-        parser.fun_signature_parser, TERM_FUN_SIGNATURE)
+        parser.fun_signature_parser, parser.lex.TERM_FUN_SIGNATURE)
     skip_indent(parser)
     args_type = pattern.node_type
     if args_type != lex.NT_TUPLE:
@@ -782,7 +725,7 @@ def _parse_named_function(parser, node):
     init_node_layout(parser, node)
     name = grab_name_or_operator(parser.name_parser)
     func = _parse_function(
-        parser, TERM_FUN_PATTERN, TERM_FUN_GUARD, TERM_CASE, TERM_BLOCK)
+        parser, parser.lex.TERM_FUN_PATTERN, parser.lex.TERM_FUN_GUARD, parser.lex.TERM_CASE, parser.lex.TERM_BLOCK)
     advance_end(parser)
     return name, func
 
@@ -800,7 +743,7 @@ def prefix_module_fun(parser, op, node):
 def prefix_lambda(parser, op, node):
     init_node_layout(parser, node)
     func = _parse_function(
-        parser, TERM_FUN_PATTERN, TERM_FUN_GUARD, TERM_CASE, TERM_BLOCK)
+        parser, parser.lex.TERM_FUN_PATTERN, parser.lex.TERM_FUN_GUARD, parser.lex.TERM_CASE, parser.lex.TERM_BLOCK)
     advance_end(parser)
     return node_2(lex.NT_FUN, node.token, empty_node(), func)
 
@@ -816,7 +759,7 @@ def ensure_tuple(t):
 
 def stmt_from(parser, op, node):
     imported = parser.import_parser.terminated_expression(
-        0, TERM_FROM_IMPORTED)
+        0, parser.lex.TERM_FROM_IMPORTED)
     parser.assert_token_types([lex.TT_IMPORT, lex.TT_HIDE])
     if parser.token_type == lex.TT_IMPORT:
         hiding = False
@@ -946,7 +889,7 @@ def _parse_union(parser, node, union_name):
     while parser.token_type == lex.TT_CASE:
         parser.advance()
         _typename = grab_name(parser.type_parser)
-        _type = _parse_type(parser, node, _typename, TERM_UNION_TYPE_ARGS)
+        _type = _parse_type(parser, node, _typename, parser.lex.TERM_UNION_TYPE_ARGS)
         types.append(_type)
 
     if len(types) < 2:
@@ -978,7 +921,7 @@ def stmt_type(parser, op, node):
     if parser.token_type == lex.TT_CASE:
         return _parse_union(parser, node, typename)
 
-    _t = _parse_type(parser, node, typename, TERM_TYPE_ARGS)
+    _t = _parse_type(parser, node, typename, parser.lex.TERM_TYPE_ARGS)
     advance_end(parser)
     return _t
 
@@ -1018,7 +961,7 @@ def _parser_trait_header(parser, node):
     if parser.token_type == lex.TT_OF:
         parser.advance()
         constraints = _parse_tuple_of_names(
-            parser.name_parser, TERM_METHOD_CONSTRAINTS)
+            parser.name_parser, parser.lex.TERM_METHOD_CONSTRAINTS)
     else:
         constraints = create_empty_list_node(node)
     skip_indent(parser)
@@ -1036,14 +979,14 @@ def stmt_trait(parser, op, node):
         parser.assert_token_type(lex.TT_NAME)
 
         sig = juxtaposition_as_list(
-            parser.method_signature_parser, TERM_METHOD_SIG)
+            parser.method_signature_parser, parser.lex.TERM_METHOD_SIG)
         parser.assert_node_type(sig, lex.NT_LIST)
         if parser.token_type == lex.TT_ARROW:
             parser.advance()
-            init_code_layout(parser, parser.node, TERM_METHOD_DEFAULT_BODY)
+            init_code_layout(parser, parser.node, parser.lex.TERM_METHOD_DEFAULT_BODY)
             args = symbol_list_to_arg_tuple(parser, node, sig)
             body = parser.expression_parser.statements(
-                TERM_METHOD_DEFAULT_BODY)
+                parser.lex.TERM_METHOD_DEFAULT_BODY)
             default_impl = create_function_variants(args, body)
         else:
             default_impl = empty_node()
@@ -1057,10 +1000,10 @@ def stmt_trait(parser, op, node):
 
 def _parser_implement_header(parser):
     trait_name = parser.name_parser.assert_any_of_terminated_expressions(
-        0, NODE_IMPLEMENT_NAME, TERM_BEFORE_FOR)
+        0, parser.lex.NODE_IMPLEMENT_NAME, parser.lex.TERM_BEFORE_FOR)
     parser.advance_expected(lex.TT_FOR)
     type_name = parser.name_parser.assert_any_of_terminated_expressions(
-        0, NODE_IMPLEMENT_NAME, TERM_IMPL_HEADER)
+        0, parser.lex.NODE_IMPLEMENT_NAME, parser.lex.TERM_IMPL_HEADER)
     skip_indent(parser)
     return trait_name, type_name
 
@@ -1086,8 +1029,8 @@ def stmt_implement(parser, op, node):
             method_name, method_name.token_value)
 
         funcs = _parse_function(parser.expression_parser,
-                                TERM_FUN_PATTERN, TERM_FUN_GUARD,
-                                TERM_IMPL_BODY, TERM_IMPL_BODY)
+                                parser.lex.TERM_FUN_PATTERN, parser.lex.TERM_FUN_GUARD,
+                                parser.lex.TERM_IMPL_BODY, parser.lex.TERM_IMPL_BODY)
         methods.append(list_node([method_name, funcs]))
 
     advance_end(parser)
@@ -1098,7 +1041,7 @@ def stmt_implement(parser, op, node):
 def stmt_extend(parser, op, node):
     init_node_layout(parser, node)
     type_name = parser.name_parser.assert_any_of_terminated_expressions(
-        0, NODE_IMPLEMENT_NAME, TERM_BEFORE_WITH)
+        0, parser.lex.NODE_IMPLEMENT_NAME, parser.lex.TERM_BEFORE_WITH)
     skip_indent(parser)
     traits = []
 
@@ -1106,12 +1049,12 @@ def stmt_extend(parser, op, node):
         init_offside_layout(parser, parser.node)
         parser.advance_expected(lex.TT_WITH)
         trait_name = parser.name_parser.assert_any_of_terminated_expressions(
-            0, NODE_IMPLEMENT_NAME, TERM_EXTEND_TRAIT)
+            0, parser.lex.NODE_IMPLEMENT_NAME, parser.lex.TERM_EXTEND_TRAIT)
         skip_indent(parser)
         if parser.token_type == lex.TT_ASSIGN:
             parser.advance()
             implementation = parser.terminated_expression(
-                0, TERM_EXTEND_MIXIN_TRAIT)
+                0, parser.lex.TERM_EXTEND_MIXIN_TRAIT)
         elif parser.token_type == lex.TT_DEF:
             init_offside_layout(parser, parser.node)
             methods = []
@@ -1123,8 +1066,8 @@ def stmt_extend(parser, op, node):
                     method_name, method_name.token_value)
 
                 funcs = _parse_function(parser.expression_parser,
-                                        TERM_FUN_PATTERN, TERM_FUN_GUARD,
-                                        TERM_EXTEND_BODY, TERM_EXTEND_BODY)
+                                        parser.lex.TERM_FUN_PATTERN, parser.lex.TERM_FUN_GUARD,
+                                        parser.lex.TERM_EXTEND_BODY, parser.lex.TERM_EXTEND_BODY)
                 methods.append(list_node([method_name, funcs]))
             implementation = list_node(methods)
         else:

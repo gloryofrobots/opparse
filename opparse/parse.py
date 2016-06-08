@@ -87,29 +87,6 @@ def infixr_led_assign(parser, op, node, left):
 # LAYOUT
 
 
-def init_code_layout(parser, node, terminators=None):
-    skip_indent(parser)
-    parser.ts.add_code_layout(node, terminators)
-
-
-def init_offside_layout(parser, node):
-    parser.ts.add_offside_layout(node)
-
-
-def init_node_layout(parser, node, level_tokens=None):
-    parser.ts.add_node_layout(node, level_tokens)
-
-
-def init_free_layout(parser, node, terminators):
-    skip_indent(parser)
-    parser.ts.add_free_code_layout(node, terminators)
-
-
-def skip_indent(parser):
-    if parser.token_type == parser.lex.TT_INDENT:
-        parser.advance()
-
-
 class Operator(object):
 
     def __init__(self):
