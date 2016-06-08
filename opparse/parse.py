@@ -51,9 +51,8 @@ def parse_error(parser, message, token):
 ##########################################################################
 
 
-def prefix_itself(parser, op, node):
-    return nodes.node_0(parser.lex.get_nt_for_node(node),
-                        node.token)
+def prefix_itself(parser, op, token):
+    return nodes.node_0(parser.lex.get_nt_for_token(token), token)
 
 
 def prefix_empty(parser, op, node):
@@ -234,8 +233,6 @@ class Parser(object):
         self.lex = lexicon
         self.operators = operators
 
-        self.interrupted = False
-
         self.subparsers = {}
         self.state = None
 
@@ -272,10 +269,6 @@ class Parser(object):
     @property
     def token_type(self):
         return self.ts.token.type
-
-    # @property
-    # def is_newline_occurred(self):
-    #     return self.ts.is_newline_occurred
 
     @property
     def token(self):
@@ -340,14 +333,14 @@ class Parser(object):
             return parse_error(self, "Invalid operator", token)
         return op
 
-    def node_nud(self, token):
+    def token_nud(self, token):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         if not handler.nud:
             parse_error(self, "Unknown token nud", token)
         return handler.nud(self, handler, token)
 
-    def node_std(self, token):
+    def token_std(self, token):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         if not handler.std:
@@ -355,27 +348,27 @@ class Parser(object):
 
         return handler.std(self, handler, token)
 
-    def node_has_nud(self, token):
+    def token_has_nud(self, token):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         return handler.nud is not None
 
-    def node_has_layout(self, token):
+    def token_has_layout(self, token):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         return handler.layout is not None
 
-    def node_has_led(self, token):
+    def token_has_led(self, token):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         return handler.led is not None
 
-    def node_has_std(self, token):
+    def token_has_std(self, token):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         return handler.std is not None
 
-    def node_lbp(self, token):
+    def token_lbp(self, token):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         lbp = handler.lbp
@@ -384,7 +377,7 @@ class Parser(object):
 
         return lbp
 
-    def node_led(self, token, left):
+    def token_led(self, token, left):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         if not handler.led:
@@ -392,7 +385,7 @@ class Parser(object):
 
         return handler.led(self, handler, token, left)
 
-    def node_layout(self, token):
+    def token_layout(self, token):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         if not handler.layout:
@@ -476,28 +469,25 @@ class Parser(object):
 
     def base_expression(self, _rbp, terminators):
         previous = self.token
-        if self.node_has_layout(previous):
-            self.node_layout(previous)
+        if self.token_has_layout(previous):
+            self.token_layout(previous)
 
         self.advance()
 
-        left = self.node_nud(previous)
+        left = self.token_nud(previous)
         while True:
-            if self.interrupted:
-                break
-
             if terminators is not None:
                 if self.token_type in terminators:
                     return left
 
-            _lbp = self.node_lbp(self.token)
+            _lbp = self.token_lbp(self.token)
 
             if _rbp >= _lbp:
                 break
             previous = self.token
             self.advance()
 
-            left = self.node_led(previous, left)
+            left = self.token_led(previous, left)
 
         assert left is not None
         return left
@@ -545,9 +535,9 @@ class Parser(object):
 
     def statement(self):
         token = self.token
-        if self.node_has_std(token):
+        if self.token_has_std(token):
             self.advance()
-            value = self.node_std(token)
+            value = self.token_std(token)
             return value
 
         value = self.expression(0)
@@ -590,7 +580,7 @@ class JuxtapositionParser(Parser):
         self.break_on_juxtaposition = \
             settings.get("break_on_juxtaposition", False)
 
-    def node_lbp(self, node):
+    def token_lbp(self, node):
         handler = self.token_operator(node)
         lbp = handler.lbp
         # if lbp < 0:
@@ -611,18 +601,18 @@ class JuxtapositionParser(Parser):
 
     def base_expression(self, _rbp, terminators):
         previous = self.token
-        if self.node_has_layout(previous):
-            self.node_layout(previous)
+        if self.token_has_layout(previous):
+            self.token_layout(previous)
 
         self.advance()
 
-        left = self.node_nud(previous)
+        left = self.token_nud(previous)
         while True:
             if terminators is not None:
                 if self.token_type in terminators:
                     return left
 
-            _lbp = self.node_lbp(self.token)
+            _lbp = self.token_lbp(self.token)
 
             # juxtaposition support
             if _lbp < 0:
@@ -645,7 +635,7 @@ class JuxtapositionParser(Parser):
                 previous = self.token
                 self.advance()
 
-                left = self.node_led(previous, left)
+                left = self.token_led(previous, left)
 
         assert left is not None
         return left
