@@ -25,77 +25,64 @@ def create_function_variants(args, body):
     return list_node([list_node([args, body])])
 
 
-def create_fun_node(basenode, name, funcs):
+def create_fun_node(token, name, funcs):
     return node_2(lex.NT_FUN,
-                  create_token_from_node(lex.TT_STR, "fun", basenode),
+                  token,
                   name, funcs)
 
 
-def create_name_node_s(basenode, name):
-    return node_0(lex.NT_NAME,
-                  create_token_from_node(lex.TT_NAME, name, basenode))
+def create_name_node_s(token, name):
+    return node_0(lex.NT_NAME, token)
 
 
-def create_name_from_operator(basenode, op):
-    return create_name_node_s(basenode, op.token_value)
+def create_name_from_operator(token, op):
+    return create_name_node_s(token, op.token_value)
 
 
-def create_name_node(basenode, name):
-    return create_name_node_s(basenode, name)
+def create_name_node(token, name):
+    return create_name_node_s(token, name)
 
 
-def create_symbol_node(basenode, name):
-    return node_1(lex.NT_SYMBOL,
-                  create_token_from_node(lex.TT_SHARP, "#", basenode), name)
+def create_symbol_node(token, name):
+    return node_1(lex.NT_SYMBOL, token, name)
 
 
-def create_symbol_node_s(basenode, name):
-    return node_1(lex.NT_SYMBOL,
-                  create_token_from_node(lex.TT_SHARP, "#", basenode),
-                  create_name_node_s(basenode, name))
+def create_symbol_node_s(token, name):
+    return node_1(lex.NT_SYMBOL, token, create_name_node_s(token, name))
 
 
-def create_tuple_node(basenode, elements):
+def create_tuple_node(token, elements):
     return node_1(lex.NT_TUPLE,
-                  create_token_from_node(lex.TT_LPAREN,
-                                         "(", basenode), list_node(elements))
+                  token,
+                  list_node(elements))
 
 
-def create_tuple_node_from_list(basenode, elements):
+def create_tuple_node_from_list(token, elements):
     assert is_list_node(elements)
-    return node_1(lex.NT_TUPLE,
-                  create_token_from_node(lex.TT_LPAREN,
-                                         "(", basenode), elements)
+    return node_1(lex.NT_TUPLE, token, elements)
 
 
-def create_list_node(basenode, items):
-    return node_1(lex.NT_LIST,
-                  create_token_from_node(lex.TT_LSQUARE,
-                                         "[", basenode), list_node(items))
+def create_list_node(token, items):
+    return node_1(lex.NT_LIST, token, list_node(items))
 
 
-def create_list_node_from_list(basenode, items):
+def create_list_node_from_list(token, items):
     assert is_list_node(items)
-    return node_1(lex.NT_LIST,
-                  create_token_from_node(lex.TT_LSQUARE, "[", basenode), items)
+    return node_1(lex.NT_LIST, token , items)
 
 
-def create_empty_list_node(basenode):
-    return node_1(lex.NT_LIST,
-                  create_token_from_node(lex.TT_LSQUARE, "[", basenode),
-                  list_node([]))
+def create_empty_list_node(token):
+    return node_1(lex.NT_LIST, token, list_node([]))
 
 
-def create_call_node_2(basenode, func, exp1, exp2):
+def create_call_node_2(token, func, exp1, exp2):
+    return node_2(lex.NT_CALL, token, func, list_node([exp1, exp2]))
+
+
+def create_call_node(token, funcname, exps):
     return node_2(lex.NT_CALL,
-                  create_token_from_node(lex.TT_LPAREN, "(", basenode),
-                  func, list_node([exp1, exp2]))
-
-
-def create_call_node(basenode, funcname, exps):
-    return node_2(lex.NT_CALL,
-                  create_token_from_node(lex.TT_LPAREN, "(", basenode),
-                  create_name_node_s(basenode, funcname),
+                  token,
+                  create_name_node_s(token, funcname),
                   list_node(exps))
 
 
@@ -204,7 +191,7 @@ def infix_dot(parser, op, node, left):
 
     symbol = grab_name(parser)
     return node_2(lex.NT_LOOKUP,
-                  node, left, create_symbol_node(symbol, symbol))
+                  node, left, create_symbol_node(node, symbol))
 
 
 def infix_lcurly(parser, op, node, left):
@@ -681,7 +668,7 @@ def _parse_function_variants(parser, signature,
 
     # bind to different name for not confusing reading code
     # it serves as basenode for node factory functions
-    node = signature
+    token = signature.token
     parser.assert_token_type(lex.TT_CASE)
 
     init_offside_layout(parser, parser.token)
@@ -708,7 +695,7 @@ def _parse_function_variants(parser, signature,
         body = parser.statements(term_case_body)
         funcs.append(list_node([args, body]))
 
-    func = create_fun_node(node, empty_node(), list_node(funcs))
+    func = create_fun_node(token, empty_node(), list_node(funcs))
     return func
 
 
@@ -846,7 +833,7 @@ def symbol_or_name_value(parser, name):
 def prefix_name_as_symbol(parser, op, node):
     name = node_0(parser.lex.get_nt_for_token(node),
                         node)
-    return create_symbol_node(name, name)
+    return create_symbol_node(node, name)
 
 
 def symbol_list_to_arg_tuple(parser, node, symbols):
@@ -879,7 +866,7 @@ def _parse_tuple_of_names(parser, term):
             exp.first(), [lex.NT_NAME, lex.NT_LOOKUP])
         return exp
     elif exp.node_type != lex.NT_TUPLE:
-        return create_tuple_node(exp, [exp])
+        return create_tuple_node(exp.token, [exp])
 
 
 def _parse_union(parser, node, union_name):
@@ -942,9 +929,10 @@ def grab_name(parser):
 def grab_name_or_operator(parser):
     parser.assert_token_types(
         [lex.TT_NAME, lex.TT_OPERATOR, lex.TT_DOUBLE_COLON])
+    token = parser.token
     name = _init_default_current_0(parser)
     if parser.token_type == lex.TT_OPERATOR:
-        name = create_name_from_operator(name, name)
+        name = create_name_from_operator(token, name)
     elif parser.token_type == lex.TT_DOUBLE_COLON:
         name = create_name_node_s(name, "cons")
 
@@ -1026,7 +1014,7 @@ def stmt_implement(parser, op, node):
         # method_name = grab_name_or_operator(parser.name_parser)
         method_name = parser.name_parser.assert_expression(0, lex.NT_NAME)
         method_name = create_symbol_node_s(
-            method_name, method_name.token_value)
+            method_name.token, method_name.token_value)
 
         funcs = _parse_function(parser.expression_parser,
                                 parser.lex.TERM_FUN_PATTERN, parser.lex.TERM_FUN_GUARD,
@@ -1063,7 +1051,7 @@ def stmt_extend(parser, op, node):
                 parser.advance_expected(lex.TT_DEF)
                 method_name = parser.name_parser.assert_expression(0, lex.NT_NAME)
                 method_name = create_symbol_node_s(
-                    method_name, method_name.token_value)
+                    method_name.token, method_name.token_value)
 
                 funcs = _parse_function(parser.expression_parser,
                                         parser.lex.TERM_FUN_PATTERN, parser.lex.TERM_FUN_GUARD,

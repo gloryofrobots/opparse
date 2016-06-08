@@ -191,7 +191,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -204,12 +204,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -219,7 +219,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -241,12 +241,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -256,7 +256,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -297,7 +297,7 @@
                     [
                       {
                         "_ntype": "NT_CALL",
-                        "_value": "(",
+                        "_value": "==",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -339,7 +339,7 @@
       },
       {
         "_ntype": "NT_TUPLE",
-        "_value": "(",
+        "_value": "Eq",
         "children": [
           [
             {
@@ -357,12 +357,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -372,7 +372,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -394,12 +394,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -409,7 +409,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -441,7 +441,7 @@
               [
                 {
                   "_ntype": "NT_CALL",
-                  "_value": "(",
+                  "_value": "==",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -486,12 +486,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -501,7 +501,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -533,7 +533,7 @@
               [
                 {
                   "_ntype": "NT_CALL",
-                  "_value": "(",
+                  "_value": "!=",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -578,12 +578,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -593,7 +593,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -625,7 +625,7 @@
               [
                 {
                   "_ntype": "NT_CALL",
-                  "_value": "(",
+                  "_value": "==",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -670,12 +670,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -685,7 +685,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -723,7 +723,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "==",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -751,7 +751,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "<=",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -801,12 +801,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -816,7 +816,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -854,7 +854,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "<=",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -904,12 +904,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -919,7 +919,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -957,7 +957,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "<=",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -1017,7 +1017,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1030,12 +1030,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1045,7 +1045,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1067,12 +1067,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1082,7 +1082,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1104,12 +1104,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1119,7 +1119,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1141,12 +1141,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1156,7 +1156,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1178,12 +1178,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1193,7 +1193,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "y",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1215,12 +1215,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "x",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "x",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1252,7 +1252,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1265,12 +1265,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1302,7 +1302,7 @@
       },
       {
         "_ntype": "NT_TUPLE",
-        "_value": "(",
+        "_value": "Str",
         "children": [
           [
             {
@@ -1320,12 +1320,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1388,7 +1388,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1401,12 +1401,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1428,12 +1428,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1461,7 +1461,7 @@
               [
                 {
                   "_ntype": "NT_CALL",
-                  "_value": "(",
+                  "_value": "==",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1512,7 +1512,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1525,12 +1525,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "key",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "key",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1540,7 +1540,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "value",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1550,7 +1550,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1572,12 +1572,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "key",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "key",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1587,7 +1587,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1609,12 +1609,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "obj",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "obj",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1624,7 +1624,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1646,12 +1646,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "key",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "key",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1661,7 +1661,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1693,7 +1693,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1706,12 +1706,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1733,12 +1733,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1770,7 +1770,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1783,12 +1783,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1820,7 +1820,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1833,12 +1833,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "value",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "value",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1848,7 +1848,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1880,7 +1880,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1893,12 +1893,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "value",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "value",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1908,7 +1908,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1940,7 +1940,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -1953,12 +1953,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1968,7 +1968,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "other",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -1990,12 +1990,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "value",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "value",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2005,7 +2005,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2037,7 +2037,7 @@
       },
       {
         "_ntype": "NT_TUPLE",
-        "_value": "(",
+        "_value": "Collection",
         "children": [
           [
             {
@@ -2055,12 +2055,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2082,12 +2082,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2119,7 +2119,7 @@
       },
       {
         "_ntype": "NT_TUPLE",
-        "_value": "(",
+        "_value": "Sized",
         "children": [
           [
             {
@@ -2137,12 +2137,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "obj",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "obj",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2152,7 +2152,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2184,7 +2184,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -2197,12 +2197,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2234,7 +2234,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -2247,12 +2247,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "first",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "first",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2262,7 +2262,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "last",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2272,7 +2272,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2294,12 +2294,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "count",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "count",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2309,7 +2309,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2331,12 +2331,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "count",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "count",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2346,7 +2346,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2378,7 +2378,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -2391,12 +2391,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2418,12 +2418,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2455,7 +2455,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -2468,12 +2468,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2483,7 +2483,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "last",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2505,12 +2505,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2520,7 +2520,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "last",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2530,7 +2530,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "step",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2552,12 +2552,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2579,12 +2579,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2594,7 +2594,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "step",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2626,7 +2626,7 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "trait",
         "children": [
           []
         ]
@@ -2639,12 +2639,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2676,7 +2676,7 @@
       },
       {
         "_ntype": "NT_TUPLE",
-        "_value": "(",
+        "_value": "Ref",
         "children": [
           [
             {
@@ -2694,12 +2694,12 @@
           },
           {
             "_ntype": "NT_LIST",
-            "_value": "[",
+            "_value": "self",
             "children": [
               [
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "self",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2709,7 +2709,7 @@
                 },
                 {
                   "_ntype": "NT_SYMBOL",
-                  "_value": "#",
+                  "_value": "value",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -2746,12 +2746,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "val",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "val",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -2806,7 +2806,7 @@
         [
           {
             "_ntype": "NT_SYMBOL",
-            "_value": "#",
+            "_value": "f",
             "children": [
               {
                 "_ntype": "NT_NAME",
@@ -2818,7 +2818,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "a",
                 "children": [
                   [
                     {
@@ -2858,7 +2858,7 @@
         [
           {
             "_ntype": "NT_SYMBOL",
-            "_value": "#",
+            "_value": "f",
             "children": [
               {
                 "_ntype": "NT_NAME",
@@ -2870,7 +2870,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "a",
                 "children": [
                   [
                     {
@@ -2936,7 +2936,7 @@
         [
           {
             "_ntype": "NT_SYMBOL",
-            "_value": "#",
+            "_value": "test_method_1",
             "children": [
               {
                 "_ntype": "NT_NAME",
@@ -2948,7 +2948,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "a1",
                 "children": [
                   [
                     {
@@ -3001,7 +3001,7 @@
                         },
                         {
                           "_ntype": "NT_SYMBOL",
-                          "_value": "#",
+                          "_value": ".",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -3022,7 +3022,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -3042,7 +3042,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -3062,7 +3062,7 @@
         [
           {
             "_ntype": "NT_SYMBOL",
-            "_value": "#",
+            "_value": "test_method_2",
             "children": [
               {
                 "_ntype": "NT_NAME",
@@ -3074,7 +3074,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "a1",
                 "children": [
                   [
                     {
@@ -3107,7 +3107,7 @@
                         },
                         {
                           "_ntype": "NT_SYMBOL",
-                          "_value": "#",
+                          "_value": ".",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -3128,7 +3128,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -3148,7 +3148,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -3168,7 +3168,7 @@
         [
           {
             "_ntype": "NT_SYMBOL",
-            "_value": "#",
+            "_value": "test_method_3",
             "children": [
               {
                 "_ntype": "NT_NAME",
@@ -3180,7 +3180,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "self",
                 "children": [
                   [
                     {
@@ -3213,7 +3213,7 @@
                         },
                         {
                           "_ntype": "NT_SYMBOL",
-                          "_value": "#",
+                          "_value": ".",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -3234,7 +3234,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -3254,7 +3254,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -3274,7 +3274,7 @@
         [
           {
             "_ntype": "NT_SYMBOL",
-            "_value": "#",
+            "_value": "test_method_4",
             "children": [
               {
                 "_ntype": "NT_NAME",
@@ -3284,7 +3284,7 @@
           },
           {
             "_ntype": "NT_FUN",
-            "_value": "fun",
+            "_value": "self",
             "children": [
               {
                 "empty": true
@@ -3293,7 +3293,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "x",
                     "children": [
                       [
                         {
@@ -3314,7 +3314,7 @@
                         },
                         {
                           "_ntype": "NT_SYMBOL",
-                          "_value": "#",
+                          "_value": ".",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -3329,7 +3329,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "y",
                     "children": [
                       [
                         {
@@ -3353,7 +3353,7 @@
         [
           {
             "_ntype": "NT_SYMBOL",
-            "_value": "#",
+            "_value": "test_method_3",
             "children": [
               {
                 "_ntype": "NT_NAME",
@@ -3365,7 +3365,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "self",
                 "children": [
                   [
                     {
@@ -3398,7 +3398,7 @@
                         },
                         {
                           "_ntype": "NT_SYMBOL",
-                          "_value": "#",
+                          "_value": ".",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -3419,7 +3419,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -3439,7 +3439,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -3531,7 +3531,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "first",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -3543,7 +3543,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "self",
                     "children": [
                       [
                         {
@@ -3568,7 +3568,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -3593,7 +3593,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "rest",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -3605,7 +3605,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "self",
                     "children": [
                       [
                         {
@@ -3630,7 +3630,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -3682,7 +3682,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "first",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -3694,7 +3694,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "self",
                     "children": [
                       [
                         {
@@ -3755,7 +3755,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -3780,7 +3780,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "rest",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -3792,7 +3792,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "self",
                     "children": [
                       [
                         {
@@ -3817,7 +3817,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -3850,7 +3850,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "cons",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -3862,7 +3862,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "value",
                     "children": [
                       [
                         {
@@ -3891,7 +3891,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -3928,7 +3928,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "to_seq",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -3940,7 +3940,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "self",
                     "children": [
                       [
                         {
@@ -4002,7 +4002,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "len",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4014,7 +4014,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "self",
                     "children": [
                       [
                         {
@@ -4035,7 +4035,7 @@
                         },
                         {
                           "_ntype": "NT_SYMBOL",
-                          "_value": "#",
+                          "_value": ".",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -4052,7 +4052,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "is_empty",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4064,7 +4064,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "self",
                     "children": [
                       [
                         {
@@ -4089,7 +4089,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -4122,7 +4122,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "empty",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4134,7 +4134,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "self",
                     "children": [
                       [
                         {
@@ -4167,7 +4167,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "put",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4179,7 +4179,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "key",
                     "children": [
                       [
                         {
@@ -4212,7 +4212,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -4245,7 +4245,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "at",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4257,7 +4257,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "key",
                     "children": [
                       [
                         {
@@ -4286,7 +4286,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -4315,7 +4315,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "del",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4327,7 +4327,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "key",
                     "children": [
                       [
                         {
@@ -4356,7 +4356,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -4385,7 +4385,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "elem",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4397,7 +4397,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "key",
                     "children": [
                       [
                         {
@@ -4426,7 +4426,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -4463,7 +4463,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "slice",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4475,7 +4475,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "first",
                     "children": [
                       [
                         {
@@ -4508,7 +4508,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -4541,7 +4541,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "drop",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4553,7 +4553,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "count",
                     "children": [
                       [
                         {
@@ -4582,7 +4582,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -4611,7 +4611,7 @@
             [
               {
                 "_ntype": "NT_SYMBOL",
-                "_value": "#",
+                "_value": "take",
                 "children": [
                   {
                     "_ntype": "NT_NAME",
@@ -4623,7 +4623,7 @@
                 [
                   {
                     "_ntype": "NT_TUPLE",
-                    "_value": "(",
+                    "_value": "count",
                     "children": [
                       [
                         {
@@ -4652,7 +4652,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -4715,12 +4715,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "v",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "v",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -4768,12 +4768,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "v",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "v",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -4812,12 +4812,12 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "p1",
         "children": [
           [
             {
               "_ntype": "NT_SYMBOL",
-              "_value": "#",
+              "_value": "p1",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -4827,7 +4827,7 @@
             },
             {
               "_ntype": "NT_SYMBOL",
-              "_value": "#",
+              "_value": "p2",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -4850,12 +4850,12 @@
       },
       {
         "_ntype": "NT_LIST",
-        "_value": "[",
+        "_value": "x",
         "children": [
           [
             {
               "_ntype": "NT_SYMBOL",
-              "_value": "#",
+              "_value": "x",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -4865,7 +4865,7 @@
             },
             {
               "_ntype": "NT_SYMBOL",
-              "_value": "#",
+              "_value": "y",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -4875,7 +4875,7 @@
             },
             {
               "_ntype": "NT_SYMBOL",
-              "_value": "#",
+              "_value": "z",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -4885,7 +4885,7 @@
             },
             {
               "_ntype": "NT_SYMBOL",
-              "_value": "#",
+              "_value": "c",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -4917,12 +4917,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "x",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "x",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -4945,12 +4945,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "y",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "y",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -4973,12 +4973,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "x",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "x",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -4988,7 +4988,7 @@
                   },
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "y",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5011,12 +5011,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "width",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "width",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5026,7 +5026,7 @@
                   },
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "height",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5049,12 +5049,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "left",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "left",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5064,7 +5064,7 @@
                   },
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "top",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5074,7 +5074,7 @@
                   },
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "right",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5084,7 +5084,7 @@
                   },
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "bottom",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5107,12 +5107,12 @@
             },
             {
               "_ntype": "NT_LIST",
-              "_value": "[",
+              "_value": "point1",
               "children": [
                 [
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "point1",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5122,7 +5122,7 @@
                   },
                   {
                     "_ntype": "NT_SYMBOL",
-                    "_value": "#",
+                    "_value": "point2",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5163,7 +5163,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "x",
             "children": [
               [
                 {
@@ -5227,7 +5227,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "x",
             "children": [
               [
                 {
@@ -5259,7 +5259,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "x",
             "children": [
               [
                 {
@@ -5307,7 +5307,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "f",
             "children": [
               [
                 {
@@ -5355,7 +5355,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "f",
             "children": [
               [
                 {
@@ -5419,7 +5419,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "f",
             "children": [
               [
                 {
@@ -5483,7 +5483,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "f",
             "children": [
               [
                 {
@@ -5496,7 +5496,7 @@
           [
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": ">>",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -5531,7 +5531,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "f",
             "children": [
               [
                 {
@@ -5587,7 +5587,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "x",
             "children": [
               [
                 {
@@ -5600,7 +5600,7 @@
           [
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "==",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -5651,7 +5651,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "x",
             "children": [
               [
                 {
@@ -5707,7 +5707,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "x",
             "children": [
               [
                 {
@@ -5720,7 +5720,7 @@
           [
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "+",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -5755,7 +5755,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "x",
             "children": [
               [
                 {
@@ -5768,7 +5768,7 @@
           [
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "-",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -5907,7 +5907,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "coll",
             "children": [
               [
                 {
@@ -5929,7 +5929,7 @@
                 [
                   {
                     "_ntype": "NT_CALL",
-                    "_value": "(",
+                    "_value": "-",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -5981,7 +5981,7 @@
       },
       {
         "_ntype": "NT_FUN",
-        "_value": "fun",
+        "_value": "func",
         "children": [
           {
             "empty": true
@@ -5990,7 +5990,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "f",
                 "children": [
                   [
                     {
@@ -6021,7 +6021,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "f",
                 "children": [
                   [
                     {
@@ -6107,7 +6107,7 @@
       },
       {
         "_ntype": "NT_FUN",
-        "_value": "fun",
+        "_value": "func",
         "children": [
           {
             "empty": true
@@ -6116,7 +6116,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "f",
                 "children": [
                   [
                     {
@@ -6147,7 +6147,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "f",
                 "children": [
                   [
                     {
@@ -6233,7 +6233,7 @@
       },
       {
         "_ntype": "NT_FUN",
-        "_value": "fun",
+        "_value": "f",
         "children": [
           {
             "empty": true
@@ -6242,7 +6242,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "f",
                 "children": [
                   [
                     {
@@ -6296,7 +6296,7 @@
             [
               {
                 "_ntype": "NT_TUPLE",
-                "_value": "(",
+                "_value": "f",
                 "children": [
                   [
                     {
@@ -6355,7 +6355,7 @@
         [
           {
             "_ntype": "NT_TUPLE",
-            "_value": "(",
+            "_value": "f",
             "children": [
               [
                 {
@@ -6380,7 +6380,7 @@
                 },
                 {
                   "_ntype": "NT_FUN",
-                  "_value": "fun",
+                  "_value": "s1",
                   "children": [
                     {
                       "empty": true
@@ -6389,7 +6389,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "[",
                           "children": [
                             [
                               {
@@ -6416,7 +6416,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "xs",
                           "children": [
                             [
                               {
@@ -6443,7 +6443,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "x",
                           "children": [
                             [
                               {
@@ -6614,7 +6614,7 @@
                 },
                 {
                   "_ntype": "NT_FUN",
-                  "_value": "fun",
+                  "_value": "s",
                   "children": [
                     {
                       "empty": true
@@ -6623,7 +6623,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "[",
                           "children": [
                             [
                               {
@@ -6649,7 +6649,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "[",
                           "children": [
                             [
                               {
@@ -6677,7 +6677,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "xs",
                           "children": [
                             [
                               {
@@ -6861,7 +6861,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "<",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -6882,11 +6882,11 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "-",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
-                                "_value": "negate"
+                                "_value": "-"
                               },
                               [
                                 {
@@ -7014,7 +7014,7 @@
                 },
                 {
                   "_ntype": "NT_FUN",
-                  "_value": "fun",
+                  "_value": "N",
                   "children": [
                     {
                       "empty": true
@@ -7023,11 +7023,11 @@
                       [
                         {
                           "_ntype": "NT_WHEN",
-                          "_value": "(",
+                          "_value": ">=",
                           "children": [
                             {
                               "_ntype": "NT_TUPLE",
-                              "_value": "(",
+                              "_value": "N",
                               "children": [
                                 [
                                   {
@@ -7051,7 +7051,7 @@
                             },
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": ">=",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -7082,7 +7082,7 @@
                               },
                               {
                                 "_ntype": "NT_CALL",
-                                "_value": "(",
+                                "_value": "-",
                                 "children": [
                                   {
                                     "_ntype": "NT_NAME",
@@ -7112,7 +7112,7 @@
                               },
                               {
                                 "_ntype": "NT_CALL",
-                                "_value": "(",
+                                "_value": "-",
                                 "children": [
                                   {
                                     "_ntype": "NT_NAME",
@@ -7142,7 +7142,7 @@
                               },
                               {
                                 "_ntype": "NT_CALL",
-                                "_value": "(",
+                                "_value": "-",
                                 "children": [
                                   {
                                     "_ntype": "NT_NAME",
@@ -7173,7 +7173,7 @@
                               [
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "-",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -7193,7 +7193,7 @@
                                 },
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "-",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -7267,11 +7267,11 @@
                       [
                         {
                           "_ntype": "NT_WHEN",
-                          "_value": "(",
+                          "_value": ">=",
                           "children": [
                             {
                               "_ntype": "NT_TUPLE",
-                              "_value": "(",
+                              "_value": "N",
                               "children": [
                                 [
                                   {
@@ -7295,7 +7295,7 @@
                             },
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": ">=",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -7326,7 +7326,7 @@
                               },
                               {
                                 "_ntype": "NT_CALL",
-                                "_value": "(",
+                                "_value": "-",
                                 "children": [
                                   {
                                     "_ntype": "NT_NAME",
@@ -7357,7 +7357,7 @@
                               [
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "-",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -7377,7 +7377,7 @@
                                 },
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "-",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -7431,7 +7431,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "1",
                           "children": [
                             [
                               {
@@ -7473,7 +7473,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "0",
                           "children": [
                             [
                               {
@@ -7523,7 +7523,7 @@
                           "children": [
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": ">",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -7543,7 +7543,7 @@
                             },
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": "<=",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -7552,7 +7552,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": "-",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -7585,7 +7585,7 @@
                           "children": [
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": "<",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -7605,7 +7605,7 @@
                             },
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": ">=",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -7614,7 +7614,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": "-",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -7654,7 +7654,7 @@
                           },
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "-",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -7663,7 +7663,7 @@
                               [
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "/",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -7672,7 +7672,7 @@
                                     [
                                       {
                                         "_ntype": "NT_CALL",
-                                        "_value": "(",
+                                        "_value": "+",
                                         "children": [
                                           {
                                             "_ntype": "NT_NAME",
@@ -7681,7 +7681,7 @@
                                           [
                                             {
                                               "_ntype": "NT_CALL",
-                                              "_value": "(",
+                                              "_value": "-",
                                               "children": [
                                                 {
                                                   "_ntype": "NT_NAME",
@@ -7737,7 +7737,7 @@
                             },
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": "+",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -7746,7 +7746,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": "*",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -7759,7 +7759,7 @@
                                         },
                                         {
                                           "_ntype": "NT_CALL",
-                                          "_value": "(",
+                                          "_value": "-",
                                           "children": [
                                             {
                                               "_ntype": "NT_NAME",
@@ -7810,7 +7810,7 @@
                       "children": [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "==",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -7830,7 +7830,7 @@
                         },
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "==",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -8002,7 +8002,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8054,7 +8054,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8100,7 +8100,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8146,7 +8146,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8192,7 +8192,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8254,7 +8254,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8372,7 +8372,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8518,7 +8518,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8553,7 +8553,7 @@
                       },
                       {
                         "_ntype": "NT_SYMBOL",
-                        "_value": "#",
+                        "_value": ".",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -8584,7 +8584,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8605,7 +8605,7 @@
                       },
                       {
                         "_ntype": "NT_SYMBOL",
-                        "_value": "#",
+                        "_value": ".",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -8636,7 +8636,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8657,7 +8657,7 @@
                       },
                       {
                         "_ntype": "NT_SYMBOL",
-                        "_value": "#",
+                        "_value": ".",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -8782,7 +8782,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -8898,7 +8898,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9014,7 +9014,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9050,7 +9050,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9069,7 +9069,7 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": ">",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -9125,7 +9125,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9144,7 +9144,7 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "<",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -9200,7 +9200,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9219,7 +9219,7 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "==",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -9275,7 +9275,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9294,7 +9294,7 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "==",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -9315,7 +9315,7 @@
                           [
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": "*",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -9348,7 +9348,7 @@
                                   [
                                     {
                                       "_ntype": "NT_CALL",
-                                      "_value": "(",
+                                      "_value": "==",
                                       "children": [
                                         {
                                           "_ntype": "NT_NAME",
@@ -9369,7 +9369,7 @@
                                     [
                                       {
                                         "_ntype": "NT_CALL",
-                                        "_value": "(",
+                                        "_value": "*",
                                         "children": [
                                           {
                                             "_ntype": "NT_NAME",
@@ -9483,7 +9483,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9496,11 +9496,11 @@
                 [
                   {
                     "_ntype": "NT_CALL",
-                    "_value": "(",
+                    "_value": "`elem`",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
-                        "_value": "elem"
+                        "_value": "`elem`"
                       },
                       [
                         {
@@ -9537,7 +9537,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9550,11 +9550,11 @@
                 [
                   {
                     "_ntype": "NT_CALL",
-                    "_value": "(",
+                    "_value": "`elem`",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
-                        "_value": "elem"
+                        "_value": "`elem`"
                       },
                       [
                         {
@@ -9585,7 +9585,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9627,7 +9627,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9669,7 +9669,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9711,7 +9711,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -9755,7 +9755,7 @@
             },
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "<|",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -9776,7 +9776,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -9795,7 +9795,7 @@
                               [
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "==",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -9816,7 +9816,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": "+",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -9839,7 +9839,7 @@
                               [
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "==",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -9860,7 +9860,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": "+",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -9883,7 +9883,7 @@
                               [
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "==",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -9904,7 +9904,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": "+",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -9931,7 +9931,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": "+",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -9966,7 +9966,7 @@
             },
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "<|",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -9987,7 +9987,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -10268,7 +10268,7 @@
                                 },
                                 {
                                   "_ntype": "NT_SYMBOL",
-                                  "_value": "#",
+                                  "_value": ".",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -10286,7 +10286,7 @@
                                 },
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "+",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -10307,7 +10307,7 @@
                                               },
                                               {
                                                 "_ntype": "NT_SYMBOL",
-                                                "_value": "#",
+                                                "_value": ".",
                                                 "children": [
                                                   {
                                                     "_ntype": "NT_NAME",
@@ -10319,7 +10319,7 @@
                                           },
                                           {
                                             "_ntype": "NT_SYMBOL",
-                                            "_value": "#",
+                                            "_value": ".",
                                             "children": [
                                               {
                                                 "_ntype": "NT_NAME",
@@ -10400,7 +10400,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -10512,7 +10512,7 @@
                   [
                     {
                       "_ntype": "NT_TUPLE",
-                      "_value": "(",
+                      "_value": "x",
                       "children": [
                         [
                           {
@@ -10542,7 +10542,7 @@
                           [
                             {
                               "_ntype": "NT_NAME",
-                              "_value": "+"
+                              "_value": "`+`"
                             },
                             {
                               "_ntype": "NT_LIST",
@@ -10755,7 +10755,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "x",
                           "children": [
                             [
                               {
@@ -10768,7 +10768,7 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "*",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -10803,11 +10803,11 @@
                 },
                 {
                   "_ntype": "NT_CALL",
-                  "_value": "*",
+                  "_value": "`*`",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
-                      "_value": "*"
+                      "_value": "`*`"
                     },
                     [
                       {
@@ -10833,7 +10833,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -10846,7 +10846,7 @@
                 [
                   {
                     "_ntype": "NT_CALL",
-                    "_value": "(",
+                    "_value": "|>",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -10855,7 +10855,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "|>",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -10864,7 +10864,7 @@
                             [
                               {
                                 "_ntype": "NT_CALL",
-                                "_value": "(",
+                                "_value": "|>",
                                 "children": [
                                   {
                                     "_ntype": "NT_NAME",
@@ -10873,7 +10873,7 @@
                                   [
                                     {
                                       "_ntype": "NT_CALL",
-                                      "_value": "(",
+                                      "_value": "|>",
                                       "children": [
                                         {
                                           "_ntype": "NT_NAME",
@@ -10914,11 +10914,11 @@
                                         [
                                           {
                                             "_ntype": "NT_CALL",
-                                            "_value": "+",
+                                            "_value": "`+`",
                                             "children": [
                                               {
                                                 "_ntype": "NT_NAME",
-                                                "_value": "+"
+                                                "_value": "`+`"
                                               },
                                               [
                                                 {
@@ -10954,7 +10954,7 @@
                                         [
                                           {
                                             "_ntype": "NT_NAME",
-                                            "_value": "-"
+                                            "_value": "`-`"
                                           },
                                           {
                                             "_ntype": "NT_INT",
@@ -10980,7 +10980,7 @@
                             [
                               {
                                 "_ntype": "NT_CALL",
-                                "_value": "(",
+                                "_value": ">>",
                                 "children": [
                                   {
                                     "_ntype": "NT_NAME",
@@ -11049,7 +11049,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -11062,11 +11062,11 @@
                 [
                   {
                     "_ntype": "NT_CALL",
-                    "_value": "(",
+                    "_value": ">>",
                     "children": [
                       {
                         "_ntype": "NT_CALL",
-                        "_value": "(",
+                        "_value": ">>",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -11075,7 +11075,7 @@
                           [
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": ">>",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -11084,7 +11084,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": ">>",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -11118,11 +11118,11 @@
                                             [
                                               {
                                                 "_ntype": "NT_CALL",
-                                                "_value": "+",
+                                                "_value": "`+`",
                                                 "children": [
                                                   {
                                                     "_ntype": "NT_NAME",
-                                                    "_value": "+"
+                                                    "_value": "`+`"
                                                   },
                                                   [
                                                     {
@@ -11158,7 +11158,7 @@
                                             [
                                               {
                                                 "_ntype": "NT_NAME",
-                                                "_value": "-"
+                                                "_value": "`-`"
                                               },
                                               {
                                                 "_ntype": "NT_INT",
@@ -11184,7 +11184,7 @@
                                 [
                                   {
                                     "_ntype": "NT_CALL",
-                                    "_value": "(",
+                                    "_value": ">>",
                                     "children": [
                                       {
                                         "_ntype": "NT_NAME",
@@ -11287,7 +11287,7 @@
                   [
                     {
                       "_ntype": "NT_TUPLE",
-                      "_value": "(",
+                      "_value": "x",
                       "children": [
                         [
                           {
@@ -11317,7 +11317,7 @@
                 },
                 {
                   "_ntype": "NT_FUN",
-                  "_value": "fun",
+                  "_value": "list",
                   "children": [
                     {
                       "empty": true
@@ -11326,7 +11326,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "[",
                           "children": [
                             [
                               {
@@ -11355,7 +11355,7 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "+",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -11364,7 +11364,7 @@
                               [
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "+",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -11408,7 +11408,7 @@
                   [
                     {
                       "_ntype": "NT_TUPLE",
-                      "_value": "(",
+                      "_value": "x",
                       "children": [
                         [
                           {
@@ -11425,7 +11425,7 @@
                     [
                       {
                         "_ntype": "NT_CALL",
-                        "_value": "(",
+                        "_value": "+",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -11458,7 +11458,7 @@
                 },
                 {
                   "_ntype": "NT_CALL",
-                  "_value": "(",
+                  "_value": "<|",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -11483,7 +11483,7 @@
                       },
                       {
                         "_ntype": "NT_CALL",
-                        "_value": "(",
+                        "_value": "+",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -11596,7 +11596,7 @@
                             },
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": "<|",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -11648,7 +11648,7 @@
                                                         [
                                                           {
                                                             "_ntype": "NT_TUPLE",
-                                                            "_value": "(",
+                                                            "_value": "x",
                                                             "children": [
                                                               [
                                                                 {
@@ -11689,7 +11689,7 @@
                                                       },
                                                       {
                                                         "_ntype": "NT_FUN",
-                                                        "_value": "fun",
+                                                        "_value": "x",
                                                         "children": [
                                                           {
                                                             "empty": true
@@ -11698,7 +11698,7 @@
                                                             [
                                                               {
                                                                 "_ntype": "NT_TUPLE",
-                                                                "_value": "(",
+                                                                "_value": "x",
                                                                 "children": [
                                                                   [
                                                                     {
@@ -11736,7 +11736,7 @@
                                                               [
                                                                 {
                                                                   "_ntype": "NT_TUPLE",
-                                                                  "_value": "(",
+                                                                  "_value": "x",
                                                                   "children": [
                                                                     [
                                                                       {
@@ -11782,7 +11782,7 @@
                                                         [
                                                           {
                                                             "_ntype": "NT_TUPLE",
-                                                            "_value": "(",
+                                                            "_value": "x",
                                                             "children": [
                                                               [
                                                                 {
@@ -11818,7 +11818,7 @@
                                                               [
                                                                 {
                                                                   "_ntype": "NT_TUPLE",
-                                                                  "_value": "(",
+                                                                  "_value": "x",
                                                                   "children": [
                                                                     [
                                                                       {
@@ -11854,7 +11854,7 @@
                                                                     [
                                                                       {
                                                                         "_ntype": "NT_TUPLE",
-                                                                        "_value": "(",
+                                                                        "_value": "x",
                                                                         "children": [
                                                                           [
                                                                             {
@@ -11919,7 +11919,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -11979,7 +11979,7 @@
                 },
                 {
                   "_ntype": "NT_FUN",
-                  "_value": "fun",
+                  "_value": "a",
                   "children": [
                     {
                       "empty": true
@@ -11988,7 +11988,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "0",
                           "children": [
                             [
                               {
@@ -12008,7 +12008,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "1",
                           "children": [
                             [
                               {
@@ -12028,7 +12028,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "2",
                           "children": [
                             [
                               {
@@ -12064,7 +12064,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -12108,7 +12108,7 @@
                 },
                 {
                   "_ntype": "NT_FUN",
-                  "_value": "fun",
+                  "_value": "a",
                   "children": [
                     {
                       "empty": true
@@ -12117,7 +12117,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "0",
                           "children": [
                             [
                               {
@@ -12137,7 +12137,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "1",
                           "children": [
                             [
                               {
@@ -12157,7 +12157,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "2",
                           "children": [
                             [
                               {
@@ -12193,7 +12193,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -12237,7 +12237,7 @@
                 },
                 {
                   "_ntype": "NT_FUN",
-                  "_value": "fun",
+                  "_value": "a",
                   "children": [
                     {
                       "empty": true
@@ -12246,7 +12246,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "0",
                           "children": [
                             [
                               {
@@ -12290,7 +12290,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -12378,7 +12378,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -12494,7 +12494,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -12556,7 +12556,7 @@
                   [
                     {
                       "_ntype": "NT_TUPLE",
-                      "_value": "(",
+                      "_value": "a",
                       "children": [
                         [
                           {
@@ -12590,7 +12590,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "a",
                                     "children": [
                                       [
                                         {
@@ -12653,7 +12653,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -12742,7 +12742,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "x",
                           "children": [
                             [
                               {
@@ -12786,7 +12786,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -12847,7 +12847,7 @@
                       [
                         {
                           "_ntype": "NT_TUPLE",
-                          "_value": "(",
+                          "_value": "x",
                           "children": [
                             [
                               {
@@ -12891,7 +12891,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -12950,7 +12950,7 @@
                     },
                     {
                       "_ntype": "NT_FUN",
-                      "_value": "fun",
+                      "_value": "x",
                       "children": [
                         {
                           "empty": true
@@ -12959,7 +12959,7 @@
                           [
                             {
                               "_ntype": "NT_TUPLE",
-                              "_value": "(",
+                              "_value": "[",
                               "children": [
                                 [
                                   {
@@ -13045,7 +13045,7 @@
                           [
                             {
                               "_ntype": "NT_TUPLE",
-                              "_value": "(",
+                              "_value": "_",
                               "children": [
                                 [
                                   {
@@ -13091,7 +13091,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -13207,7 +13207,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -13231,7 +13231,7 @@
                           },
                           {
                             "_ntype": "NT_FUN",
-                            "_value": "fun",
+                            "_value": "x",
                             "children": [
                               {
                                 "empty": true
@@ -13240,7 +13240,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "[",
                                     "children": [
                                       [
                                         {
@@ -13326,7 +13326,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "_",
                                     "children": [
                                       [
                                         {
@@ -13453,7 +13453,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -13479,7 +13479,7 @@
                             [
                               {
                                 "_ntype": "NT_TUPLE",
-                                "_value": "(",
+                                "_value": "x",
                                 "children": [
                                   [
                                     {
@@ -13492,7 +13492,7 @@
                               [
                                 {
                                   "_ntype": "NT_CALL",
-                                  "_value": "(",
+                                  "_value": "+",
                                   "children": [
                                     {
                                       "_ntype": "NT_NAME",
@@ -13532,7 +13532,7 @@
             },
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "<|",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -13549,7 +13549,7 @@
                       },
                       {
                         "_ntype": "NT_SYMBOL",
-                        "_value": "#",
+                        "_value": ".",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -13576,7 +13576,7 @@
                               },
                               {
                                 "_ntype": "NT_FUN",
-                                "_value": "fun",
+                                "_value": "x",
                                 "children": [
                                   {
                                     "empty": true
@@ -13585,7 +13585,7 @@
                                     [
                                       {
                                         "_ntype": "NT_TUPLE",
-                                        "_value": "(",
+                                        "_value": "1",
                                         "children": [
                                           [
                                             {
@@ -13613,7 +13613,7 @@
                                     [
                                       {
                                         "_ntype": "NT_TUPLE",
-                                        "_value": "(",
+                                        "_value": "2",
                                         "children": [
                                           [
                                             {
@@ -13700,7 +13700,7 @@
                           },
                           {
                             "_ntype": "NT_FUN",
-                            "_value": "fun",
+                            "_value": "x",
                             "children": [
                               {
                                 "empty": true
@@ -13709,7 +13709,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "1",
                                     "children": [
                                       [
                                         {
@@ -13729,7 +13729,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "2",
                                     "children": [
                                       [
                                         {
@@ -13774,7 +13774,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -13844,7 +13844,7 @@
                           },
                           {
                             "_ntype": "NT_FUN",
-                            "_value": "fun",
+                            "_value": "x",
                             "children": [
                               {
                                 "empty": true
@@ -13853,7 +13853,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "5",
                                     "children": [
                                       [
                                         {
@@ -13873,7 +13873,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "6",
                                     "children": [
                                       [
                                         {
@@ -13904,7 +13904,7 @@
                           },
                           {
                             "_ntype": "NT_FUN",
-                            "_value": "fun",
+                            "_value": "x",
                             "children": [
                               {
                                 "empty": true
@@ -13913,7 +13913,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "5",
                                     "children": [
                                       [
                                         {
@@ -13933,7 +13933,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "6",
                                     "children": [
                                       [
                                         {
@@ -13966,7 +13966,7 @@
                             [
                               {
                                 "_ntype": "NT_TUPLE",
-                                "_value": "(",
+                                "_value": "x",
                                 "children": [
                                   [
                                     {
@@ -14009,7 +14009,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14067,7 +14067,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14125,7 +14125,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14213,7 +14213,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14277,7 +14277,7 @@
                           },
                           {
                             "_ntype": "NT_FUN",
-                            "_value": "fun",
+                            "_value": "x",
                             "children": [
                               {
                                 "empty": true
@@ -14286,7 +14286,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "5",
                                     "children": [
                                       [
                                         {
@@ -14306,7 +14306,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "6",
                                     "children": [
                                       [
                                         {
@@ -14337,7 +14337,7 @@
                           },
                           {
                             "_ntype": "NT_FUN",
-                            "_value": "fun",
+                            "_value": "x",
                             "children": [
                               {
                                 "empty": true
@@ -14346,7 +14346,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "5",
                                     "children": [
                                       [
                                         {
@@ -14366,7 +14366,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "6",
                                     "children": [
                                       [
                                         {
@@ -14403,7 +14403,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "x",
                                     "children": [
                                       [
                                         {
@@ -14450,7 +14450,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14508,7 +14508,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14566,7 +14566,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14624,7 +14624,7 @@
                           },
                           {
                             "_ntype": "NT_FUN",
-                            "_value": "fun",
+                            "_value": "x",
                             "children": [
                               {
                                 "empty": true
@@ -14633,7 +14633,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "5",
                                     "children": [
                                       [
                                         {
@@ -14653,7 +14653,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "6",
                                     "children": [
                                       [
                                         {
@@ -14684,7 +14684,7 @@
                           },
                           {
                             "_ntype": "NT_FUN",
-                            "_value": "fun",
+                            "_value": "x",
                             "children": [
                               {
                                 "empty": true
@@ -14693,7 +14693,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "5",
                                     "children": [
                                       [
                                         {
@@ -14713,7 +14713,7 @@
                                 [
                                   {
                                     "_ntype": "NT_TUPLE",
-                                    "_value": "(",
+                                    "_value": "6",
                                     "children": [
                                       [
                                         {
@@ -14746,7 +14746,7 @@
                             [
                               {
                                 "_ntype": "NT_TUPLE",
-                                "_value": "(",
+                                "_value": "x",
                                 "children": [
                                   [
                                     {
@@ -14789,7 +14789,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14847,7 +14847,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14905,7 +14905,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -14993,7 +14993,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -15045,7 +15045,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -15114,7 +15114,7 @@
                           [
                             {
                               "_ntype": "NT_TUPLE",
-                              "_value": "(",
+                              "_value": "x",
                               "children": [
                                 [
                                   {
@@ -15151,7 +15151,7 @@
                                   [
                                     {
                                       "_ntype": "NT_TUPLE",
-                                      "_value": "(",
+                                      "_value": "x",
                                       "children": [
                                         [
                                           {
@@ -15209,7 +15209,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -15267,7 +15267,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -15302,7 +15302,7 @@
                                       [
                                         {
                                           "_ntype": "NT_TUPLE",
-                                          "_value": "(",
+                                          "_value": "x",
                                           "children": [
                                             [
                                               {
@@ -15405,7 +15405,7 @@
                             },
                             {
                               "_ntype": "NT_FUN",
-                              "_value": "fun",
+                              "_value": "x",
                               "children": [
                                 {
                                   "empty": true
@@ -15414,7 +15414,7 @@
                                   [
                                     {
                                       "_ntype": "NT_TUPLE",
-                                      "_value": "(",
+                                      "_value": "1",
                                       "children": [
                                         [
                                           {
@@ -15438,7 +15438,7 @@
                                   [
                                     {
                                       "_ntype": "NT_TUPLE",
-                                      "_value": "(",
+                                      "_value": "2",
                                       "children": [
                                         [
                                           {
@@ -15494,7 +15494,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -15515,7 +15515,7 @@
                       },
                       {
                         "_ntype": "NT_SYMBOL",
-                        "_value": "#",
+                        "_value": ".",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -15546,7 +15546,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -15571,7 +15571,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -15616,7 +15616,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "==",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -15671,7 +15671,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -15709,7 +15709,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "==",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -15737,7 +15737,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "==",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -15765,7 +15765,7 @@
                       [
                         {
                           "_ntype": "NT_CALL",
-                          "_value": "(",
+                          "_value": "==",
                           "children": [
                             {
                               "_ntype": "NT_NAME",
@@ -15860,7 +15860,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -15974,7 +15974,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -16088,7 +16088,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -16133,7 +16133,7 @@
                           [
                             {
                               "_ntype": "NT_TUPLE",
-                              "_value": "(",
+                              "_value": "x",
                               "children": [
                                 [
                                   {
@@ -16162,7 +16162,7 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "<|",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -16178,7 +16178,7 @@
                                     },
                                     {
                                       "_ntype": "NT_FUN",
-                                      "_value": "fun",
+                                      "_value": "t",
                                       "children": [
                                         {
                                           "empty": true
@@ -16212,7 +16212,7 @@
                                             [
                                               {
                                                 "_ntype": "NT_CALL",
-                                                "_value": "(",
+                                                "_value": "+",
                                                 "children": [
                                                   {
                                                     "_ntype": "NT_NAME",
@@ -16244,7 +16244,7 @@
                                     [
                                       {
                                         "_ntype": "NT_CALL",
-                                        "_value": "(",
+                                        "_value": "+",
                                         "children": [
                                           {
                                             "_ntype": "NT_NAME",
@@ -16264,7 +16264,7 @@
                                       },
                                       {
                                         "_ntype": "NT_CALL",
-                                        "_value": "(",
+                                        "_value": "+",
                                         "children": [
                                           {
                                             "_ntype": "NT_NAME",
@@ -16321,7 +16321,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -16363,7 +16363,7 @@
                           [
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": "==",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -16446,7 +16446,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -16470,7 +16470,7 @@
             },
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "<|",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -16479,7 +16479,7 @@
                 [
                   {
                     "_ntype": "NT_CALL",
-                    "_value": "(",
+                    "_value": "<|",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -16496,7 +16496,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -16566,7 +16566,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -16610,7 +16610,7 @@
             },
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "<|",
               "children": [
                 {
                   "_ntype": "NT_NAME",
@@ -16619,7 +16619,7 @@
                 [
                   {
                     "_ntype": "NT_CALL",
-                    "_value": "(",
+                    "_value": "<|",
                     "children": [
                       {
                         "_ntype": "NT_NAME",
@@ -16636,7 +16636,7 @@
                             },
                             {
                               "_ntype": "NT_SYMBOL",
-                              "_value": "#",
+                              "_value": ".",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -16694,7 +16694,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -16711,7 +16711,7 @@
                     "children": [
                       {
                         "_ntype": "NT_CALL",
-                        "_value": "(",
+                        "_value": "<|",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -16730,7 +16730,7 @@
                                       [
                                         {
                                           "_ntype": "NT_CALL",
-                                          "_value": "(",
+                                          "_value": "==",
                                           "children": [
                                             {
                                               "_ntype": "NT_NAME",
@@ -16771,7 +16771,7 @@
                                                 [
                                                   {
                                                     "_ntype": "NT_TUPLE",
-                                                    "_value": "(",
+                                                    "_value": "x",
                                                     "children": [
                                                       [
                                                         {
@@ -16788,7 +16788,7 @@
                                                   [
                                                     {
                                                       "_ntype": "NT_CALL",
-                                                      "_value": "(",
+                                                      "_value": "+",
                                                       "children": [
                                                         {
                                                           "_ntype": "NT_NAME",
@@ -16880,7 +16880,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -16899,7 +16899,7 @@
                         [
                           {
                             "_ntype": "NT_CALL",
-                            "_value": "(",
+                            "_value": "==",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -16989,11 +16989,11 @@
             },
             {
               "_ntype": "NT_CALL",
-              "_value": "(",
+              "_value": "-",
               "children": [
                 {
                   "_ntype": "NT_NAME",
-                  "_value": "negate"
+                  "_value": "-"
                 },
                 [
                   {
@@ -17017,7 +17017,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -17049,7 +17049,7 @@
                 },
                 {
                   "_ntype": "NT_CALL",
-                  "_value": "(",
+                  "_value": "+",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -17058,7 +17058,7 @@
                     [
                       {
                         "_ntype": "NT_CALL",
-                        "_value": "(",
+                        "_value": "+",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -17067,7 +17067,7 @@
                           [
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": "+",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -17115,7 +17115,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -17147,7 +17147,7 @@
                 },
                 {
                   "_ntype": "NT_CALL",
-                  "_value": "(",
+                  "_value": "+",
                   "children": [
                     {
                       "_ntype": "NT_NAME",
@@ -17156,7 +17156,7 @@
                     [
                       {
                         "_ntype": "NT_CALL",
-                        "_value": "(",
+                        "_value": "+",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -17165,7 +17165,7 @@
                           [
                             {
                               "_ntype": "NT_CALL",
-                              "_value": "(",
+                              "_value": "+",
                               "children": [
                                 {
                                   "_ntype": "NT_NAME",
@@ -17213,7 +17213,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -17340,7 +17340,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17376,7 +17376,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17436,7 +17436,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17510,7 +17510,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17546,7 +17546,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17620,7 +17620,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17656,7 +17656,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17730,7 +17730,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17766,7 +17766,7 @@
                           },
                           {
                             "_ntype": "NT_SYMBOL",
-                            "_value": "#",
+                            "_value": ".",
                             "children": [
                               {
                                 "_ntype": "NT_NAME",
@@ -17805,7 +17805,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -17841,7 +17841,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
@@ -17908,7 +17908,7 @@
                     [
                       {
                         "_ntype": "NT_CALL",
-                        "_value": "(",
+                        "_value": "+",
                         "children": [
                           {
                             "_ntype": "NT_NAME",
@@ -17945,7 +17945,7 @@
                     },
                     {
                       "_ntype": "NT_SYMBOL",
-                      "_value": "#",
+                      "_value": ".",
                       "children": [
                         {
                           "_ntype": "NT_NAME",
