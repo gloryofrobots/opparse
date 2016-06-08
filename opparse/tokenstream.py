@@ -5,7 +5,6 @@ from opparse import tokens, nodes
 class TokenStream:
     def __init__(self, _tokens, src):
         self.tokens = _tokens
-        self.node = None
         self.token = None
         self.is_newline_occurred = False
         self.src = src
@@ -24,5 +23,4 @@ class TokenStream:
 
         # print token
         self.token = token
-        self.node = nodes.node_blank(self.token)
-        return self.node
+        return token

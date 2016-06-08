@@ -130,7 +130,6 @@ class IndentationTokenStream:
 
         self.index = 0
         self.length = len(self.tokens)
-        self.node = None
         self.token = None
         self.src = src
         self.logical_tokens = Fifo()
@@ -325,10 +324,8 @@ class IndentationTokenStream:
     def attach_token(self, token):
         logger.debug("^^^^^ATTACH %s", str(token))
         self.token = token
-        self.node = token
-        # self.node = nodes.node_blank(self.token)
         self.produced_tokens.append(self.token)
-        return self.node
+        return self.token
 
     def _on_end_token(self, token):
         layouts = self.layouts
@@ -354,7 +351,7 @@ class IndentationTokenStream:
             return self.next_logical()
 
         if self.index >= self.length:
-            return self.node
+            return self.token
 
         token = self.next_physical()
         ttype = token.type

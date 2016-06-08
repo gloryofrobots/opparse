@@ -28,11 +28,12 @@ class ObinParser(JuxtapositionParser):
 
     def endofexpression(self):
         if self.isend():
-            return None
+            return False
         if self.token_type in self.lex.TERM_BLOCK:
-            return self.node
+            return True
         if self.token_type == self.lex.TT_END_EXPR:
-            return self.advance()
+            self.advance()
+            return True
         return False
 
 

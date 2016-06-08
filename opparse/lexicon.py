@@ -57,6 +57,9 @@ class Lexicon:
     def get_nt_for_node(self, node):
         return self.get_nt_for_tt(node.token_type)
 
+    def get_nt_for_token(self, token):
+        return self.get_nt_for_tt(token.token_type)
+
     def get_nt_for_tt(self, tt):
         """
         get node type for token type according to class
