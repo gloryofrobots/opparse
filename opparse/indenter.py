@@ -179,9 +179,8 @@ class IndentationTokenStream:
         token = self._skip_newlines()
         return token.level
 
-    def _add_layout(self, node, layout_type,
+    def _add_layout(self, token, layout_type,
                     level_tokens=None, terminators=None):
-        token = node.token
         cur = self.current_layout()
         layout = Layout(cur.level, token.level,
                         layout_type, level_tokens, terminators)

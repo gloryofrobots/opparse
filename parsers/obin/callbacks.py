@@ -188,23 +188,23 @@ def infix_backtick_name(parser, op, node, left):
 
 def infix_spacedot(parser, op, node, left):
     right = parser.expression(op.lbp)
-    return nodes.node_2(lex.NT_JUXTAPOSITION, node.token, left, right)
+    return nodes.node_2(lex.NT_JUXTAPOSITION, node, left, right)
 
 
 def infix_juxtaposition(parser, op, node, left):
     right = parser.base_expression(op.lbp, None)
-    return nodes.node_2(lex.NT_JUXTAPOSITION, node.token, left, right)
+    return nodes.node_2(lex.NT_JUXTAPOSITION, node, left, right)
 
 
 def infix_dot(parser, op, node, left):
     if parser.token_type == lex.TT_INT:
         idx = _init_default_current_0(parser)
         parser.advance()
-        return node_2(lex.NT_LOOKUP, node.token, left, idx)
+        return node_2(lex.NT_LOOKUP, node, left, idx)
 
     symbol = grab_name(parser)
     return node_2(lex.NT_LOOKUP,
-                  node.token, left, create_symbol_node(symbol, symbol))
+                  node, left, create_symbol_node(symbol, symbol))
 
 
 def infix_lcurly(parser, op, node, left):
@@ -231,14 +231,14 @@ def infix_lcurly(parser, op, node, left):
             parser.advance_expected(lex.TT_COMMA)
 
     parser.advance_expected(lex.TT_RCURLY)
-    return node_2(lex.NT_MODIFY, node.token, left, list_node(items))
+    return node_2(lex.NT_MODIFY, node, left, list_node(items))
 
 
 def infix_lsquare(parser, op, node, left):
     init_free_layout(parser, node, [lex.TT_RSQUARE])
     exp = parser.expression(0)
     parser.advance_expected(lex.TT_RSQUARE)
-    return node_2(lex.NT_LOOKUP, node.token, left, exp)
+    return node_2(lex.NT_LOOKUP, node, left, exp)
 
 
 def infix_lparen(parser, op, node, left):
@@ -256,14 +256,14 @@ def infix_lparen(parser, op, node, left):
             parser.advance_expected(lex.TT_COMMA)
 
     parser.advance_expected(lex.TT_RPAREN)
-    return node_2(lex.NT_CALL, node.token, left, list_node(items))
+    return node_2(lex.NT_CALL, node, left, list_node(items))
 
 
 def infix_name_pair(parser, op, node, left):
     parser.assert_token_type(lex.TT_NAME)
     name = _init_default_current_0(parser)
     parser.advance()
-    return node_2(parser.lex.get_nt_for_node(node), node.token, left, name)
+    return node_2(parser.lex.get_nt_for_token(node), node, left, name)
 
 
 def infix_at(parser, op, node, left):
@@ -272,7 +272,7 @@ def infix_at(parser, op, node, left):
         parse_error(parser, "Bad lvalue in pattern binding", left)
 
     exp = parser.expression(9)
-    return node_2(lex.NT_BIND, node.token, left, exp)
+    return node_2(lex.NT_BIND, node, left, exp)
 
 
 ##############################################################
@@ -343,7 +343,7 @@ def layout_lparen(parser, op, node):
 def prefix_lparen(parser, op, node):
     if parser.token_type == lex.TT_RPAREN:
         parser.advance_expected(lex.TT_RPAREN)
-        return node_0(lex.NT_UNIT, node.token)
+        return node_0(lex.NT_UNIT, node)
 
     e = parser.terminated_expression(0, [lex.TT_RPAREN])
     skip_end_expression(parser)
@@ -364,7 +364,7 @@ def prefix_lparen(parser, op, node):
             parser.advance_expected(lex.TT_COMMA)
 
     parser.advance_expected(lex.TT_RPAREN)
-    return node_1(lex.NT_TUPLE, node.token, list_node(items))
+    return node_1(lex.NT_TUPLE, node, list_node(items))
 
 
 def layout_lsquare(parser, op, node):
@@ -384,7 +384,7 @@ def prefix_lsquare(parser, op, node):
             parser.advance_expected(lex.TT_COMMA)
 
     parser.advance_expected(lex.TT_RSQUARE)
-    return node_1(lex.NT_LIST, node.token, list_node(items))
+    return node_1(lex.NT_LIST, node, list_node(items))
 
 
 def on_bind_node(parser, key):
@@ -428,7 +428,7 @@ def prefix_lcurly_type(parser, op, node):
             parser.advance_expected(lex.TT_COMMA)
 
     parser.advance_expected(lex.TT_RCURLY)
-    return node_1(lex.NT_LIST, node.token, list_node(items))
+    return node_1(lex.NT_LIST, node, list_node(items))
 
 
 def layout_lcurly(parser, op, node):
@@ -488,7 +488,7 @@ def _prefix_lcurly(parser, op, node, types, on_unknown):
             parser.advance_expected(lex.TT_COMMA)
 
     parser.advance_expected(lex.TT_RCURLY)
-    return node_1(lex.NT_MAP, node.token, list_node(items))
+    return node_1(lex.NT_MAP, node, list_node(items))
 
 
 def prefix_if(parser, op, node):
@@ -521,7 +521,7 @@ def prefix_if(parser, op, node):
     body = parser.statements(parser.lex.TERM_BLOCK)
     branches.append(list_node([empty_node(), body]))
     advance_end(parser)
-    return node_1(lex.NT_CONDITION, node.token, list_node(branches))
+    return node_1(lex.NT_CONDITION, node, list_node(branches))
 
 
 def prefix_let(parser, op, node):
@@ -533,7 +533,7 @@ def prefix_let(parser, op, node):
     init_code_layout(parser, parser.token)
     inblock = parser.statements(parser.lex.TERM_BLOCK)
     advance_end(parser)
-    return node_2(lex.NT_LET, node.token, letblock, inblock)
+    return node_2(lex.NT_LET, node, letblock, inblock)
 
 
 def prefix_try(parser, op, node):
@@ -575,7 +575,7 @@ def prefix_try(parser, op, node):
     advance_end(parser)
 
     return node_3(lex.NT_TRY,
-                  node.token, trybody, list_node(catches), finallybody)
+                  node, trybody, list_node(catches), finallybody)
 
 
 def _parse_pattern(parser):
@@ -627,12 +627,12 @@ def prefix_match(parser, op, node):
     if len(branches) == 0:
         parse_error(parser, "Empty match expression", node)
 
-    return node_2(lex.NT_MATCH, node.token, exp, list_node(branches))
+    return node_2(lex.NT_MATCH, node, exp, list_node(branches))
 
 
 def prefix_throw(parser, op, node):
     exp = parser.expression(0)
-    return node_1(parser.lex.get_nt_for_node(node), node.token, exp)
+    return node_1(parser.lex.get_nt_for_token(node), node, exp)
 
 
 # FUNCTION STUFF################################
@@ -732,12 +732,12 @@ def _parse_named_function(parser, node):
 
 def prefix_fun(parser, op, node):
     name, funcs = _parse_named_function(parser, node)
-    return node_2(lex.NT_FUN, node.token, name, funcs)
+    return node_2(lex.NT_FUN, node, name, funcs)
 
 
 def prefix_module_fun(parser, op, node):
     name, funcs = _parse_named_function(parser.expression_parser, node)
-    return node_2(lex.NT_FUN, node.token, name, funcs)
+    return node_2(lex.NT_FUN, node, name, funcs)
 
 
 def prefix_lambda(parser, op, node):
@@ -745,7 +745,7 @@ def prefix_lambda(parser, op, node):
     func = _parse_function(
         parser, parser.lex.TERM_FUN_PATTERN, parser.lex.TERM_FUN_GUARD, parser.lex.TERM_CASE, parser.lex.TERM_BLOCK)
     advance_end(parser)
-    return node_2(lex.NT_FUN, node.token, empty_node(), func)
+    return node_2(lex.NT_FUN, node, empty_node(), func)
 
 
 ###############################################################
@@ -786,7 +786,7 @@ def stmt_from(parser, op, node):
             # hiding names can't have as binding
             parser.assert_types_in_nodes_list(names.first(), [lex.NT_NAME])
 
-    return node_2(ntype, node.token, imported, names)
+    return node_2(ntype, node, imported, names)
 
 
 def stmt_import(parser, op, node):
@@ -815,7 +815,7 @@ def stmt_import(parser, op, node):
                                " Symbol(s) expected", node)
         names = empty_node()
 
-    return node_2(ntype, node.token, imported, names)
+    return node_2(ntype, node, imported, names)
 
 
 def stmt_export(parser, op, node):
@@ -824,7 +824,7 @@ def stmt_export(parser, op, node):
     parser.assert_node_types(names, [lex.NT_TUPLE, lex.NT_NAME])
     names = ensure_tuple(names)
     parser.assert_types_in_nodes_list(names.first(), [lex.NT_NAME])
-    return node_1(lex.NT_EXPORT, node.token, names)
+    return node_1(lex.NT_EXPORT, node, names)
 
 
 def symbol_or_name_value(parser, name):
@@ -844,8 +844,8 @@ def symbol_or_name_value(parser, name):
 
 # TYPES ************************
 def prefix_name_as_symbol(parser, op, node):
-    name = node_0(parser.lex.get_nt_for_node(node),
-                        node.token)
+    name = node_0(parser.lex.get_nt_for_token(node),
+                        node)
     return create_symbol_node(name, name)
 
 
@@ -857,7 +857,7 @@ def symbol_list_to_arg_tuple(parser, node, symbols):
         name = child.first()
         args.append(name)
 
-    return nodes.node_1(lex.NT_TUPLE, node.token, list_node(args))
+    return nodes.node_1(lex.NT_TUPLE, node, list_node(args))
 
 
 def _symbols_to_args(parser, node, symbols):
@@ -867,7 +867,7 @@ def _symbols_to_args(parser, node, symbols):
         name = child.first()
         args.append(name)
 
-    return nodes.node_1(lex.NT_TUPLE, node.token, list_node(args))
+    return nodes.node_1(lex.NT_TUPLE, node, list_node(args))
 
 
 # DERIVE ################################
@@ -899,7 +899,7 @@ def _parse_union(parser, node, union_name):
 
     advance_end(parser)
     return nodes.node_2(lex.NT_UNION,
-                        node.token, union_name, nodes.list_node(types))
+                        node, union_name, nodes.list_node(types))
 
 
 def _parse_type(parser, node, typename, term):
@@ -909,7 +909,7 @@ def _parse_type(parser, node, typename, term):
         fields = empty_node()
 
     return nodes.node_2(lex.NT_TYPE,
-                        node.token, typename, fields)
+                        node, typename, fields)
 
 
 # TODO BETTER PARSE ERRORS HERE
@@ -928,7 +928,7 @@ def stmt_type(parser, op, node):
 
 # TRAIT*************************
 def symbol_operator_name(parser, op, node):
-    name = node_0(parser.lex.get_nt_for_node(node), node.token)
+    name = node_0(parser.lex.get_nt_for_token(node), node)
     return create_name_from_operator(node, name)
 
 
@@ -994,7 +994,7 @@ def stmt_trait(parser, op, node):
         methods.append(list_node([method_name, sig, default_impl]))
     advance_end(parser)
     return nodes.node_4(lex.NT_TRAIT,
-                        node.token, name,
+                        node, name,
                         instance_name, constraints, list_node(methods))
 
 
@@ -1016,7 +1016,7 @@ def stmt_implement(parser, op, node):
     if parser.token_type != lex.TT_DEF:
         advance_end(parser)
         return nodes.node_3(lex.NT_IMPLEMENT,
-                            node.token,
+                            node,
                             trait_name, type_name, list_node(methods))
 
     init_offside_layout(parser, parser.token)
@@ -1034,7 +1034,7 @@ def stmt_implement(parser, op, node):
         methods.append(list_node([method_name, funcs]))
 
     advance_end(parser)
-    return nodes.node_3(lex.NT_IMPLEMENT, node.token,
+    return nodes.node_3(lex.NT_IMPLEMENT, node,
                         trait_name, type_name, list_node(methods))
 
 
@@ -1077,7 +1077,7 @@ def stmt_extend(parser, op, node):
 
     advance_end(parser)
     return nodes.node_2(lex.NT_EXTEND,
-                        node.token, type_name, list_node(traits))
+                        node, type_name, list_node(traits))
 
 
 # OPERATORS

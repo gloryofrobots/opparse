@@ -47,7 +47,7 @@ def parse_error(parser, message, token):
     ])
 
 ##########################################################################
-## COMMON CALLBACKS #######################################################
+# COMMON CALLBACKS #######################################################
 ##########################################################################
 
 
@@ -55,34 +55,34 @@ def prefix_itself(parser, op, token):
     return nodes.node_0(parser.lex.get_nt_for_token(token), token)
 
 
-def prefix_empty(parser, op, node):
+def prefix_empty(parser, op, token):
     return parser.expression(0)
 
 
-def prefix_nud(parser, op, node):
+def prefix_nud(parser, op, token):
     exp = parser.literal_expression()
-    return nodes.node_1(parser.lex.get_nt_for_node(node),
-                        node.token, exp)
+    return nodes.node_1(parser.lex.get_nt_for_token(token),
+                        token, exp)
 
 
-def infix_led(parser, op, node, left):
+def infix_led(parser, op, token, left):
     exp = parser.expression(op.lbp)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token,
+    return nodes.node_2(parser.lex.get_nt_for_token(token),
+                        token,
                         left, exp)
 
 
-def infixr_led(parser, op, node, left):
+def infixr_led(parser, op, token, left):
     exp = parser.rexpression(op)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token,
+    return nodes.node_2(parser.lex.get_nt_for_token(token),
+                        token,
                         left, exp)
 
 
-def infixr_led_assign(parser, op, node, left):
+def infixr_led_assign(parser, op, token, left):
     exp = parser.expression(9)
-    return nodes.node_2(parser.lex.get_nt_for_node(node),
-                        node.token, left, exp)
+    return nodes.node_2(parser.lex.get_nt_for_token(token),
+                        token, left, exp)
 # LAYOUT
 
 
@@ -121,13 +121,13 @@ class Operator(object):
             return False
 
         if self.prefix_function and other.prefix_function:
-            if not operator.eq(self.prefix_function, other.prefix_function):
+            if self.prefix_function != other.prefix_function:
                 return False
         elif self.prefix_function or other.prefix_function:
             return False
 
         if self.infix_function and other.infix_function:
-            if not operator.eq(self.infix_function, other.infix_function):
+            if self.infix_function != other.infix_function:
                 return False
         elif self.infix_function or other.infix_function:
             return False
@@ -409,7 +409,7 @@ class Parser(object):
         if self.token_type not in types:
             parse_error(self, "Wrong token type, expected one of %s, got %s" %
                         (unicode([type for type in types]),
-                         self.token_type), parser.token)
+                         self.token_type), self.token)
 
     def assert_types_in_nodes_list(self, node, expected_types):
         for child in node:
@@ -434,7 +434,6 @@ class Parser(object):
             return None
 
         token = self.next_token()
-        # print "ADVANCE", node
         return token
 
     def advance_expected(self, ttype):
@@ -520,7 +519,7 @@ class Parser(object):
 
     def assert_any_of_expressions(self, rbp, expected_types):
         return self.assert_any_of_terminated_expressions(
-            rbp, expected_type, None)
+            rbp, expected_types, None)
 
     def rexpression(self, op):
         return self.expression(op.lbp - 1)
@@ -580,11 +579,11 @@ class JuxtapositionParser(Parser):
         self.break_on_juxtaposition = \
             settings.get("break_on_juxtaposition", False)
 
-    def token_lbp(self, node):
-        handler = self.token_operator(node)
-        lbp = handler.lbp
+    def token_lbp(self, token):
+        operator = self.token_operator(token)
+        lbp = operator.lbp
         # if lbp < 0:
-        #   parse_error(self, "Left binding power error", node)
+        #   parse_error(self, "Left binding power error", token)
 
         return lbp
 
