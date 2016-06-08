@@ -1,5 +1,5 @@
 from rply import LexerGenerator
-
+from rply.lexer import LexingError
 
 class Token:
     def __init__(self, type, val, pos, line, column):
@@ -68,37 +68,13 @@ class UnknownTokenError(Exception):
         self.position = position
 
 
-class LexerError(Exception):
-    """ Lexer error exception.
-
-        pos:
-            Position in the input line where the error occurred.
-    """
-
-    def __init__(self, pos):
-        self.pos = pos
-
-
 class Lexer:
-    def __init__(self, lexicon, skip_whitespace):
+    def __init__(self, lexicon, txt):
         self.lexicon = lexicon
         self.lexer = create_generator(lexicon.RULES)
-        self.stream = None
-
-    def input(self, buf):
-        self.stream = self.lexer.lex(buf)
+        self.stream = self.lexer.lex(txt)
 
     def token(self):
-
-        """ Return the next token (a Token object) found in the
-            input buffer. None is returned if the end of the
-            buffer was reached.
-            In case of a lexing error (the current chunk of the
-            buffer matches no rule), a LexerError is raised with
-            the position of the error.
-        """
-
-        from rply.lexer import LexingError
         try:
             return self._token()
         except StopIteration:
@@ -109,7 +85,6 @@ class Lexer:
 
     def _token(self):
         t = next(self.stream)
-        # print tokens.token_type_to_str(t.name), t.value
         token = Token(t.name, t.value,
                       t.source_pos.idx,
                       t.source_pos.lineno, t.source_pos.colno)
@@ -119,7 +94,19 @@ class Lexer:
 
         return token
 
-    def tokens(self):
+    def as_list(self):
+        tokens  = []
+        while True:
+            tok = self.token()
+            if tok is None:
+                tokens.append(Token(self.lexicon.TT_NEWLINE, "\n", -1, -1, 1))
+                tokens.append(Token(self.lexicon.TT_ENDSTREAM, "", -1, -1, 1))
+                break
+            tokens.append(tok)
+
+        return tokens
+
+    def as_generator(self):
         """
         Returns an iterator to the tokens found in the buffer.
         """
@@ -132,12 +119,3 @@ class Lexer:
                 yield Token(self.lexicon.TT_ENDSTREAM, "", -1, -1, 1)
                 break
             yield tok
-
-
-##
-
-
-def lexer(txt, lex):
-    lx = Lexer(lex, False)
-    lx.input(txt)
-    return lx

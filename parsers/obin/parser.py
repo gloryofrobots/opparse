@@ -19,9 +19,8 @@ def create_stream(parser, source):
         new_line_token=parser.lex.TT_NEWLINE
     )
 
-    lx = lexer.lexer(source, parser.lex)
-    tokens_iter = lx.tokens()
-    return IndentationTokenStream(tokens_iter, source, indenter_settings)
+    lx = lexer.Lexer(parser.lex, source)
+    return IndentationTokenStream(lx.as_list(), source, indenter_settings)
 
 
 class ObinParser(JuxtapositionParser):

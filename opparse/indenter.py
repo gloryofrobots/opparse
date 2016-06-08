@@ -117,8 +117,8 @@ def indentation_error(msg, token):
 
 class IndentationTokenStream:
 
-    def __init__(self, _tokens, src, tokens_options):
-        self.tokens = [token for token in _tokens]
+    def __init__(self, tokens, src, tokens_options):
+        self.tokens = tokens
 
         self.operator_tokens = tokens_options.get("operator_tokens", [])
         self.end_token = tokens_options["end_token"]
