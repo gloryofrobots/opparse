@@ -56,7 +56,7 @@ def prefix_itself(parser, op, token):
 
 
 def prefix_empty(parser, op, token):
-    return parser.expression(0)
+    return nodes.empty_node()
 
 
 def prefix_nud(parser, op, token):
@@ -559,7 +559,7 @@ class Parser(object):
             s = self.statement()
             # order matter here
             continue_loop = self.endofexpression()
-            if s is None:
+            if nodes.is_empty_node(s):
                 continue
 
             stmts.append(s)

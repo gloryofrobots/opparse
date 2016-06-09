@@ -5,6 +5,82 @@
     "children": [
       {
         "_ntype": "NT_NAME",
+        "_value": "add"
+      },
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "x"
+        },
+        {
+          "_ntype": "NT_NAME",
+          "_value": "y"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "print"
+            },
+            [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "x"
+              },
+              {
+                "_ntype": "NT_NAME",
+                "_value": "y"
+              }
+            ]
+          ]
+        },
+        {
+          "_ntype": "NT_ASSIGN",
+          "_value": "=",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "z"
+            },
+            {
+              "_ntype": "NT_ADD",
+              "_value": "+",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "x"
+                },
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "y"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_ntype": "TT_RETURN",
+          "_value": "return",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "z"
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_FUN",
+    "_value": "def",
+    "children": [
+      {
+        "_ntype": "NT_NAME",
         "_value": "sub"
       },
       [
@@ -72,6 +148,327 @@
             }
           ]
         }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_FUN",
+    "_value": "def",
+    "children": [
+      {
+        "_ntype": "NT_NAME",
+        "_value": "mul"
+      },
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "x"
+        },
+        {
+          "_ntype": "NT_NAME",
+          "_value": "y"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "print"
+            },
+            [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "x"
+              },
+              {
+                "_ntype": "NT_NAME",
+                "_value": "y"
+              }
+            ]
+          ]
+        },
+        {
+          "_ntype": "NT_ASSIGN",
+          "_value": "=",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "z"
+            },
+            {
+              "_ntype": "NT_MUL",
+              "_value": "*",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "x"
+                },
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "y"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_ntype": "TT_RETURN",
+          "_value": "return",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "z"
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_IF",
+    "_value": "if",
+    "children": [
+      [
+        [
+          {
+            "_ntype": "NT_EQ",
+            "_value": "==",
+            "children": [
+              {
+                "_ntype": "NT_INT",
+                "_value": "1"
+              },
+              {
+                "_ntype": "NT_INT",
+                "_value": "2"
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_STR",
+                    "_value": "\"1 == 2\""
+                  }
+                ]
+              ]
+            },
+            {
+              "_ntype": "TT_RAISE",
+              "_value": "raise",
+              "children": [
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "SystemExit"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_NEGATE",
+                        "_value": "-",
+                        "children": [
+                          {
+                            "_ntype": "NT_INT",
+                            "_value": "1"
+                          }
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "_ntype": "NT_OR",
+            "_value": "or",
+            "children": [
+              {
+                "_ntype": "NT_EQ",
+                "_value": "==",
+                "children": [
+                  {
+                    "_ntype": "NT_INT",
+                    "_value": "2"
+                  },
+                  {
+                    "_ntype": "NT_INT",
+                    "_value": "4"
+                  }
+                ]
+              },
+              {
+                "_ntype": "NT_EQ",
+                "_value": "==",
+                "children": [
+                  {
+                    "_ntype": "NT_INT",
+                    "_value": "5"
+                  },
+                  {
+                    "_ntype": "NT_INT",
+                    "_value": "6"
+                  }
+                ]
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "TT_RAISE",
+              "_value": "raise",
+              "children": [
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "SystemExit"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_NEGATE",
+                        "_value": "-",
+                        "children": [
+                          {
+                            "_ntype": "NT_INT",
+                            "_value": "2"
+                          }
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "_ntype": "NT_AND",
+            "_value": "and",
+            "children": [
+              {
+                "_ntype": "NT_EQ",
+                "_value": "==",
+                "children": [
+                  {
+                    "_ntype": "NT_STR",
+                    "_value": "\"Cow\""
+                  },
+                  {
+                    "_ntype": "NT_STR",
+                    "_value": "\"Horse\""
+                  }
+                ]
+              },
+              {
+                "_ntype": "NT_OR",
+                "_value": "or",
+                "children": [
+                  {
+                    "_ntype": "NT_IS",
+                    "_value": "is",
+                    "children": [
+                      {
+                        "_ntype": "NT_STR",
+                        "_value": "\"Dog\""
+                      },
+                      {
+                        "_ntype": "NT_STR",
+                        "_value": "\"Cat\""
+                      }
+                    ]
+                  },
+                  {
+                    "_ntype": "NT_IS",
+                    "_value": "is",
+                    "children": [
+                      {
+                        "_ntype": "NT_STR",
+                        "_value": "\"Fish\""
+                      },
+                      {
+                        "_ntype": "NT_STR",
+                        "_value": "\"Bird\""
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "TT_RAISE",
+              "_value": "raise",
+              "children": [
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "SystemExit"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_NEGATE",
+                        "_value": "-",
+                        "children": [
+                          {
+                            "_ntype": "NT_INT",
+                            "_value": "3"
+                          }
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "empty": true
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_STR",
+                    "_value": "\"Everything is alright\""
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
       ]
     ]
   }

@@ -124,7 +124,6 @@ def ipy_parser():
             .symbol(lex.TT_RPAREN)
             .symbol(lex.TT_RCURLY)
             .symbol(lex.TT_COMMA)
-            .symbol(lex.TT_END_EXPR)
             .symbol(lex.TT_ELSE)
             .symbol(lex.TT_ELIF)
             .symbol(lex.TT_EXCEPT)
@@ -135,6 +134,8 @@ def ipy_parser():
             .symbol(lex.TT_AS)
             .symbol(lex.TT_ENDSTREAM)
 
+            .symbol(lex.TT_END_EXPR, prefix_empty)
+
             .prefix(lex.TT_INDENT, prefix_indent)
             .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
             .prefix_layout(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
@@ -143,6 +144,7 @@ def ipy_parser():
             .prefix(lex.TT_TRY, prefix_try)
 
             .prefix_default(lex.TT_NOT, lex.NT_NOT)
+            .prefix_default(lex.TT_MINUS, lex.NT_NEGATE)
 
             .stmt(lex.TT_DEF, prefix_fun)
             .prefix(lex.TT_FUN, prefix_fun)
@@ -160,6 +162,7 @@ def ipy_parser():
             .infix_default(lex.TT_GE, 35, lex.NT_GE)
             .infix_default(lex.TT_EQ, 35, lex.NT_EQ)
             .infix_default(lex.TT_NE, 35, lex.NT_NE)
+            .infix_default(lex.TT_IS, 35, lex.NT_IS)
             .infix_default(lex.TT_MINUS, 40, lex.NT_SUB)
             .infix_default(lex.TT_PLUS, 40, lex.NT_ADD)
             .infix_default(lex.TT_STAR, 50, lex.NT_MUL)

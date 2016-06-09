@@ -156,8 +156,8 @@ def prefix_if(parser, op, token):
     init_node_layout(parser, token, parser.lex.LEVELS_IF)
     branches = []
 
-    cond = parser.terminated_expression(0, parser.lex.TERM_IF_CONDITION)
-    parser.advance_expected_one_of(parser.lex.TERM_IF_CONDITION)
+    cond = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
+    parser.advance_expected_one_of(parser.lex.TERM_CONDITION)
     init_code_layout(parser, parser.token, parser.lex.TERM_IF_BODY)
 
     body = parser.statements(parser.lex.TERM_IF_BODY)
@@ -168,8 +168,8 @@ def prefix_if(parser, op, token):
     while parser.token_type == lex.TT_ELIF:
         parser.advance_expected(lex.TT_ELIF)
 
-        cond = parser.terminated_expression(0, parser.lex.TERM_IF_CONDITION)
-        parser.advance_expected_one_of(parser.lex.TERM_IF_CONDITION)
+        cond = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
+        parser.advance_expected_one_of(parser.lex.TERM_CONDITION)
         init_code_layout(parser, parser.token, parser.lex.TERM_IF_BODY)
 
         body = parser.statements(parser.lex.TERM_IF_BODY)
@@ -227,7 +227,7 @@ def prefix_try(parser, op, token):
 
 def stmt_raise(parser, op, token):
     exp = parser.expression(0)
-    return node_1(lex.TT_THROW, token, exp)
+    return node_1(lex.TT_RAISE, token, exp)
 
 
 def stmt_yield(parser, op, token):

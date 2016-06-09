@@ -3,7 +3,6 @@ from opparse.lexicon import Lexicon, token, keyword
 
 class IpyLexicon(Lexicon):
 
-
     # NODE_TYPES
     NT_TRUE = "NT_TRUE"
     NT_FALSE = "NT_FALSE"
@@ -20,8 +19,8 @@ class IpyLexicon(Lexicon):
     NT_TRY = "NT_TRY"
     NT_RAISE = "NT_RAISE"
     NT_ASSIGN = "NT_ASSIGN"
-    NT_PLUS_ASSIGN="NT_PLUS_ASSIGN"
-    NT_MINUS_ASSIGN="NT_MINUS_ASSIGN"
+    NT_PLUS_ASSIGN = "NT_PLUS_ASSIGN"
+    NT_MINUS_ASSIGN = "NT_MINUS_ASSIGN"
     NT_CALL = "NT_CALL"
     NT_LOOKUP = "NT_LOOKUP"
     NT_AS = "NT_AS"
@@ -36,12 +35,15 @@ class IpyLexicon(Lexicon):
     NT_LE = "NT_LE"
     NT_LT = "NT_LT"
     NT_EQ = "NT_EQ"
+    NT_IS = "NT_IS"
     NT_NE = "NT_NE"
 
     NT_ADD = "NT_ADD"
     NT_SUB = "NT_SUB"
     NT_DIV = "NT_DIV"
     NT_MUL = "NT_MUL"
+
+    NT_NEGATE = "NT_NEGATE"
 
     NT_VARGS = "NT_VARGS"
     NT_KVARGS = "NT_KVARGS"
@@ -61,6 +63,7 @@ class IpyLexicon(Lexicon):
     TT_ELSE = "TT_ELSE"
     TT_IN = "TT_IN"
     TT_AS = "TT_AS"
+    TT_IS = "TT_IS"
     TT_AND = "TT_AND"
     TT_NOT = "TT_AND"
     TT_OR = "TT_OR"
@@ -114,6 +117,7 @@ class IpyLexicon(Lexicon):
         (keyword('elif'), TT_ELIF),
         (keyword('else'), TT_ELSE),
         (keyword('end'), TT_END),
+        (keyword('is'), TT_IS),
         (keyword('and'), TT_AND),
         (keyword('or'), TT_OR),
         (keyword('not'), TT_NOT),
@@ -154,14 +158,22 @@ class IpyLexicon(Lexicon):
         (token('\.'), TT_DOT),
         (token(':'), TT_COLON),
 
+        (token('\+='), TT_PLUS_ASSIGN),
+        (token('\-='), TT_MINUS_ASSIGN),
         (token('\*\*'), TT_DOUBLE_STAR),
+        (token('=='), TT_EQ),
+        (token('>='), TT_GE),
+        (token('>'), TT_GT),
+        (token('<'), TT_LT),
+        (token('<='), TT_LE),
+        (token('=='), TT_EQ),
+        (token('!='), TT_NE),
+
         (token('\+'), TT_PLUS),
         (token('\-'), TT_MINUS),
         (token('\*'), TT_STAR),
         (token('\/'), TT_SLASH),
         (token('='), TT_ASSIGN),
-        (token('\+='), TT_PLUS_ASSIGN),
-        (token('\-='), TT_MINUS_ASSIGN),
     ]
 
     TERM_BLOCK = [TT_END]
@@ -180,4 +192,3 @@ class IpyLexicon(Lexicon):
     LEVELS_IF = [TT_ELSE, TT_ELIF]
     LEVELS_TRY = [TT_EXCEPT, TT_FINALLY]
     LEVELS_FOR = [TT_ELSE]
-
