@@ -139,34 +139,6 @@ class ObinLexicon(Lexicon):
     NT_END_EXPR = "NT_END_EXPR"
     NT_END = "NT_END"
 
-    TT_TO_NT_MAPPING = {
-        TT_TRUE: NT_TRUE,
-        TT_FALSE: NT_FALSE,
-        TT_INT: NT_INT,
-        TT_FLOAT: NT_FLOAT,
-        TT_STR: NT_STR,
-        TT_MULTI_STR: NT_MULTI_STR,
-        TT_CHAR: NT_CHAR,
-        TT_WILDCARD: NT_WILDCARD,
-        TT_NAME: NT_NAME,
-        TT_IF: NT_CONDITION,
-        TT_MATCH: NT_MATCH,
-        TT_EXPORT: NT_EXPORT,
-        TT_IMPORT: NT_IMPORT,
-        TT_TRAIT: NT_TRAIT,
-        TT_THROW: NT_THROW,
-        TT_ELLIPSIS: NT_REST,
-        TT_ASSIGN: NT_ASSIGN,
-        TT_OF: NT_OF,
-        TT_AS: NT_AS,
-        TT_AND: NT_AND,
-        TT_OR: NT_OR,
-        TT_SHARP: NT_SYMBOL,
-        TT_OPERATOR: NT_NAME,
-        TT_DOUBLE_COLON: NT_CONS,
-        TT_DOT: NT_LOOKUP,
-    }
-
     RULES = [
         (token('\n'), TT_NEWLINE),
         (token('[ ]*\.\.\.'), TT_ELLIPSIS),

@@ -1,0 +1,64 @@
+def add(x, y): print(x,y)
+               z = x + y
+               return z
+
+def sub(x, y):
+    print(x,y)
+    z = x - y
+    return z
+
+def mul(x, y): print(x,y); z = x * y; return z;
+
+
+def foldl(func, acc, it):
+    for i in it:
+        try:
+            acc = func(i, acc)
+        except StopIteration as e:
+               return acc
+    return acc
+
+def map(it, func):
+    for i in it: try v = func(it):
+                     yield v
+                 except StopIteration as e: print("map interrupted on %s" % str(it)); return None
+
+map([1,2,3,4,5], fun (i): a = add(i, 2) / 42
+                          b = a + 2 + mul(add(i,i),i)
+                          c = b + 42 + div(42, 42)
+                          a + b + c
+                 end)
+
+map([1,2,3,4,5], lambda i: i + 1)
+
+map([1,2,3,4,5], fun(i):
+                        if  i < 0:
+                            i * -1
+                        else:
+                            i
+                 end)
+foldl(if 1 == 1:
+         lambda x,y : x + y
+      else:
+         lambda x,y: x - y
+      end, 0, range(10))
+
+foldl(lambda x,y : x + y if 1==1 else lambda x,y: x - y, 0, [1,2,3,4,5,6,7,8])
+
+foldl((lambda x,y:
+              x + y
+         if 1==1
+                                                                else
+           lambda x,y:
+                                x - y), 0, [1,2,3,4,5,6,7,8])
+
+mapr = lambda func, it: map(it, func)
+
+if 1 == 2: print("1 == 2")
+           raise SystemExit(-1)
+elif 2 == 4 or 5 == 6:
+     raise SystemExit(-2)
+elif "Cow" == "Horse" and ("Dog" is "Cat" or "Fish" is "Bird"): rasie SystemExit(-3)
+else:
+    print ("Everything is alright")
+
