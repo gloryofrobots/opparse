@@ -73,7 +73,7 @@ def name_parser():
         .symbol(lex.TT_ELLIPSIS)
         .symbol(lex.TT_ENDSTREAM)
 
-        .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
+        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout=layout_lparen)
         .symbol(lex.TT_OPERATOR, symbol_operator_name)
         .infix(lex.TT_DOT, 100, infix_name_pair, NT_LOOKUP)
     )
@@ -86,7 +86,7 @@ def type_parser():
         .symbol(lex.TT_COMMA)
         .symbol(lex.TT_END)
         .symbol(lex.TT_RCURLY)
-        .prefix(lex.TT_LCURLY, prefix_lcurly_type, layout_lcurly)
+        .prefix_layout(lex.TT_LCURLY, prefix_lcurly_type, layout_lcurly)
         .prefix(lex.TT_NAME, prefix_name_as_symbol)
         .infix(lex.TT_DOT, 100, infix_name_pair, NT_LOOKUP)
         .infix(lex.TT_JUXTAPOSITION, 5, infix_juxtaposition)
@@ -113,7 +113,7 @@ def import_names_parser():
         .symbol(lex.TT_COMMA)
         .literal(lex.TT_NAME, lex.NT_NAME)
         .infix(lex.TT_AS, 15, infix_name_pair, lex.NT_AS)
-        .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
+        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
     )
 
 
@@ -142,9 +142,9 @@ def guard_parser():
         .symbol(lex.TT_RSQUARE)
         .symbol(lex.TT_ARROW)
 
-        .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
-        .prefix(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
-        .prefix(lex.TT_LCURLY, prefix_lcurly, layout_lcurly)
+        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
+        .prefix_layout(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
+        .prefix_layout(lex.TT_LCURLY, prefix_lcurly, layout_lcurly)
         .prefix(lex.TT_SHARP, prefix_sharp)
         .prefix(lex.TT_BACKTICK_OPERATOR, prefix_backtick_operator)
 
@@ -159,10 +159,10 @@ def guard_parser():
 def setup_pattern_parser(parser_builder):
     return (
         set_literals(parser_builder)
-        .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
-        .prefix(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
-        .prefix(lex.TT_LCURLY, prefix_lcurly_patterns, layout_lcurly)
-        .prefix(lex.TT_SHARP, prefix_sharp)
+        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
+        .prefix_layout(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
+        .prefix_layout(lex.TT_LCURLY, prefix_lcurly_patterns, layout_lcurly)
+        .prefix_layout(lex.TT_SHARP, prefix_sharp)
         .prefix_default(lex.TT_ELLIPSIS, lex.NT_REST)
 
         .infix_default(lex.TT_OF, 10, lex.NT_OF)
@@ -199,7 +199,7 @@ def fun_signature_parser():
         builder(juxtaposition_as_list=True)
         .literal(lex.TT_NAME, lex.NT_NAME)
 
-        .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
+        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
         .symbol(lex.TT_RPAREN)
         .symbol(lex.TT_INDENT)
         .prefix_default(lex.TT_ELLIPSIS, lex.NT_REST)
@@ -238,9 +238,9 @@ def expression_parser():
         .symbol(lex.TT_IN)
 
         .prefix(lex.TT_INDENT, prefix_indent)
-        .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
-        .prefix(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
-        .prefix(lex.TT_LCURLY, prefix_lcurly, layout_lcurly)
+        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
+        .prefix_layout(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
+        .prefix_layout(lex.TT_LCURLY, prefix_lcurly, layout_lcurly)
         .prefix(lex.TT_SHARP, prefix_sharp)
         .prefix_default(lex.TT_ELLIPSIS, lex.NT_REST)
         .prefix(lex.TT_IF, prefix_if)
@@ -298,9 +298,9 @@ def obin_parser():
         .symbol(lex.TT_ENDSTREAM)
 
         .prefix(lex.TT_INDENT, prefix_indent)
-        .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
-        .prefix(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
-        .prefix(lex.TT_LCURLY, prefix_lcurly, layout_lcurly)
+        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
+        .prefix_layout(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
+        .prefix_layout(lex.TT_LCURLY, prefix_lcurly, layout_lcurly)
         .prefix(lex.TT_SHARP, prefix_sharp)
         .prefix(lex.TT_LAMBDA, prefix_lambda)
 

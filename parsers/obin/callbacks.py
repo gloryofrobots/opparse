@@ -163,7 +163,7 @@ def infix_juxtaposition(parser, op, token, left):
 
 def infix_dot(parser, op, token, left):
     if parser.token_type == lex.TT_INT:
-        idx = _init_default_current_0(parser)
+        idx = node_0(lex.NT_INT, parser.token)
         parser.advance()
         return node_2(lex.NT_LOOKUP, token, left, idx)
 
@@ -249,26 +249,6 @@ def prefix_indent(parser, op, token):
     return parse_error(parser, "Invalid indentation level", token)
 
 
-def _parse_name(parser):
-    if parser.token_type == lex.TT_SHARP:
-        token = parser.token
-        parser.advance()
-        return _parse_symbol(parser, token)
-
-    parser.assert_token_types([lex.TT_STR, lex.TT_MULTI_STR, lex.TT_NAME])
-    token = parser.token
-    parser.advance()
-    return node_0(parser.lex.token_node_type(token), token)
-
-
-def _parse_symbol(parser, token):
-    parser.assert_token_types(
-        [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
-    exp = node_0(parser.lex.token_node_type(parser.token), parser.token)
-    parser.advance()
-    return node_1(parser.lex.token_node_type(token), token, exp)
-
-
 def prefix_backtick_operator(parser, op, token):
     opname = strutil.cat_both_ends(token.value)
     if opname == "::":
@@ -284,7 +264,12 @@ def prefix_backtick_operator(parser, op, token):
 
 
 def prefix_sharp(parser, op, token):
-    return _parse_symbol(parser, token)
+    parser.assert_token_types(
+        [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
+    # TODO REMOVE SYMBOLS
+    exp = node_0(lex.NT_NAME, parser.token)
+    parser.advance()
+    return node_1(lex.NT_SYMBOL, token, exp)
 
 
 def symbol_wildcard(parser, op, token):
@@ -803,8 +788,7 @@ def symbol_or_name_value(parser, name):
 
 # TYPES ************************
 def prefix_name_as_symbol(parser, op, token):
-    name = node_0(parser.lex.token_node_type(token),
-                        token)
+    name = node_0(lex.NT_NAME, token)
     return create_symbol_node(token, name)
 
 
@@ -892,7 +876,7 @@ def symbol_operator_name(parser, op, token):
 
 def grab_name(parser):
     parser.assert_token_type(lex.TT_NAME)
-    name = _init_default_current_0(parser)
+    name = node_0(lex.NT_NAME, parser.token)
     parser.advance()
     return name
 
@@ -900,10 +884,11 @@ def grab_name(parser):
 def grab_name_or_operator(parser):
     parser.assert_token_types(
         [lex.TT_NAME, lex.TT_OPERATOR, lex.TT_DOUBLE_COLON])
+
     token = parser.token
-    name = _init_default_current_0(parser)
-    if parser.token_type == lex.TT_OPERATOR:
-        name = create_name_from_operator(token, name)
+    if parser.token_type == lex.TT_OPERATOR \
+       or parser.token_type == lex.TT_NAME:
+        name = create_name_node_s(token, token.value)
     elif parser.token_type == lex.TT_DOUBLE_COLON:
         name = create_name_node_s(name, "cons")
 

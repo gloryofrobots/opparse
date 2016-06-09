@@ -716,6 +716,10 @@ class Builder:
         return self
 
 
+    def prefix_layout(self, ttype, nud, layout, node_type=None):
+        self.prefix(ttype, nud, node_type, layout)
+        return self
+
     def prefix(self, ttype, nud, node_type=None, layout=None):
         self.operators.set_nud(ttype, nud)
         self.operators.set_prefix_node_type(node_type)

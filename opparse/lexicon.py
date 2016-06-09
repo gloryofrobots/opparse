@@ -42,6 +42,3 @@ class Lexicon:
     TT_ENDSTREAM = 0
     TT_TO_NT_MAPPING = {}
     RULES = {}
-
-    def token_node_type(self, token):
-        return self.TT_TO_NT_MAPPING[token.type]
