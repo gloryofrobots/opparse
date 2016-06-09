@@ -226,9 +226,9 @@ def infix_lparen(parser, op, token, left):
 
 def infix_name_pair(parser, op, token, left):
     parser.assert_token_type(lex.TT_NAME)
-    name = _init_default_current_0(parser)
+    name = node_0(lex.NT_NAME, parser.token)
     parser.advance()
-    return node_2(parser.lex.token_node_type(token), token, left, name)
+    return node_2(op.infix_node_type, token, left, name)
 
 
 def infix_at(parser, op, token, left):
@@ -887,8 +887,7 @@ def stmt_type(parser, op, token):
 
 # TRAIT*************************
 def symbol_operator_name(parser, op, token):
-    name = node_0(parser.lex.token_node_type(token), token)
-    return create_name_from_operator(token, name)
+    return create_name_node_s(token, token.token_value)
 
 
 def grab_name(parser):

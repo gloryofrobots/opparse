@@ -47,15 +47,15 @@ def builder(**settings):
 def set_literals(parser_builder):
     return (
         parser_builder
-        .literal(lex.TT_INT)
-        .literal(lex.TT_FLOAT)
-        .literal(lex.TT_CHAR)
-        .literal(lex.TT_STR)
-        .literal(lex.TT_MULTI_STR)
-        .literal(lex.TT_NAME)
-        .literal(lex.TT_TRUE)
-        .literal(lex.TT_FALSE)
-        .literal(lex.TT_WILDCARD)
+        .literal(lex.TT_INT, lex.NT_INT)
+        .literal(lex.TT_FLOAT, lex.NT_FLOAT)
+        .literal(lex.TT_CHAR, lex.NT_CHAR)
+        .literal(lex.TT_STR, LEX.NT_STR)
+        .literal(lex.TT_MULTI_STR, lex.NT_MULTI_STR)
+        .literal(lex.TT_NAME, lex.NT_NAME)
+        .literal(lex.TT_TRUE, lex.NT_TRUE)
+        .literal(lex.TT_FALSE, lex.NT_FALSE)
+        .literal(lex.TT_WILDCARD, lex.NT_WILDCARD)
     )
 
 
@@ -75,7 +75,7 @@ def name_parser():
 
         .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
         .symbol(lex.TT_OPERATOR, symbol_operator_name)
-        .infix(lex.TT_DOT, 100, infix_name_pair)
+        .infix(lex.TT_DOT, 100, infix_name_pair, NT_LOOKUP)
     )
 
 
@@ -88,9 +88,9 @@ def type_parser():
         .symbol(lex.TT_RCURLY)
         .prefix(lex.TT_LCURLY, prefix_lcurly_type, layout_lcurly)
         .prefix(lex.TT_NAME, prefix_name_as_symbol)
-        .infix(lex.TT_COLON, 100, infix_name_pair)
+        .infix(lex.TT_DOT, 100, infix_name_pair, NT_LOOKUP)
         .infix(lex.TT_JUXTAPOSITION, 5, infix_juxtaposition)
-        .symbol(lex.TT_CASE, None)
+        .symbol(lex.TT_CASE)
     )
 
 
@@ -98,9 +98,9 @@ def method_signature_parser():
     return (
         builder(juxtaposition_as_list=True)
         .prefix(lex.TT_NAME, prefix_name_as_symbol)
-        .symbol(lex.TT_DEF, None)
-        .symbol(lex.TT_END, None)
-        .symbol(lex.TT_ARROW, None)
+        .symbol(lex.TT_DEF)
+        .symbol(lex.TT_END)
+        .symbol(lex.TT_ARROW)
         .infix(lex.TT_JUXTAPOSITION, 5, infix_juxtaposition)
     )
 
@@ -109,10 +109,10 @@ def import_names_parser():
     return (
         builder(allow_unknown=True)
         .symbol(lex.TT_UNKNOWN)
-        .symbol(lex.TT_RPAREN, None)
-        .symbol(lex.TT_COMMA, None)
-        .literal(lex.TT_NAME)
-        .infix(lex.TT_AS, 15, infix_name_pair)
+        .symbol(lex.TT_RPAREN)
+        .symbol(lex.TT_COMMA)
+        .literal(lex.TT_NAME, lex.NT_NAME)
+        .infix(lex.TT_AS, 15, infix_name_pair, lex.NT_AS)
         .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
     )
 
@@ -121,26 +121,26 @@ def import_parser():
     return (
         builder(allow_unknown=True)
         .symbol(lex.TT_UNKNOWN)
-        .symbol(lex.TT_COMMA, None)
-        .symbol(lex.TT_LPAREN, None)
-        .symbol(lex.TT_HIDING, None)
-        .symbol(lex.TT_HIDE, None)
-        .symbol(lex.TT_IMPORT, None)
-        .symbol(lex.TT_WILDCARD, None)
-        .infix(lex.TT_DOT, 100, infix_name_pair)
-        .infix(lex.TT_AS, 15, infix_name_pair)
-        .literal(lex.TT_NAME)
+        .symbol(lex.TT_COMMA)
+        .symbol(lex.TT_LPAREN)
+        .symbol(lex.TT_HIDING)
+        .symbol(lex.TT_HIDE)
+        .symbol(lex.TT_IMPORT)
+        .symbol(lex.TT_WILDCARD)
+        .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_LOOKUP)
+        .infix(lex.TT_AS, 15, infix_name_pair, lex.NT_AS)
+        .literal(lex.TT_NAME, lex.NT_NAME)
     )
 
 
 def guard_parser():
     return (
         set_literals(builder(allow_overloading=True))
-        .symbol(lex.TT_COMMA, None)
-        .symbol(lex.TT_RPAREN, None)
-        .symbol(lex.TT_RCURLY, None)
-        .symbol(lex.TT_RSQUARE, None)
-        .symbol(lex.TT_ARROW, None)
+        .symbol(lex.TT_COMMA)
+        .symbol(lex.TT_RPAREN)
+        .symbol(lex.TT_RCURLY)
+        .symbol(lex.TT_RSQUARE)
+        .symbol(lex.TT_ARROW)
 
         .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
         .prefix(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
@@ -148,12 +148,11 @@ def guard_parser():
         .prefix(lex.TT_SHARP, prefix_sharp)
         .prefix(lex.TT_BACKTICK_OPERATOR, prefix_backtick_operator)
 
-        .infix(lex.TT_OR, 25, infix_led)
-        .infix(lex.TT_AND, 30, infix_led)
+        .infix_default(lex.TT_OR, 25, lex.NT_OR)
+        .infix_default(lex.TT_AND, 30, lex.NT_AND)
         .infix(lex.TT_BACKTICK_NAME, 35, infix_backtick_name)
         .infix(lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
-        .infix(lex.TT_DOT, 100, infix_dot)
-        .infix(lex.TT_COLON, 100, infix_name_pair)
+        .infix(lex.TT_DOT, 100, infix_dot, lex.NT_LOOKUP)
     )
 
 
@@ -164,12 +163,11 @@ def setup_pattern_parser(parser_builder):
         .prefix(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
         .prefix(lex.TT_LCURLY, prefix_lcurly_patterns, layout_lcurly)
         .prefix(lex.TT_SHARP, prefix_sharp)
-        .prefix(lex.TT_ELLIPSIS, prefix_nud)
+        .prefix_default(lex.TT_ELLIPSIS, lex.NT_REST)
 
-        .infix(lex.TT_OF, 10, infix_led)
+        .infix_default(lex.TT_OF, 10, lex.NT_OF)
         .infix(lex.TT_AT_SIGN, 10, infix_at)
-        .infix(lex.TT_DOUBLE_COLON, 60, infixr_led)
-        .infix(lex.TT_COLON, 100, infix_name_pair)
+        .infixr(lex.TT_DOUBLE_COLON, 60, lex.NT_CONS)
 
         .symbol(lex.TT_WHEN)
         .symbol(lex.TT_CASE)
@@ -199,17 +197,17 @@ def fun_pattern_parser():
 def fun_signature_parser():
     return (
         builder(juxtaposition_as_list=True)
-        .literal(lex.TT_NAME)
+        .literal(lex.TT_NAME, lex.NT_NAME)
 
         .prefix(lex.TT_LPAREN, prefix_lparen, layout_lparen)
         .symbol(lex.TT_RPAREN)
         .symbol(lex.TT_INDENT)
-        .prefix(lex.TT_ELLIPSIS, prefix_nud)
+        .prefix_default(lex.TT_ELLIPSIS, lex.NT_REST)
 
-        .infix(lex.TT_OF, 15, infix_led)
-        .infix(lex.TT_COLON, 100, infix_name_pair)
+        .infix_default(lex.TT_OF, 15, lex.NT_OF)
+        .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_LOOKUP)
 
-        .literal(lex.TT_WILDCARD)
+        .literal(lex.TT_WILDCARD, lex.NT_WILDCARD)
         .symbol(lex.TT_DEF)
         .symbol(lex.TT_ARROW)
         .symbol(lex.TT_CASE)
@@ -244,7 +242,7 @@ def expression_parser():
         .prefix(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
         .prefix(lex.TT_LCURLY, prefix_lcurly, layout_lcurly)
         .prefix(lex.TT_SHARP, prefix_sharp)
-        .prefix(lex.TT_ELLIPSIS, prefix_nud)
+        .prefix_default(lex.TT_ELLIPSIS, lex.NT_REST)
         .prefix(lex.TT_IF, prefix_if)
 
         .prefix(lex.TT_FUN, prefix_fun)
@@ -256,15 +254,14 @@ def expression_parser():
         .prefix(lex.TT_LET, prefix_let)
 
         .assignment(lex.TT_ASSIGN, 10)
-        .infix(lex.TT_OF, 15, infix_led)
-        .infix(lex.TT_OR, 25, infix_led)
-        .infix(lex.TT_AND, 30, infix_led)
+        .infix_default(lex.TT_OF, 15, lex.NT_OF)
+        .infix_default(lex.TT_OR, 25, lex.NT_OR)
+        .infix_default(lex.TT_AND, 30, lex.NT_AND)
+        .infix_default(lex.TT_DOUBLE_COLON, 70, lex.NT_CONS)
         .infix(lex.TT_BACKTICK_NAME, 35, infix_backtick_name)
-        .infix(lex.TT_DOUBLE_COLON, 70, infixr_led)
 
         .infix(lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
-        .infix(lex.TT_COLON, 100, infix_name_pair)
-        .infix(lex.TT_DOT, 100, infix_dot)
+        .infix(lex.TT_DOT, 100, infix_dot, lex.NT_LOOKUP)
 
         .infix(lex.TT_INFIX_DOT_LCURLY, 100, infix_lcurly)
         .infix(lex.TT_INFIX_DOT_LSQUARE, 100, infix_lsquare)
@@ -310,7 +307,6 @@ def obin_parser():
         .assignment(lex.TT_ASSIGN, 10)
         .infix(lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
         .infix(lex.TT_DOT, 100, infix_dot)
-        .infix(lex.TT_COLON, 100, infix_name_pair)
 
         .stmt(lex.TT_FUN, prefix_module_fun)
         .stmt(lex.TT_TRAIT, stmt_trait)

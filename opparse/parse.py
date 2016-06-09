@@ -52,7 +52,7 @@ def parse_error(parser, message, token):
 
 
 def prefix_itself(parser, op, token):
-    return nodes.node_0(parser.lex.token_node_type(token), token)
+    return nodes.node_0(op.prefix_node_type, token)
 
 
 def prefix_empty(parser, op, token):
@@ -61,28 +61,22 @@ def prefix_empty(parser, op, token):
 
 def prefix_nud(parser, op, token):
     exp = parser.literal_expression()
-    return nodes.node_1(parser.lex.token_node_type(token),
-                        token, exp)
+    return nodes.node_1(op.prefix_node_type, token, exp)
 
 
 def infix_led(parser, op, token, left):
     exp = parser.expression(op.lbp)
-    return nodes.node_2(parser.lex.token_node_type(token),
-                        token,
-                        left, exp)
+    return nodes.node_2(op.infix_node_type, token, left, exp)
 
 
 def infixr_led(parser, op, token, left):
     exp = parser.rexpression(op)
-    return nodes.node_2(parser.lex.token_node_type(token),
-                        token,
-                        left, exp)
+    return nodes.node_2(op.infix_node_type, token, left, exp)
 
 
 def infixr_led_assign(parser, op, token, left):
     exp = parser.expression(9)
-    return nodes.node_2(parser.lex.token_node_type(token),
-                        token, left, exp)
+    return nodes.node_2(op.infix_node_type, token, left, exp)
 # LAYOUT
 
 
@@ -96,6 +90,8 @@ class Operator(object):
         # self.is_breaker = False
         self.layout = None
 
+        self.prefix_node_type = None
+        self.infix_node_type = None
         self.prefix_function = None
         self.infix_function = None
 
@@ -204,6 +200,16 @@ class Operators:
     def set_prefix_function(self, h, nud, prefix_fn):
         h.nud = nud
         h.prefix_function = prefix_fn
+        return h
+
+    def set_prefix_node_type(self, ttype, node_type):
+        h = self.get_or_create(ttype)
+        h.prefix_node_type = node_type
+        return h
+
+    def set_infix_node_type(self, ttype, node_type):
+        h = self.get_or_create(ttype)
+        h.infix_node_type = node_type
         return h
 
     def has(self, ttype):
@@ -695,20 +701,37 @@ class Builder:
         self.operators.set_layout(ttype, fn)
         return self
 
-    def infix(self, ttype, lbp, led):
+    def infix(self, ttype, lbp, led, node_type=None):
         self.operators.set_led(ttype, lbp, led)
+        self.operators.set_infix_node_type(node_type)
         return self
 
-    def prefix(self, ttype, nud, layout=None):
+    def infix_default(self, ttype, lbp, node_type):
+        self.infix(ttype, lbp, infix_led, node_type)
+        return self
+
+
+    def infixr(self, ttype, lbp, node_type):
+        self.infix(ttype, lbp, infixr_led, node_type)
+        return self
+
+
+    def prefix(self, ttype, nud, node_type=None, layout=None):
         self.operators.set_nud(ttype, nud)
+        self.operators.set_prefix_node_type(node_type)
         self.operators.set_layout(ttype, layout)
+        return self
+
+    def prefix_default(self, ttype, node_type, layout=None):
+        self.prefix(ttype, prefix_nud, node_type, layout)
         return self
 
     def stmt(self, ttype, std):
         self.operators.set_std(ttype, std)
         return self
 
-    def literal(self, ttype):
+    def literal(self, ttype, node_type):
+        self.operators.set_prefix_node_type(node_type)
         self.operators.set_nud(ttype, prefix_itself)
         return self
 
@@ -716,9 +739,6 @@ class Builder:
         self.operators.set_lbp(ttype, 0)
         self.operators.set_nud(ttype, nud)
         return self
-
-    def infixr(self, ttype, lbp):
-        return self.infix(ttype, lbp, infixr_led)
 
     def assignment(self, ttype, lbp):
         return self.infix(ttype, lbp, infixr_led_assign)

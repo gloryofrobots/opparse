@@ -38,7 +38,7 @@ class Lexicon:
     ]
     """
     # DEFAULTS
-    TT_UNKNOWN = -1
+    TT_UNKNOWN = 1
     TT_ENDSTREAM = 0
     TT_TO_NT_MAPPING = {}
     RULES = {}
