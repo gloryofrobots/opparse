@@ -43,16 +43,5 @@ class Lexicon:
     TT_TO_NT_MAPPING = {}
     RULES = {}
 
-    def __init(self):
-        self.rules = []
-
     def token_node_type(self, token):
-        return self.node_type_for_token_type(token.type)
-
-    def node_type_for_token_type(self, tt):
-        """
-        get node type for token type according to class
-        variable TT_TO_NT_MAPPING
-        """
-
-        return self.TT_TO_NT_MAPPING[tt]
+        return self.TT_TO_NT_MAPPING[token.type]

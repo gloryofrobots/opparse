@@ -17,6 +17,10 @@ def write_file(filename, content):
     with open(str(filename), "w") as f:
         f.write(content)
 
+def isfile(p):
+    state = path.isfile(p)
+    return state
+
 def join(*parts):
     return reduce(path.join, parts)
     # return path.join(path1, path2)
@@ -116,9 +120,6 @@ def is_directory(p):
     return isDir
 
 
-def is_file(p):
-    state = path.isfile(p)
-    return state
 
 
 def make_dirs_recursive_if_not_exist(p):

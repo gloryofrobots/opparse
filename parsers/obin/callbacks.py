@@ -590,7 +590,7 @@ def prefix_match(parser, op, token):
 
 def prefix_throw(parser, op, token):
     exp = parser.expression(0)
-    return node_1(parser.lex.token_node_type(token), token, exp)
+    return node_1(lex.TT_THROW, token, exp)
 
 
 # FUNCTION STUFF################################

@@ -1,5 +1,5 @@
 import importlib
-
+import json
 from opparse import nodes
 from opparse.misc import fs, timer
 
@@ -14,6 +14,7 @@ def execute_parser(parser_name):
     parser_dir = fs.join("parsers", parser_name)
     syntax_path = fs.join(parser_dir,  "syntax." + parser_name)
     ast_path = fs.join(parser_dir, "ast.json")
+    check_ast_path = fs.join(parser_dir, "check.json")
 
     source = fs.load_file(syntax_path)
     ast, scope = parser_module.parse(source)
@@ -22,6 +23,13 @@ def execute_parser(parser_name):
     print "************************** AST *********************"
     data = ast.to_json_string()
     fs.write_file(ast_path, data)
+
+    if fs.isfile(check_ast_path):
+        check_source = fs.load_file(check_ast_path)
+        if data != check_source:
+            print "Test %s failed" % parser_name
+        else:
+            print "Test %s success" % parser_name
 
 
 def main(parsers):
