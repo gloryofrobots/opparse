@@ -8,15 +8,15 @@ lex = ObinLexicon()
 def create_stream(parser, source):
     indenter_settings = dict(
         operator_tokens=[lex.TT_DOUBLE_COLON,
-                         parser.lex.TT_COLON, lex.TT_OPERATOR,
-                         parser.lex.TT_DOT,
+                         lex.TT_COLON, lex.TT_OPERATOR,
+                         lex.TT_DOT,
                          lex.TT_ASSIGN, lex.TT_OR, lex.TT_AND],
 
         end_expr_token=lex.TT_END_EXPR,
         indent_token=lex.TT_INDENT,
-        end_token=parser.lex.TT_END,
-        end_stream_token=parser.lex.TT_ENDSTREAM,
-        new_line_token=parser.lex.TT_NEWLINE
+        end_token=lex.TT_END,
+        end_stream_token=lex.TT_ENDSTREAM,
+        new_line_token=lex.TT_NEWLINE
     )
 
     lx = lexer.Lexer(parser.lex, source)

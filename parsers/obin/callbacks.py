@@ -19,11 +19,6 @@ def create_function_variants(args, body):
     return list_node([list_node([args, body])])
 
 
-def create_fun_node(token, name, funcs):
-    return node_2(lex.NT_FUN,
-                  token,
-                  name, funcs)
-
 
 def create_name_node_s(token, name):
     return node_0(lex.NT_NAME, token)
@@ -31,10 +26,6 @@ def create_name_node_s(token, name):
 
 def create_name_from_operator(token, op):
     return create_name_node_s(token, op.token_value)
-
-
-def create_name_node(token, name):
-    return create_name_node_s(token, name)
 
 
 def create_symbol_node(token, name):
@@ -115,7 +106,7 @@ def tuple_node_length(n):
 
 
 def _init_default_current_0(parser):
-    return nodes.node_0(parser.lex.node_type_for_token_type(parser.token.type),
+    return nodes.node_0(parser.lex.token_node_type(parser.token),
                         parser.token)
 
 
@@ -289,7 +280,7 @@ def prefix_backtick_operator(parser, op, token):
     if op.infix_function is None:
         return parse_error(parser, "Expected infix operator", token)
 
-    return create_name_node(token, op.infix_function)
+    return create_name_node_s(token, op.infix_function)
 
 
 def prefix_sharp(parser, op, token):
@@ -675,8 +666,9 @@ def _parse_function_variants(parser, signature,
         body = parser.statements(term_case_body)
         funcs.append(list_node([args, body]))
 
-    func = create_fun_node(token, empty_node(), list_node(funcs))
-    return func
+    return node_2(parser.lex.NT_FUN,
+                  token,
+                  empty_node(), list_node(funcs))
 
 
 def _parse_function(parser, term_pattern,
