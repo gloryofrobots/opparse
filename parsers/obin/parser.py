@@ -50,7 +50,7 @@ def set_literals(parser_builder):
         .literal(lex.TT_INT, lex.NT_INT)
         .literal(lex.TT_FLOAT, lex.NT_FLOAT)
         .literal(lex.TT_CHAR, lex.NT_CHAR)
-        .literal(lex.TT_STR, LEX.NT_STR)
+        .literal(lex.TT_STR, lex.NT_STR)
         .literal(lex.TT_MULTI_STR, lex.NT_MULTI_STR)
         .literal(lex.TT_NAME, lex.NT_NAME)
         .literal(lex.TT_TRUE, lex.NT_TRUE)
@@ -75,7 +75,7 @@ def name_parser():
 
         .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout=layout_lparen)
         .symbol(lex.TT_OPERATOR, symbol_operator_name)
-        .infix(lex.TT_DOT, 100, infix_name_pair, NT_LOOKUP)
+        .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_LOOKUP)
     )
 
 
@@ -88,7 +88,7 @@ def type_parser():
         .symbol(lex.TT_RCURLY)
         .prefix_layout(lex.TT_LCURLY, prefix_lcurly_type, layout_lcurly)
         .prefix(lex.TT_NAME, prefix_name_as_symbol)
-        .infix(lex.TT_DOT, 100, infix_name_pair, NT_LOOKUP)
+        .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_LOOKUP)
         .infix(lex.TT_JUXTAPOSITION, 5, infix_juxtaposition)
         .symbol(lex.TT_CASE)
     )
@@ -162,7 +162,7 @@ def setup_pattern_parser(parser_builder):
         .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
         .prefix_layout(lex.TT_LSQUARE, prefix_lsquare, layout_lsquare)
         .prefix_layout(lex.TT_LCURLY, prefix_lcurly_patterns, layout_lcurly)
-        .prefix_layout(lex.TT_SHARP, prefix_sharp)
+        .prefix(lex.TT_SHARP, prefix_sharp)
         .prefix_default(lex.TT_ELLIPSIS, lex.NT_REST)
 
         .infix_default(lex.TT_OF, 10, lex.NT_OF)
@@ -253,7 +253,7 @@ def expression_parser():
         .prefix(lex.TT_BACKTICK_OPERATOR, prefix_backtick_operator)
         .prefix(lex.TT_LET, prefix_let)
 
-        .assignment(lex.TT_ASSIGN, 10)
+        .assignment(lex.TT_ASSIGN, 10, lex.NT_ASSIGN)
         .infix_default(lex.TT_OF, 15, lex.NT_OF)
         .infix_default(lex.TT_OR, 25, lex.NT_OR)
         .infix_default(lex.TT_AND, 30, lex.NT_AND)
@@ -304,7 +304,7 @@ def obin_parser():
         .prefix(lex.TT_SHARP, prefix_sharp)
         .prefix(lex.TT_LAMBDA, prefix_lambda)
 
-        .assignment(lex.TT_ASSIGN, 10)
+        .assignment(lex.TT_ASSIGN, 10, lex.NT_ASSIGN)
         .infix(lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
         .infix(lex.TT_DOT, 100, infix_dot)
 

@@ -105,11 +105,6 @@ def tuple_node_length(n):
     return len(n.first())
 
 
-def _init_default_current_0(parser):
-    return nodes.node_0(parser.lex.token_node_type(parser.token),
-                        parser.token)
-
-
 # additional helpers
 
 
@@ -871,7 +866,7 @@ def stmt_type(parser, op, token):
 
 # TRAIT*************************
 def symbol_operator_name(parser, op, token):
-    return create_name_node_s(token, token.token_value)
+    return create_name_node_s(token, token.value)
 
 
 def grab_name(parser):

@@ -697,24 +697,21 @@ class Builder:
             assert issubclass(parser_class, Parser), parser_class
             self.parser_class = parser_class
 
-    def layout(self, ttype, fn):
-        self.operators.set_layout(ttype, fn)
-        return self
-
     def infix(self, ttype, lbp, led, node_type=None):
         self.operators.set_led(ttype, lbp, led)
-        self.operators.set_infix_node_type(node_type)
+        self.operators.set_infix_node_type(ttype, node_type)
         return self
 
     def infix_default(self, ttype, lbp, node_type):
         self.infix(ttype, lbp, infix_led, node_type)
         return self
 
-
     def infixr(self, ttype, lbp, node_type):
         self.infix(ttype, lbp, infixr_led, node_type)
         return self
 
+    def assignment(self, ttype, lbp, node_type):
+        return self.infix(ttype, lbp, infixr_led_assign, node_type)
 
     def prefix_layout(self, ttype, nud, layout, node_type=None):
         self.prefix(ttype, nud, node_type, layout)
@@ -722,21 +719,16 @@ class Builder:
 
     def prefix(self, ttype, nud, node_type=None, layout=None):
         self.operators.set_nud(ttype, nud)
-        self.operators.set_prefix_node_type(node_type)
+        self.operators.set_prefix_node_type(ttype, node_type)
         self.operators.set_layout(ttype, layout)
         return self
 
-    def prefix_default(self, ttype, node_type, layout=None):
-        self.prefix(ttype, prefix_nud, node_type, layout)
-        return self
-
-    def stmt(self, ttype, std):
-        self.operators.set_std(ttype, std)
+    def prefix_default(self, ttype, node_type):
+        self.prefix(ttype, prefix_nud, node_type)
         return self
 
     def literal(self, ttype, node_type):
-        self.operators.set_prefix_node_type(node_type)
-        self.operators.set_nud(ttype, prefix_itself)
+        self.prefix(ttype, prefix_itself, node_type=node_type, layout=None)
         return self
 
     def symbol(self, ttype, nud=None):
@@ -744,8 +736,9 @@ class Builder:
         self.operators.set_nud(ttype, nud)
         return self
 
-    def assignment(self, ttype, lbp):
-        return self.infix(ttype, lbp, infixr_led_assign)
+    def stmt(self, ttype, std):
+        self.operators.set_std(ttype, std)
+        return self
 
     def build(self, name):
         return self.parser_class(name, self.lexicon,
