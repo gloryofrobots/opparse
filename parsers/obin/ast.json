@@ -7220,42 +7220,42 @@
                                   "_value": "::",
                                   "children": [
                                     {
+                                      "_ntype": "NT_NAME",
+                                      "_value": "W"
+                                    },
+                                    {
                                       "_ntype": "NT_CONS",
                                       "_value": "::",
                                       "children": [
                                         {
+                                          "_ntype": "NT_NAME",
+                                          "_value": "Z"
+                                        },
+                                        {
                                           "_ntype": "NT_CONS",
                                           "_value": "::",
                                           "children": [
+                                            {
+                                              "_ntype": "NT_NAME",
+                                              "_value": "Y"
+                                            },
                                             {
                                               "_ntype": "NT_CONS",
                                               "_value": "::",
                                               "children": [
                                                 {
                                                   "_ntype": "NT_NAME",
-                                                  "_value": "W"
+                                                  "_value": "X"
                                                 },
                                                 {
                                                   "_ntype": "NT_NAME",
-                                                  "_value": "Z"
+                                                  "_value": "L"
                                                 }
                                               ]
-                                            },
-                                            {
-                                              "_ntype": "NT_NAME",
-                                              "_value": "Y"
                                             }
                                           ]
-                                        },
-                                        {
-                                          "_ntype": "NT_NAME",
-                                          "_value": "X"
                                         }
                                       ]
-                                    },
-                                    {
-                                      "_ntype": "NT_NAME",
-                                      "_value": "L"
                                     }
                                   ]
                                 }
@@ -7404,22 +7404,22 @@
                                   "_value": "::",
                                   "children": [
                                     {
+                                      "_ntype": "NT_NAME",
+                                      "_value": "Y"
+                                    },
+                                    {
                                       "_ntype": "NT_CONS",
                                       "_value": "::",
                                       "children": [
                                         {
                                           "_ntype": "NT_NAME",
-                                          "_value": "Y"
+                                          "_value": "X"
                                         },
                                         {
                                           "_ntype": "NT_NAME",
-                                          "_value": "X"
+                                          "_value": "L"
                                         }
                                       ]
-                                    },
-                                    {
-                                      "_ntype": "NT_NAME",
-                                      "_value": "L"
                                     }
                                   ]
                                 }
@@ -9685,7 +9685,7 @@
                     "_value": "#",
                     "children": [
                       {
-                        "_ntype": "NT_NAME",
+                        "_ntype": "NT_STR",
                         "_value": "\"++++ ---- <> $$\""
                       }
                     ]
@@ -9731,7 +9731,7 @@
                     "_value": "#",
                     "children": [
                       {
-                        "_ntype": "NT_NAME",
+                        "_ntype": "NT_STR",
                         "_value": "\"++++ ---- <> $$\""
                       }
                     ]

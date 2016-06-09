@@ -260,9 +260,17 @@ def prefix_backtick_operator(parser, op, token):
 
 def prefix_sharp(parser, op, token):
     parser.assert_token_types(
-        [lex.TT_NAME, lex.TT_MULTI_STR, lex.TT_STR, lex.TT_OPERATOR])
+        [lex.TT_NAME, lex.TT_STR, lex.TT_OPERATOR])
     # TODO REMOVE SYMBOLS
-    exp = node_0(lex.NT_NAME, parser.token)
+    tt = parser.token_type
+    if tt == lex.TT_NAME:
+        nt = lex.NT_NAME
+    elif tt == lex.TT_STR:
+        nt = lex.NT_STR
+    elif tt == lex.TT_OPERATOR:
+        nt = lec.NT_OPERATOR
+
+    exp = node_0(nt, parser.token)
     parser.advance()
     return node_1(lex.NT_SYMBOL, token, exp)
 

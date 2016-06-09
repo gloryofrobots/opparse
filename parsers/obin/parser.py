@@ -257,7 +257,7 @@ def expression_parser():
         .infix_default(lex.TT_OF, 15, lex.NT_OF)
         .infix_default(lex.TT_OR, 25, lex.NT_OR)
         .infix_default(lex.TT_AND, 30, lex.NT_AND)
-        .infix_default(lex.TT_DOUBLE_COLON, 70, lex.NT_CONS)
+        .infixr(lex.TT_DOUBLE_COLON, 70, lex.NT_CONS)
         .infix(lex.TT_BACKTICK_NAME, 35, infix_backtick_name)
 
         .infix(lex.TT_JUXTAPOSITION, 90, infix_juxtaposition)
