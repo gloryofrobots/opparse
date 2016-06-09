@@ -31,6 +31,13 @@ class IpyLexicon(Lexicon):
     NT_END_EXPR = "NT_END_EXPR"
     NT_END = "NT_END"
 
+    NT_GT = "NT_GT"
+    NT_GE = "NT_GE"
+    NT_LE = "NT_LE"
+    NT_LT = "NT_LT"
+    NT_EQ = "NT_EQ"
+    NT_NE = "NT_NE"
+
     NT_ADD = "NT_ADD"
     NT_SUB = "NT_SUB"
     NT_DIV = "NT_DIV"
@@ -83,6 +90,13 @@ class IpyLexicon(Lexicon):
     TT_RSQUARE = "TT_RSQUARE"
     TT_DOT = "TT_DOT"
     TT_COLON = "TT_COLON"
+
+    TT_GT = "TT_GT"
+    TT_GE = "TT_GE"
+    TT_LE = "TT_LE"
+    TT_LT = "TT_LT"
+    TT_EQ = "TT_EQ"
+    TT_NE = "TT_NE"
     TT_PLUS = "TT_PLUS"
     TT_MINUS = "TT_MINUS"
     TT_SLASH = "TT_SLASH"

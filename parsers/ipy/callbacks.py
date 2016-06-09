@@ -258,6 +258,26 @@ def grab_name(parser):
     return name
 
 
+def _parse_function(parser):
+    parser.advance_expected(lex.TT_LPAREN)
+    args = []
+    if parser.token_type != lex.TT_RPAREN:
+        while True:
+            args.append(parser.signature_parser.expression(0))
+            skip_end_expression(parser)
+
+            if parser.token_type != lex.TT_COMMA:
+                break
+
+            parser.advance_expected(lex.TT_COMMA)
+
+    parser.advance_expected(lex.TT_RPAREN)
+    parser.advance_expected(lex.TT_COLON)
+    init_code_layout(parser, parser.token)
+    body = parser.statements(parser.lex.TERM_BLOCK)
+    return list_node(args), body
+
+
 # TODO TRY DO IT IN COMPLETELY OPERATOR WAY
 def prefix_fun(parser, op, token):
     init_node_layout(parser, token)
@@ -267,7 +287,7 @@ def prefix_fun(parser, op, token):
         name = grab_name(parser.name_parser)
     args, body = _parse_function(parser)
     parser.advance_end()
-    return node_3(lex.NT_FUN, token, name, args, funcs)
+    return node_3(lex.NT_FUN, token, name, args, body)
 
 
 def stmt_def(parser, op, token):

@@ -32,15 +32,15 @@ def parser_error_indentation(parser, msg, position, lineno, column):
 def parse_error(parser, message, token):
     print parser.ts.advanced_values()
     print parser.ts.layouts
-    if token.token_type == parser.lex.TT_ENDSTREAM:
+    if token.type == parser.lex.TT_ENDSTREAM:
         line = "Unclosed top level statement"
     else:
-        line = get_line(parser.ts.src, token.token_line)
+        line = get_line(parser.ts.src, token.line)
 
     raise ParseError([
-        token.token_position,
-        token.token_line,
-        token.token_column,
+        token.position,
+        token.line,
+        token.column,
         str(token),
         message,
         line
@@ -505,6 +505,9 @@ class Parser(object):
         #     terminators = [self.lex.TT_END_EXPR]
         expr = self.base_expression(rbp, terminators)
         expr = self.postprocess(expr)
+        return expr
+
+    def postprocess(self, expr):
         return expr
 
     def assert_expression(self, rbp, expected_type):
