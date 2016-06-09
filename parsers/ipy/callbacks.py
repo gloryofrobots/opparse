@@ -39,18 +39,18 @@ def infix_lsquare(parser, op, token, left):
 
 
 def infix_lparen(parser, op, token, left):
-    init_free_layout(parser, token, [lex.TT_RPAREN])
-
     items = []
     if parser.token_type != lex.TT_RPAREN:
-        while True:
-            items.append(parser.expression(0))
-            skip_end_expression(parser)
+        init_free_layout(parser, token, [lex.TT_RPAREN])
+        if parser.token_type != lex.TT_RPAREN:
+            while True:
+                items.append(parser.expression(0))
+                skip_end_expression(parser)
 
-            if parser.token_type != lex.TT_COMMA:
-                break
+                if parser.token_type != lex.TT_COMMA:
+                    break
 
-            parser.advance_expected(lex.TT_COMMA)
+                parser.advance_expected(lex.TT_COMMA)
 
     parser.advance_expected(lex.TT_RPAREN)
     return node_2(lex.NT_CALL, token, left, list_node(items))
@@ -189,6 +189,7 @@ def prefix_if(parser, op, token):
 
 def prefix_try(parser, op, token):
     init_node_layout(parser, token, parser.lex.LEVELS_TRY)
+    parser.advance_expected(lex.TT_COLON)
     init_code_layout(parser, parser.token, parser.lex.TERM_TRY)
 
     trybody = parser.statements(parser.lex.TERM_TRY)
@@ -208,7 +209,7 @@ def prefix_try(parser, op, token):
 
         init_code_layout(parser, parser.token, parser.lex.TERM_EXCEPT)
         body = parser.statements(parser.lex.TERM_EXCEPT)
-        catches.append(list_node([pattern, body]))
+        catches.append(list_node([sig, body]))
 
     if parser.token_type == lex.TT_FINALLY:
         parser.advance_expected(lex.TT_FINALLY)

@@ -16,3 +16,16 @@ elif 2 == 4 or 5 == 6:
 elif "Cow" == "Horse" and ("Dog" is "Cat" or "Fish" is "Bird"): raise SystemExit(-3)
 else:
     print ("Everything is alright")
+
+try:
+    kill_all_humans()
+    kill_all_cats()
+    enjoy()
+except MoralGroundException as e:
+    print("Common")
+except NotEnoughAmmo as e:
+    print("Go get some")
+except:
+    print("WTF?")
+finally:
+    sleep_well()

@@ -471,5 +471,152 @@
         ]
       ]
     ]
+  },
+  {
+    "_ntype": "NT_TRY",
+    "_value": "try",
+    "children": [
+      [
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "kill_all_humans"
+            },
+            []
+          ]
+        },
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "kill_all_cats"
+            },
+            []
+          ]
+        },
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "enjoy"
+            },
+            []
+          ]
+        }
+      ],
+      [
+        [
+          {
+            "_ntype": "NT_AS",
+            "_value": "as",
+            "children": [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "MoralGroundException"
+              },
+              {
+                "_ntype": "NT_NAME",
+                "_value": "e"
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_STR",
+                    "_value": "\"Common\""
+                  }
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "_ntype": "NT_AS",
+            "_value": "as",
+            "children": [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "NotEnoughAmmo"
+              },
+              {
+                "_ntype": "NT_NAME",
+                "_value": "e"
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_STR",
+                    "_value": "\"Go get some\""
+                  }
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "empty": true
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_STR",
+                    "_value": "\"WTF?\""
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "sleep_well"
+            },
+            []
+          ]
+        }
+      ]
+    ]
   }
 ]
