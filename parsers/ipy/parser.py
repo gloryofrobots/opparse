@@ -163,6 +163,10 @@ def ipy_parser():
             .infix_default(lex.TT_EQ, 35, lex.NT_EQ)
             .infix_default(lex.TT_NE, 35, lex.NT_NE)
             .infix_default(lex.TT_IS, 35, lex.NT_IS)
+            .infix_default(lex.TT_IN, 35, lex.NT_IN)
+            .infix_default(lex.TT_NOT_IN, 35, lex.NT_NOT_IN)
+            .infix_default(lex.TT_IS_NOT, 35, lex.NT_IS_NOT)
+
             .infix_default(lex.TT_MINUS, 40, lex.NT_SUB)
             .infix_default(lex.TT_PLUS, 40, lex.NT_ADD)
             .infix_default(lex.TT_STAR, 50, lex.NT_MUL)

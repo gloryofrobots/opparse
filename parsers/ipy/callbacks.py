@@ -242,13 +242,36 @@ def stmt_return(parser, op, token):
 
 
 # LOOPS
+def check_condition(parser, condition):
+    # assignment not a statement in operator precedence parser
+    if condition.token_type in lex.ASSIGNMENT_TOKENS:
+        parse_error(parser, "Invalid use of assignment inside condition",
+                    condition.token)
+    return True
 
 def stmt_while(parser, op, token):
-    pass
+    init_node_layout(parser, token)
+    condition = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
+    check_condition(parser, condition)
+    parser.advance_expected(lex.TT_COLON)
+    init_code_layout(parser, parser.token)
+    body = parser.statements(parser.lex.TERM_BLOCK)
+
+    return node_2(lex.NT_WHILE, token, condition, body)
 
 
 def stmt_for(parser, op, token):
-    pass
+    init_node_layout(parser, token)
+
+    condition = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
+    check_condition(parser, condition)
+    parser.assert_node_type(condition, lex.NT_IN)
+
+    parser.advance_expected(lex.TT_COLON)
+    init_code_layout(parser, parser.token)
+    body = parser.statements(parser.lex.TERM_BLOCK)
+    parser.advance_end()
+    return node_2(lex.NT_FOR, token, condition, body)
 
 
 # FUNCTION STUFF################################

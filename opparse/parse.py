@@ -425,7 +425,7 @@ class Parser(object):
         ntype = node.node_type
         if ntype != expected_type:
             parse_error(self, "Wrong node type, expected  %s, got %s" %
-                        (expected_type, ntype), node)
+                        (expected_type, ntype), node.token)
 
     # MOVEMENTS
 
@@ -433,7 +433,7 @@ class Parser(object):
         ntype = node.node_type
         if ntype not in types:
             parse_error(self, "Wrong node type, expected one of %s, got %s" %
-                        (str(types), ntype), node)
+                        (str(types), ntype), node.token)
 
     def advance(self):
         if self.isend():

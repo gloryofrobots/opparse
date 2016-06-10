@@ -17,6 +17,8 @@ class IpyLexicon(Lexicon):
     NT_FUN = "NT_FUN"
     NT_IF = "NT_IF"
     NT_TRY = "NT_TRY"
+    NT_FOR = "NT_FOR"
+    NT_WHILE = "NT_WHILE"
     NT_RAISE = "NT_RAISE"
     NT_ASSIGN = "NT_ASSIGN"
     NT_PLUS_ASSIGN = "NT_PLUS_ASSIGN"
@@ -35,8 +37,11 @@ class IpyLexicon(Lexicon):
     NT_LE = "NT_LE"
     NT_LT = "NT_LT"
     NT_EQ = "NT_EQ"
-    NT_IS = "NT_IS"
     NT_NE = "NT_NE"
+    NT_IN = "NT_IN"
+    NT_IS = "NT_IS"
+    NT_IS_NOT = "NT_IS_NOT"
+    NT_NOT_IN = "NT_NOT_IN"
 
     NT_ADD = "NT_ADD"
     NT_SUB = "NT_SUB"
@@ -64,6 +69,9 @@ class IpyLexicon(Lexicon):
     TT_IN = "TT_IN"
     TT_AS = "TT_AS"
     TT_IS = "TT_IS"
+    TT_IS_NOT = "TT_IS_NOT"
+    TT_NOT_IN = "TT_NOT_IN"
+
     TT_AND = "TT_AND"
     TT_NOT = "TT_AND"
     TT_OR = "TT_OR"
@@ -113,6 +121,8 @@ class IpyLexicon(Lexicon):
         (token(' '), -1),
         (token('#[^\n]*'), -1),
 
+        (token('is[\s]+not'), TT_IS_NOT),
+        (token('not[\s]+in'), TT_NOT_IN),
         (keyword('if'), TT_IF),
         (keyword('elif'), TT_ELIF),
         (keyword('else'), TT_ELSE),
@@ -187,8 +197,12 @@ class IpyLexicon(Lexicon):
 
     TERM_FUN_SIGNATURE = [TT_COLON]
 
+    TERM_FOR_CONDITION = [TT_IN]
+    
     TERM_FROM_IMPORTED = [TT_IMPORT]
 
     LEVELS_IF = [TT_ELSE, TT_ELIF]
     LEVELS_TRY = [TT_EXCEPT, TT_FINALLY]
     LEVELS_FOR = [TT_ELSE]
+
+    ASSIGNMENT_TOKENS = [TT_ASSIGN, TT_PLUS_ASSIGN, TT_MINUS_ASSIGN]
