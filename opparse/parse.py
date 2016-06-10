@@ -569,7 +569,8 @@ class Parser(object):
         length = len(stmts)
         if length == 0:
             return parse_error(self,
-                               "Expected one or more expressions", self.token)
+                               "Expected one or more expressions",
+                               self.token)
 
         return nodes.list_node(stmts)
 

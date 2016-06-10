@@ -26,10 +26,18 @@ def skip_end_expression(parser):
 ##############################################################
 
 def infix_comma(parser, op, token, left):
-    if parser.token_type in [lex.TT_RPAREN, lex.TT_RCURLY, lex.TT_RSQUARE, lex.TT_END_EXPR, lex.TT_IN, lex.TT_FOR]:
-        right = empty_node()
-    else:
-        right = parser.expression(op.lbp)
+    # it would be very easy, if not needed for trailing commas, aka postfix operators
+    tt = parser.token_type
+    # check for end expr because it will be auto inserted and it has nud which produces empty node
+    if not parser.token_has_nud(parser.token) \
+            or tt == lex.TT_END_EXPR:
+        # check some corner cases with 1,2,.name or 1,2,,
+        if tt == lex.TT_DOT or tt == lex.TT_COMMA:
+            parse_error(parser, "Invalid tuple syntax", token)
+
+        return left
+        # right = empty_node()
+    right = parser.expression(op.lbp)
     return node_2(lex.NT_COMMA, token, left, right)
 
 
