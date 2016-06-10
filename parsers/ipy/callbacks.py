@@ -53,14 +53,12 @@ def infix_lsquare(parser, op, token, left):
     return node_2(lex.NT_DOT, token, left, exp)
 
 def commas_as_list(node):
-    els = []
-    while node.node_type == lex.NT_COMMA:
-        els.append(node.first())
-        node = node.second()
-    els.append(node)
-    return els
+    return flatten_infix(node, lex.NT_COMMA)
 
-def commas_as_list(node):
+def commas_as_list_if_commas(node):
+    if node.node_type != lex.NT_COMMA:
+        return node
+
     return flatten_infix(node, lex.NT_COMMA)
 
 def infix_lparen(parser, op, token, left):
@@ -74,23 +72,6 @@ def infix_lparen(parser, op, token, left):
     parser.advance_expected(lex.TT_RPAREN)
     return node_2(lex.NT_CALL, token, left, args)
 
-
-def infix_lparen_2(parser, op, token, left):
-    items = []
-    if parser.token_type != lex.TT_RPAREN:
-        init_free_layout(parser, token, [lex.TT_RPAREN])
-        if parser.token_type != lex.TT_RPAREN:
-            while True:
-                items.append(parser.expression(0))
-                skip_end_expression(parser)
-
-                if parser.token_type != lex.TT_COMMA:
-                    break
-
-                parser.advance_expected(lex.TT_COMMA)
-
-    parser.advance_expected(lex.TT_RPAREN)
-    return node_2(lex.NT_CALL, token, left, list_node(items))
 
 def infix_name_pair(parser, op, token, left):
     parser.assert_token_type(lex.TT_NAME)
@@ -122,45 +103,28 @@ def prefix_lparen(parser, op, token):
 
     e = parser.terminated_expression(0, [lex.TT_RPAREN])
     skip_end_expression(parser)
-
-    if parser.token_type == lex.TT_RPAREN:
+    if e.node_type == lex.NT_COMMA:
         parser.advance_expected(lex.TT_RPAREN)
-        return e
-
-    items = [e]
-    parser.advance_expected(lex.TT_COMMA)
-
-    if parser.token_type != lex.TT_RPAREN:
-        while True:
-            items.append(parser.terminated_expression(0, [lex.TT_COMMA]))
-            skip_end_expression(parser)
-            if parser.token_type == lex.TT_RPAREN:
-                break
-            parser.advance_expected(lex.TT_COMMA)
+        items = commas_as_list(e)
+        return node_1(lex.NT_TUPLE, token, items)
 
     parser.advance_expected(lex.TT_RPAREN)
-    return node_1(lex.NT_TUPLE, token, list_node(items))
+    return e
 
 
 def layout_lsquare(parser, op, token):
     init_free_layout(parser, token, [lex.TT_RSQUARE])
 
-
 def prefix_lsquare(parser, op, token):
-    items = []
     if parser.token_type != lex.TT_RSQUARE:
-        while True:
-            items.append(parser.expression(0))
-            skip_end_expression(parser)
-
-            if parser.token_type != lex.TT_COMMA:
-                break
-
-            parser.advance_expected(lex.TT_COMMA)
+        expr = parser.expression(0)
+        skip_end_expression(parser)
+        args = commas_as_list(expr)
+    else:
+        args = list_node([])
 
     parser.advance_expected(lex.TT_RSQUARE)
-    return node_1(lex.NT_LIST, token, list_node(items))
-
+    return node_1(lex.NT_LIST, token, args)
 
 def layout_lcurly(parser, op, token):
     init_free_layout(parser, token, [lex.TT_RCURLY])

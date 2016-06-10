@@ -775,3 +775,21 @@ def parse_token_stream(parser, ts):
     parser.assert_token_type(parser.lex.TT_ENDSTREAM)
     parser.close()
     return stmts, scope
+
+
+# def infix_lparen_2(parser, op, token, left):
+#     items = []
+#     if parser.token_type != lex.TT_RPAREN:
+#         init_free_layout(parser, token, [lex.TT_RPAREN])
+#         if parser.token_type != lex.TT_RPAREN:
+#             while True:
+#                 items.append(parses.expression(0))
+#                 skip_end_expression(parser)
+
+#                 if parser.token_type != lex.TT_COMMA:
+#                     break
+
+#                 parser.advance_expected(lex.TT_COMMA)
+
+#     parser.advance_expected(lex.TT_RPAREN)
+#     return node_2(lex.NT_CALL, token, left, list_node(items))
