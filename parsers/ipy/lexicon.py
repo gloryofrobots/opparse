@@ -24,7 +24,8 @@ class IpyLexicon(Lexicon):
     NT_PLUS_ASSIGN = "NT_PLUS_ASSIGN"
     NT_MINUS_ASSIGN = "NT_MINUS_ASSIGN"
     NT_CALL = "NT_CALL"
-    NT_LOOKUP = "NT_LOOKUP"
+    NT_DOT = "NT_DOT"
+    NT_COMMA = "NT_COMMA"
     NT_AS = "NT_AS"
     NT_AND = "NT_AND"
     NT_OR = "NT_OR"
@@ -47,6 +48,8 @@ class IpyLexicon(Lexicon):
     NT_SUB = "NT_SUB"
     NT_DIV = "NT_DIV"
     NT_MUL = "NT_MUL"
+    NT_POW = "NT_POW"
+    NT_MOD = "NT_MOD"
 
     NT_NEGATE = "NT_NEGATE"
 
@@ -113,6 +116,7 @@ class IpyLexicon(Lexicon):
     TT_SLASH = "TT_SLASH"
     TT_STAR = "TT_STAR"
     TT_DOUBLE_STAR = "TT_DOUBLE_STAR"
+    TT_PERCENTS = "TT_PERCENTS"
     TT_IMPORT = "TT_IMPORT"
     TT_FROM = "TT_FROM"
 
@@ -183,6 +187,7 @@ class IpyLexicon(Lexicon):
         (token('\-'), TT_MINUS),
         (token('\*'), TT_STAR),
         (token('\/'), TT_SLASH),
+        (token('\%'), TT_PERCENTS),
         (token('='), TT_ASSIGN),
     ]
 

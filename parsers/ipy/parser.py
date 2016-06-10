@@ -65,7 +65,7 @@ def name_parser():
             .symbol(lex.TT_ENDSTREAM)
 
             .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
-            .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_LOOKUP)
+            .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_DOT)
     )
 
 
@@ -84,7 +84,7 @@ def import_names_parser():
 def exception_name_parser():
     return (
         builder(allow_unknown=True)
-            .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_LOOKUP)
+            .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_DOT)
             .infix(lex.TT_AS, 15, infix_name_pair, lex.NT_AS)
             .literal(lex.TT_NAME, lex.NT_NAME)
     )
@@ -98,7 +98,7 @@ def import_parser():
             .symbol(lex.TT_LPAREN)
             .symbol(lex.TT_IMPORT)
             .symbol(lex.TT_STAR)
-            .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_LOOKUP)
+            .infix(lex.TT_DOT, 100, infix_name_pair, lex.NT_DOT)
             .infix(lex.TT_AS, 15, infix_name_pair, lex.NT_AS)
             .literal(lex.TT_NAME, lex.NT_NAME)
     )
@@ -123,7 +123,7 @@ def ipy_parser():
             .symbol(lex.TT_COLON)
             .symbol(lex.TT_RPAREN)
             .symbol(lex.TT_RCURLY)
-            .symbol(lex.TT_COMMA)
+            # .symbol(lex.TT_COMMA)
             .symbol(lex.TT_ELSE)
             .symbol(lex.TT_ELIF)
             .symbol(lex.TT_EXCEPT)
@@ -171,8 +171,11 @@ def ipy_parser():
             .infix_default(lex.TT_PLUS, 40, lex.NT_ADD)
             .infix_default(lex.TT_STAR, 50, lex.NT_MUL)
             .infix_default(lex.TT_SLASH, 50, lex.NT_DIV)
+            .infix_default(lex.TT_PERCENTS, 50, lex.NT_MOD)
+            .infix_default(lex.TT_DOUBLE_STAR, 60, lex.NT_POW)
 
-            .infix(lex.TT_DOT, 100, infix_dot, lex.NT_LOOKUP)
+            .infix(lex.TT_DOT, 100, infix_dot)
+            .infix(lex.TT_COMMA, 100, infix_comma)
 
             .infix(lex.TT_LSQUARE, 90, infix_lsquare)
             .infix(lex.TT_LPAREN, 90, infix_lparen)

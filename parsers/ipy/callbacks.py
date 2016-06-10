@@ -25,17 +25,24 @@ def skip_end_expression(parser):
 # INFIX
 ##############################################################
 
+def infix_comma(parser, op, token, left):
+    if parser.token_type in [lex.TT_RPAREN, lex.TT_RCURLY, lex.TT_RSQUARE]:
+        right = empty_node()
+    else:
+        right = parser.expression(0)
+    return node_2(lex.NT_COMMA, token, left, right)
+
 def infix_dot(parser, op, token, left):
     parser.assert_token_type(lex.TT_NAME)
     exp = parser.expression(0)
-    return node_2(lex.NT_LOOKUP, token, left, exp)
+    return node_2(lex.NT_DOT, token, left, exp)
 
 
 def infix_lsquare(parser, op, token, left):
     init_free_layout(parser, token, [lex.TT_RSQUARE])
     exp = parser.expression(0)
     parser.advance_expected(lex.TT_RSQUARE)
-    return node_2(lex.NT_LOOKUP, token, left, exp)
+    return node_2(lex.NT_DOT, token, left, exp)
 
 
 def infix_lparen(parser, op, token, left):
