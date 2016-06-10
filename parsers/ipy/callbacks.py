@@ -26,16 +26,16 @@ def skip_end_expression(parser):
 ##############################################################
 
 def infix_comma(parser, op, token, left):
-    if parser.token_type in [lex.TT_RPAREN, lex.TT_RCURLY, lex.TT_RSQUARE]:
+    if parser.token_type in [lex.TT_RPAREN, lex.TT_RCURLY, lex.TT_RSQUARE, lex.TT_END_EXPR, lex.TT_IN, lex.TT_FOR]:
         right = empty_node()
     else:
-        right = parser.expression(0)
+        right = parser.expression(op.lbp)
     return node_2(lex.NT_COMMA, token, left, right)
 
 
 def infix_dot(parser, op, token, left):
     parser.assert_token_type(lex.TT_NAME)
-    exp = parser.expression(0)
+    exp = parser.expression(op.lbp)
     return node_2(lex.NT_DOT, token, left, exp)
 
 
@@ -50,7 +50,6 @@ def infix_lparen(parser, op, token, left):
     items = []
     if parser.token_type != lex.TT_RPAREN:
         init_free_layout(parser, token, [lex.TT_RPAREN])
-
         if parser.token_type != lex.TT_RPAREN:
             while True:
                 items.append(parser.expression(0))
@@ -64,6 +63,23 @@ def infix_lparen(parser, op, token, left):
     parser.advance_expected(lex.TT_RPAREN)
     return node_2(lex.NT_CALL, token, left, list_node(items))
 
+
+def infix_lparen_2(parser, op, token, left):
+    items = []
+    if parser.token_type != lex.TT_RPAREN:
+        init_free_layout(parser, token, [lex.TT_RPAREN])
+        if parser.token_type != lex.TT_RPAREN:
+            while True:
+                items.append(parser.expression(0))
+                skip_end_expression(parser)
+
+                if parser.token_type != lex.TT_COMMA:
+                    break
+
+                parser.advance_expected(lex.TT_COMMA)
+
+    parser.advance_expected(lex.TT_RPAREN)
+    return node_2(lex.NT_CALL, token, left, list_node(items))
 
 def infix_name_pair(parser, op, token, left):
     parser.assert_token_type(lex.TT_NAME)
@@ -330,7 +346,7 @@ def stmt_def(parser, op, token):
     name = grab_name(parser.name_parser)
     args, body = _parse_function(parser)
     parser.advance_end()
-    return node_3(lex.NT_FUN, token, name, args, funcs)
+    return node_3(lex.NT_FUN, token, name, args, body)
 
 
 def prefix_lambda(parser, op, token):
@@ -345,7 +361,7 @@ def prefix_lambda(parser, op, token):
     parser.advance_expected(lex.TT_COLON)
 
     body = parser.expression(0)
-    return node_3(lex.NT_FUN, token, empty_node(), args, body)
+    return node_3(lex.NT_FUN, token, empty_node(), list_node(args), body)
 
 
 ###############################################################

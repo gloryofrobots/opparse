@@ -110,6 +110,7 @@ def signature_parser():
             .symbol(lex.TT_RPAREN)
             .symbol(lex.TT_INDENT)
             .symbol(lex.TT_COMMA)
+            .symbol(lex.TT_COLON)
             .literal(lex.TT_NAME, lex.NT_NAME)
             .prefix_default(lex.TT_STAR, lex.NT_VARGS)
             .prefix_default(lex.TT_DOUBLE_STAR, lex.NT_KVARGS)
@@ -145,12 +146,13 @@ def ipy_parser():
 
             .prefix_default(lex.TT_NOT, lex.NT_NOT)
             .prefix_default(lex.TT_MINUS, lex.NT_NEGATE)
+            .prefix_default(lex.TT_TILDE, lex.NT_BNOT)
 
             .stmt(lex.TT_DEF, prefix_fun)
             .prefix(lex.TT_FUN, prefix_fun)
             .prefix(lex.TT_LAMBDA, prefix_lambda)
 
-            .assignment(lex.TT_ASSIGN, 10, lex.NT_ASSIGN)
+            .infix_default(lex.TT_ASSIGN, 10, lex.NT_ASSIGN)
             .assignment(lex.TT_PLUS_ASSIGN, 10, lex.NT_PLUS_ASSIGN)
             .assignment(lex.TT_MINUS_ASSIGN, 10, lex.TT_MINUS_ASSIGN)
 
@@ -165,14 +167,18 @@ def ipy_parser():
             .infix_default(lex.TT_IS, 35, lex.NT_IS)
             .infix_default(lex.TT_IN, 35, lex.NT_IN)
             .infix_default(lex.TT_NOT_IN, 35, lex.NT_NOT_IN)
-            .infix_default(lex.TT_IS_NOT, 35, lex.NT_IS_NOT)
+            .infix_default(lex.TT_PIPE, 40, lex.NT_BOR)
+            .infix_default(lex.TT_CARET, 40, lex.NT_BXOR)
+            .infix_default(lex.TT_AMP, 45, lex.NT_BAND)
+            .infix_default(lex.TT_SHL, 50, lex.NT_BSHL)
+            .infix_default(lex.TT_SHR, 50, lex.NT_BSHR)
 
-            .infix_default(lex.TT_MINUS, 40, lex.NT_SUB)
-            .infix_default(lex.TT_PLUS, 40, lex.NT_ADD)
-            .infix_default(lex.TT_STAR, 50, lex.NT_MUL)
-            .infix_default(lex.TT_SLASH, 50, lex.NT_DIV)
-            .infix_default(lex.TT_PERCENTS, 50, lex.NT_MOD)
-            .infix_default(lex.TT_DOUBLE_STAR, 60, lex.NT_POW)
+            .infix_default(lex.TT_MINUS, 55, lex.NT_SUB)
+            .infix_default(lex.TT_PLUS, 55, lex.NT_ADD)
+            .infix_default(lex.TT_STAR, 60, lex.NT_MUL)
+            .infix_default(lex.TT_SLASH, 60, lex.NT_DIV)
+            .infix_default(lex.TT_PERCENTS, 60, lex.NT_MOD)
+            .infix_default(lex.TT_DOUBLE_STAR, 70, lex.NT_POW)
 
             .infix(lex.TT_DOT, 100, infix_dot)
             .infix(lex.TT_COMMA, 100, infix_comma)

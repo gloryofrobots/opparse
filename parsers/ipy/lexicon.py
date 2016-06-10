@@ -50,6 +50,12 @@ class IpyLexicon(Lexicon):
     NT_MUL = "NT_MUL"
     NT_POW = "NT_POW"
     NT_MOD = "NT_MOD"
+    NT_BXOR = "NT_BXOR"
+    NT_BNOT = "NT_BNOT"
+    NT_BOR = "NT_BOR"
+    NT_BAND = "NT_BAND"
+    NT_BSHL = "NT_BSHL"
+    NT_BSHR = "NT_BSHR"
 
     NT_NEGATE = "NT_NEGATE"
 
@@ -117,6 +123,14 @@ class IpyLexicon(Lexicon):
     TT_STAR = "TT_STAR"
     TT_DOUBLE_STAR = "TT_DOUBLE_STAR"
     TT_PERCENTS = "TT_PERCENTS"
+
+    TT_TILDE = "TT_TILDE"
+    TT_CARET = "TT_CARET"
+    TT_PIPE = "TT_PIPE"
+    TT_SHL = "TT_SHL"
+    TT_SHR = "TT_SHR"
+    TT_AMP = "TT_AMP"
+
     TT_IMPORT = "TT_IMPORT"
     TT_FROM = "TT_FROM"
 
@@ -172,6 +186,13 @@ class IpyLexicon(Lexicon):
         (token('\.'), TT_DOT),
         (token(':'), TT_COLON),
 
+        (token('>>'), TT_SHR),
+        (token('<<'), TT_SHL),
+        (token('\^'), TT_CARET),
+        (token('\&'), TT_AMP),
+        (token('\~'), TT_TILDE),
+        (token('\|'), TT_PIPE),
+
         (token('\+='), TT_PLUS_ASSIGN),
         (token('\-='), TT_MINUS_ASSIGN),
         (token('\*\*'), TT_DOUBLE_STAR),
@@ -182,6 +203,7 @@ class IpyLexicon(Lexicon):
         (token('<='), TT_LE),
         (token('=='), TT_EQ),
         (token('!='), TT_NE),
+
 
         (token('\+'), TT_PLUS),
         (token('\-'), TT_MINUS),

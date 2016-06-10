@@ -75,7 +75,7 @@ def infixr_led(parser, op, token, left):
 
 
 def infixr_led_assign(parser, op, token, left):
-    exp = parser.expression(9)
+    exp = parser.expression(op.lbp-1)
     return nodes.node_2(op.infix_node_type, token, left, exp)
 # LAYOUT
 
