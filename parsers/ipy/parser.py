@@ -129,7 +129,7 @@ def ipy_parser():
             .symbol(lex.TT_ELIF)
             .symbol(lex.TT_EXCEPT)
             .symbol(lex.TT_FINALLY)
-            .symbol(lex.TT_COMMA)
+            # .symbol(lex.TT_COMMA)
             .symbol(lex.TT_END)
             .symbol(lex.TT_IN)
             .symbol(lex.TT_AS)
@@ -156,6 +156,7 @@ def ipy_parser():
             .assignment(lex.TT_PLUS_ASSIGN, 10, lex.NT_PLUS_ASSIGN)
             .assignment(lex.TT_MINUS_ASSIGN, 10, lex.TT_MINUS_ASSIGN)
 
+            .infix(lex.TT_COMMA, 10, infix_comma)
             .infix_default(lex.TT_OR, 25, lex.NT_OR)
             .infix_default(lex.TT_AND, 30, lex.NT_AND)
             .infix_default(lex.TT_LE, 35, lex.NT_LE)
@@ -180,8 +181,7 @@ def ipy_parser():
             .infix_default(lex.TT_PERCENTS, 60, lex.NT_MOD)
             .infix_default(lex.TT_DOUBLE_STAR, 70, lex.NT_POW)
 
-            .infix(lex.TT_DOT, 100, infix_dot)
-            .infix(lex.TT_COMMA, 100, infix_comma)
+            .infix(lex.TT_DOT, 90, infix_dot)
 
             .infix(lex.TT_LSQUARE, 90, infix_lsquare)
             .infix(lex.TT_LPAREN, 90, infix_lparen)

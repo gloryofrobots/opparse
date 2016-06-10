@@ -36,7 +36,6 @@ def infix_comma(parser, op, token, left):
             parse_error(parser, "Invalid tuple syntax", token)
 
         return left
-        # right = empty_node()
     right = parser.expression(op.lbp)
     return node_2(lex.NT_COMMA, token, left, right)
 
@@ -53,23 +52,27 @@ def infix_lsquare(parser, op, token, left):
     parser.advance_expected(lex.TT_RSQUARE)
     return node_2(lex.NT_DOT, token, left, exp)
 
+def commas_as_list(node):
+    els = []
+    while node.node_type == lex.NT_COMMA:
+        els.append(node.first())
+        node = node.second()
+    els.append(node)
+    return els
+
+def commas_as_list(node):
+    return flatten_infix(node, lex.NT_COMMA)
 
 def infix_lparen(parser, op, token, left):
-    items = []
     if parser.token_type != lex.TT_RPAREN:
         init_free_layout(parser, token, [lex.TT_RPAREN])
-        if parser.token_type != lex.TT_RPAREN:
-            while True:
-                items.append(parser.expression(0))
-                skip_end_expression(parser)
-
-                if parser.token_type != lex.TT_COMMA:
-                    break
-
-                parser.advance_expected(lex.TT_COMMA)
-
+        expr = parser.expression(0)
+        skip_end_expression(parser)
+        args = commas_as_list(expr)
+    else:
+        args = list_node([])
     parser.advance_expected(lex.TT_RPAREN)
-    return node_2(lex.NT_CALL, token, left, list_node(items))
+    return node_2(lex.NT_CALL, token, left, args)
 
 
 def infix_lparen_2(parser, op, token, left):

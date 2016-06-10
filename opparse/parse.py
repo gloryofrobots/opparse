@@ -75,9 +75,20 @@ def infixr_led(parser, op, token, left):
 
 
 def infixr_led_assign(parser, op, token, left):
-    exp = parser.expression(op.lbp-1)
+    exp = parser.expression(op.lbp - 1)
     return nodes.node_2(op.infix_node_type, token, left, exp)
 # LAYOUT
+
+
+def flatten_infix(node, ttype):
+    if node.node_type == ttype:
+        first = node.first()
+        second = node.second()
+        head = flatten_infix(first, ttype)
+        tail = flatten_infix(second, ttype)
+        return head.concat(tail)
+    else:
+        return nodes.list_node([node])
 
 
 class Operator(object):
