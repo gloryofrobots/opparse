@@ -32,6 +32,7 @@ def infix_comma(parser, op, token, left):
         right = parser.expression(0)
     return node_2(lex.NT_COMMA, token, left, right)
 
+
 def infix_dot(parser, op, token, left):
     parser.assert_token_type(lex.TT_NAME)
     exp = parser.expression(0)
@@ -49,6 +50,7 @@ def infix_lparen(parser, op, token, left):
     items = []
     if parser.token_type != lex.TT_RPAREN:
         init_free_layout(parser, token, [lex.TT_RPAREN])
+
         if parser.token_type != lex.TT_RPAREN:
             while True:
                 items.append(parser.expression(0))
@@ -255,6 +257,7 @@ def check_condition(parser, condition):
         parse_error(parser, "Invalid use of assignment inside condition",
                     condition.token)
     return True
+
 
 def stmt_while(parser, op, token):
     init_node_layout(parser, token)
