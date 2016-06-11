@@ -5,7 +5,6 @@ from opparse import log
 
 logger = log.logger("indenter")
 
-
 MODULE = -1
 NODE = 0
 CODE = 1
@@ -35,9 +34,7 @@ def init_free_layout(parser, node, terminators):
     parser.ts.add_free_code_layout(node, terminators)
 
 
-
 class InvalidIndentationError(Exception):
-
     def __init__(self, msg, position, line, column):
         self.position = position
         self.line = line
@@ -48,9 +45,7 @@ class InvalidIndentationError(Exception):
         return self.msg
 
 
-
 class Layout(object):
-
     def __init__(self, parent_level, level, type, level_tokens, terminators):
         self.parent_level = parent_level
         self.level = level
@@ -93,7 +88,7 @@ class Layout(object):
         elif bt == OFFSIDE:
             bt_s = "OFFSIDE"
         return "<Block pl=%d, l=%d, t=%s>" % \
-            (self.parent_level, self.level, bt_s)
+               (self.parent_level, self.level, bt_s)
 
     def is_code(self):
         return self.type == CODE
@@ -116,17 +111,16 @@ def indentation_error(msg, token):
 
 
 class IndentationTokenStream:
-
     def __init__(self, tokens, src, tokens_options):
         self.tokens = tokens
 
         self.operator_tokens = tokens_options.get("operator_tokens", [])
+        self.require_operator_indent = tokens_options.get("require_operator_indent", True)
         self.end_token = tokens_options["end_token"]
         self.end_expr_token = tokens_options["end_expr_token"]
         self.end_stream_token = tokens_options["end_stream_token"]
         self.new_line_token = tokens_options["new_line_token"]
         self.indent_token = tokens_options["indent_token"]
-
 
         self.index = 0
         self.length = len(self.tokens)
@@ -141,21 +135,21 @@ class IndentationTokenStream:
     def create_end_token(self, token):
 
         return opparse.lexer.Token(self.end_token, "(end)",
-                               token.position,
-                               token.line,
-                               token.column)
+                                   token.position,
+                                   token.line,
+                                   token.column)
 
     def create_end_expression_token(self, token):
         return opparse.lexer.Token(self.end_expr_token, "(end_expr)",
-                               token.position,
-                               token.line,
-                               token.column)
+                                   token.position,
+                                   token.line,
+                                   token.column)
 
     def create_indent_token(self, token):
         return opparse.lexer.Token(self.indent_token, "(indent)",
-                               token.position,
-                               token.line,
-                               token.column)
+                                   token.position,
+                                   token.line,
+                                   token.column)
 
     def advanced_values(self):
         t = [token.value for token in self.produced_tokens]
@@ -166,7 +160,7 @@ class IndentationTokenStream:
 
     def next_layout(self):
         return self.layouts[-2]
-        #return plist.head(plist.tail(self.layouts))
+        # return plist.head(plist.tail(self.layouts))
 
     def pop_layout(self):
         logger.debug("---- POP LAYOUT %s", self.current_layout())
@@ -264,11 +258,12 @@ class IndentationTokenStream:
         # TODO remove not layout.is_module() after implementing real pragmas
         # ![]
         if cur_type in self.operator_tokens and not layout.is_module():
-            if level <= layout.level:
-                return indentation_error("Indentation level of token next to"
-                                         " operator must be bigger then"
-                                         " of parent layout",
-                                         token)
+            if self.require_operator_indent:
+                if level <= layout.level:
+                    return indentation_error("Indentation level of token next to"
+                                             " operator must be bigger then"
+                                             " of parent layout",
+                                             token)
 
             return self.next_token()
 
