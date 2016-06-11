@@ -585,6 +585,7 @@ class Parser(object):
             s = self.statement()
             # order matter here
             continue_loop = self.endofexpression()
+            assert s is not None
             if nodes.is_empty_node(s):
                 continue
 

@@ -3,7 +3,7 @@ import json
 from opparse import nodes
 from opparse.misc import fs, timer
 
-PARSERS = ["ipy"]
+PARSERS = ["obin"]
 
 
 def execute_parser(parser_name):
@@ -41,6 +41,3 @@ def main(parsers):
 
 if __name__ == "__main__":
     main(PARSERS)
-
-
-

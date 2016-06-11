@@ -1042,6 +1042,7 @@ def stmt_prefix(parser, op, token):
     scope = parser.current_scope()
     op = scope.get_custom_operator_or_create_new(op_value)
     parser.operators.set_prefix_function(op, prefix_nud_function, func_value)
+    return empty_node()
 
 def stmt_infixl(parser, op, token):
     return _meta_infix(parser, token, infix_led_function)
@@ -1069,3 +1070,4 @@ def _meta_infix(parser, token, infix_function):
     op = scope.get_custom_operator_or_create_new(op_value)
     parser.operators.set_infix_function(op,
                                         precedence, infix_function, func_value)
+    return empty_node()
