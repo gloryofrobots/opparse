@@ -156,6 +156,7 @@ def ipy_parser():
             .assignment(lex.TT_PLUS_ASSIGN, 10, lex.NT_PLUS_ASSIGN)
             .assignment(lex.TT_MINUS_ASSIGN, 10, lex.TT_MINUS_ASSIGN)
 
+            .infix(lex.TT_IF, 5, infix_if)
             .infix(lex.TT_COMMA, 10, infix_comma)
             .infix_default(lex.TT_OR, 25, lex.NT_OR)
             .infix_default(lex.TT_AND, 30, lex.NT_AND)
@@ -168,6 +169,7 @@ def ipy_parser():
             .infix_default(lex.TT_IS, 35, lex.NT_IS)
             .infix_default(lex.TT_IN, 35, lex.NT_IN)
             .infix_default(lex.TT_NOT_IN, 35, lex.NT_NOT_IN)
+            .infix_default(lex.TT_IS_NOT, 35, lex.TT_IS_NOT)
             .infix_default(lex.TT_PIPE, 40, lex.NT_BOR)
             .infix_default(lex.TT_CARET, 40, lex.NT_BXOR)
             .infix_default(lex.TT_AMP, 45, lex.NT_BAND)

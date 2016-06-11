@@ -790,4 +790,3 @@ def parse_token_stream(parser, ts):
     parser.assert_token_type(parser.lex.TT_ENDSTREAM)
     parser.close()
     return stmts, scope
-

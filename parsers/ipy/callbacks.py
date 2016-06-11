@@ -139,11 +139,22 @@ def _lcurly_pair(parser):
     skip_end_expression(parser)
     return list_node([key, value])
 
+
 def prefix_lcurly(parser, op, token):
     items = parse_struct(parser, _lcurly_pair, lex.TT_RCURLY, lex.TT_COMMA)
     return node_1(lex.NT_DICT, token, items)
 
 
+def infix_if(parser, op, token, left):
+    condition = parser.expression(0)
+    parser.advance_expected(lex.TT_ELSE)
+    else_exp = parser.expression(0)
+
+    return node_1(lex.NT_IF, token, list_node(
+        [list_node([condition, left]),
+         list_node([empty_node(), else_exp])]))
+
+# 
 def prefix_if(parser, op, token):
     init_node_layout(parser, token, parser.lex.LEVELS_IF)
     branches = []
