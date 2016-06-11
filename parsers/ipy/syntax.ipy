@@ -1,3 +1,10 @@
+import mod.lib.code
+import numpy as np
+import mod.lib.code as code
+from numpy import *
+from mod.lib.code import code as _c, dot as _d, fly as _f, var1, var2
+from mod.lib.code import (code as _c, dot as _d, fly as _f, var1, var2)
+
 def t():
     1 + 2 +
     3 - 2 * n.

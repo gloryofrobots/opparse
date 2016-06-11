@@ -281,7 +281,9 @@ def stmt_while(parser, op, token):
 def stmt_for(parser, op, token):
     init_node_layout(parser, token)
 
-    var = parser.for_signature_parser.terminated_expression(0, parser.lex.TERM_FOR_CONDITION)
+    var = parser.for_signature_parser. \
+        terminated_expression(0, parser.lex.TERM_FOR_CONDITION)
+
     var = maybe_tuple(var)
     parser.advance_expected(lex.TT_IN)
     expr = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
@@ -380,117 +382,17 @@ def prefix_lambda(parser, op, token):
 ###############################################################
 # IMPORT STATEMENTS
 ###############################################################
-def ensure_tuple(t):
-    if t.node_type != lex.NT_TUPLE:
-        return create_tuple_node(t, [t])
-    return t
-
-
+# import callbacks are not error prone
+# you need better tuned parsers to do it properly
+# for example, current implementation allows
+# import mod1.mod2.file as mod3.file
 def stmt_from(parser, op, token):
-    imported = parser.import_parser.terminated_expression(
-        0, parser.lex.TERM_FROM_IMPORTED)
-    parser.assert_token_types([lex.TT_IMPORT, lex.TT_HIDE])
-    if parser.token_type == lex.TT_IMPORT:
-        hiding = False
-        ntype = lex.NT_IMPORT_FROM
-    else:
-        hiding = True
-        ntype = lex.NT_IMPORT_FROM_HIDING
-
-    parser.advance()
-    if parser.token_type == lex.TT_WILDCARD:
-        if hiding is True:
-            return parse_error(parser,
-                               "Invalid usage of hide"
-                               "Symbol(s) expected",
-                               token)
-
-        names = empty_node()
-        parser.advance()
-    else:
-        names = parser.import_names_parser.expression(0)
-        parser.assert_node_types(names, [lex.NT_TUPLE, lex.NT_NAME, lex.NT_AS])
-        names = ensure_tuple(names)
-        if hiding is True:
-            # hiding names can't have as binding
-            parser.assert_types_in_nodes_list(names.first(), [lex.NT_NAME])
-
-    return node_2(ntype, token, imported, names)
+    module = parser.import_parser.expression(0)
+    parser.advance_expected(lex.TT_IMPORT)
+    what = parser.import_parser.expression(0)
+    return node_2(lex.NT_IMPORT_FROM, token, module, what)
 
 
 def stmt_import(parser, op, token):
-    imported = parser.import_parser.terminated_expression(
-        0, [lex.TT_LPAREN, lex.TT_HIDING])
-
-    if parser.token_type == lex.TT_HIDING:
-        ntype = lex.NT_IMPORT_HIDING
-        hiding = True
-        parser.advance()
-    else:
-        hiding = False
-        ntype = lex.NT_IMPORT
-
-    if parser.token_type == lex.TT_LPAREN:
-        names = parser.import_names_parser.expression(0)
-        parser.assert_node_types(names, [lex.NT_TUPLE, lex.NT_NAME, lex.NT_AS])
-        names = ensure_tuple(names)
-        if hiding is True:
-            # hiding names can't have as binding
-            parser.assert_types_in_nodes_list(names.first(), [lex.NT_NAME])
-    else:
-        if hiding is True:
-            return parse_error(parser,
-                               "Invalid usage of hide keyword."
-                               " Symbol(s) expected", token)
-        names = empty_node()
-
-    return node_2(ntype, token, imported, names)
-
-
-# TRAIT*************************
-
-def _parser_trait_header(parser, token):
-    type_parser = parser.type_parser
-    name = grab_name(type_parser)
-    parser.assert_token_type(lex.TT_FOR)
-    parser.advance()
-    instance_name = grab_name(type_parser)
-    if parser.token_type == lex.TT_OF:
-        parser.advance()
-        constraints = _parse_tuple_of_names(
-            parser.name_parser, parser.lex.TERM_METHOD_CONSTRAINTS)
-    else:
-        constraints = create_empty_list_node(token)
-    skip_indent(parser)
-    return name, instance_name, constraints
-
-
-def stmt_trait(parser, op, token):
-    init_node_layout(parser, token)
-    name, instance_name, constraints = _parser_trait_header(parser, token)
-    methods = []
-    init_offside_layout(parser, parser.token)
-    while parser.token_type == lex.TT_DEF:
-        parser.advance_expected(lex.TT_DEF)
-        method_name = grab_name(parser)
-        parser.assert_token_type(lex.TT_NAME)
-
-        sig = juxtaposition_as_list(
-            parser.method_signature_parser, parser.lex.TERM_METHOD_SIG)
-        parser.assert_node_type(sig, lex.NT_LIST)
-        if parser.token_type == lex.TT_ARROW:
-            parser.advance()
-            init_code_layout(parser, parser.token,
-                             parser.lex.TERM_METHOD_DEFAULT_BODY)
-            args = symbol_list_to_arg_tuple(parser, token, sig)
-            body = parser.expression_parser.statements(
-                parser.lex.TERM_METHOD_DEFAULT_BODY)
-            default_impl = create_function_variants(args, body)
-        else:
-            default_impl = empty_node()
-
-        methods.append(list_node([method_name, sig, default_impl]))
-    parser.advance_end()
-    return nodes.node_4(lex.NT_TRAIT,
-                        token, name,
-                        instance_name, constraints, list_node(methods))
+    imported = parser.import_parser.expression(0)
+    return node_1(lex.NT_IMPORT, token, imported)
