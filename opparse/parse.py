@@ -91,6 +91,21 @@ def flatten_infix(node, ttype):
         return nodes.list_node([node])
 
 
+def parse_struct(parser, func, terminator, separator, initializer=None):
+    items = []
+    if parser.token_type != terminator:
+        if initializer:
+            initializer(parser)
+        while parser.token_type != terminator:
+            items.append(func(parser))
+            if parser.token_type != separator:
+                break
+
+            parser.advance_expected(separator)
+    parser.advance_expected(terminator)
+    return nodes.list_node(items)
+
+
 class Operator(object):
 
     def __init__(self):
@@ -776,20 +791,3 @@ def parse_token_stream(parser, ts):
     parser.close()
     return stmts, scope
 
-
-# def infix_lparen_2(parser, op, token, left):
-#     items = []
-#     if parser.token_type != lex.TT_RPAREN:
-#         init_free_layout(parser, token, [lex.TT_RPAREN])
-#         if parser.token_type != lex.TT_RPAREN:
-#             while True:
-#                 items.append(parses.expression(0))
-#                 skip_end_expression(parser)
-
-#                 if parser.token_type != lex.TT_COMMA:
-#                     break
-
-#                 parser.advance_expected(lex.TT_COMMA)
-
-#     parser.advance_expected(lex.TT_RPAREN)
-#     return node_2(lex.NT_CALL, token, left, list_node(items))

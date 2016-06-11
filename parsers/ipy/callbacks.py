@@ -130,26 +130,18 @@ def layout_lcurly(parser, op, token):
     init_free_layout(parser, token, [lex.TT_RCURLY])
 
 
+def _lcurly_pair(parser):
+    parser.assert_token_types([lex.TT_INT, lex.TT_STR])
+
+    key = parser.terminated_expression(0, [lex.TT_COLON])
+    parser.advance_expected(lex.TT_COLON)
+    value = parser.terminated_expression(0, [lex.TT_COMMA])
+    skip_end_expression(parser)
+    return list_node([key, value])
+
 def prefix_lcurly(parser, op, token):
-    items = []
-    if parser.token_type != lex.TT_RCURLY:
-        while True:
-            parser.assert_token_types([lex.NT_NAME, lex.NT_STR])
-
-            key = parser.expression(0)
-            parser.advance_expected(lex.TT_COLON)
-            value = parser.expression(0)
-            skip_end_expression(parser)
-
-            items.append(list_node([key, value]))
-
-            if parser.token_type != lex.TT_COMMA:
-                break
-
-            parser.advance_expected(lex.TT_COMMA)
-
-    parser.advance_expected(lex.TT_RCURLY)
-    return node_1(lex.NT_DICT, token, list_node(items))
+    items = parse_struct(parser, _lcurly_pair, lex.TT_RCURLY, lex.TT_COMMA)
+    return node_1(lex.NT_DICT, token, items)
 
 
 def prefix_if(parser, op, token):

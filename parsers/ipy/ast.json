@@ -223,5 +223,99 @@
         }
       ]
     ]
+  },
+  {
+    "_ntype": "NT_DICT",
+    "_value": "{",
+    "children": [
+      [
+        [
+          {
+            "_ntype": "NT_STR",
+            "_value": "\"x\""
+          },
+          {
+            "_ntype": "NT_STR",
+            "_value": "\"y\""
+          }
+        ],
+        [
+          {
+            "_ntype": "NT_INT",
+            "_value": "4"
+          },
+          {
+            "_ntype": "NT_INT",
+            "_value": "67"
+          }
+        ],
+        [
+          {
+            "_ntype": "NT_STR",
+            "_value": "\"Bob\""
+          },
+          {
+            "_ntype": "NT_TUPLE",
+            "_value": "(",
+            "children": [
+              [
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "1"
+                },
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "2"
+                },
+                {
+                  "_ntype": "NT_LIST",
+                  "_value": "[",
+                  "children": [
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "2"
+                      },
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "3"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "_ntype": "NT_DICT",
+                  "_value": "{",
+                  "children": [
+                    [
+                      [
+                        {
+                          "_ntype": "NT_STR",
+                          "_value": "\"Bob\""
+                        },
+                        {
+                          "_ntype": "NT_STR",
+                          "_value": "\"bob\""
+                        }
+                      ],
+                      [
+                        {
+                          "_ntype": "NT_STR",
+                          "_value": "\"Alice\""
+                        },
+                        {
+                          "_ntype": "NT_STR",
+                          "_value": "\"alice\""
+                        }
+                      ]
+                    ]
+                  ]
+                }
+              ]
+            ]
+          }
+        ]
+      ]
+    ]
   }
 ]
