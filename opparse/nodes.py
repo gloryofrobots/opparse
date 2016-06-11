@@ -2,7 +2,6 @@ import json
 
 
 class BaseNode(object):
-
     def to_json(self):
         raise NotImplementedError()
 
@@ -12,7 +11,6 @@ class BaseNode(object):
 
 
 class EmptyNode(BaseNode):
-
     def __eq__(self, other):
         return self is other
 
@@ -21,7 +19,6 @@ class EmptyNode(BaseNode):
 
 
 class Node(BaseNode):
-
     def __init__(self, ntype, token, children):
         self.node_type = ntype
         self.token = token
@@ -86,9 +83,14 @@ class Node(BaseNode):
 
         return d
 
+    def __repr__(self):
+        return "Node(%s, %d)" % (str(self.node_type), self.length)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class ListNode(BaseNode):
-
     def __init__(self, elements):
         self.elements = elements
 
@@ -129,6 +131,7 @@ class ListNode(BaseNode):
 
     def tail(self):
         return ListNode(self.elements[1:])
+
 
 __EMPTY__ = EmptyNode()
 

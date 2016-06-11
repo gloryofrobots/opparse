@@ -19,6 +19,8 @@ class IpyLexicon(Lexicon):
     NT_TRY = "NT_TRY"
     NT_FOR = "NT_FOR"
     NT_WHILE = "NT_WHILE"
+    NT_CONTINUE = "NT_CONTINUE"
+    NT_BREAK = "NT_BREAK"
     NT_RAISE = "NT_RAISE"
     NT_ASSIGN = "NT_ASSIGN"
     NT_PLUS_ASSIGN = "NT_PLUS_ASSIGN"
@@ -61,6 +63,7 @@ class IpyLexicon(Lexicon):
 
     NT_VARGS = "NT_VARGS"
     NT_KVARGS = "NT_KVARGS"
+    NT_CLASS = "NT_CLASS"
 
     # TOKEN TYPES
 
@@ -70,6 +73,10 @@ class IpyLexicon(Lexicon):
     TT_FUN = "TT_FUN"
     TT_FOR = "TT_FOR"
     TT_WHILE = "TT_WHILE"
+
+    TT_BREAK = "TT_BREAK"
+    TT_CONTINUE = "TT_CONTINUE"
+
     TT_CLASS = "TT_CLASS"
     TT_DEF = "TT_DEF"
     TT_IF = "TT_IF"
@@ -168,6 +175,9 @@ class IpyLexicon(Lexicon):
         (keyword('for'), TT_FOR),
         (keyword('in'), TT_IN),
 
+        (keyword('break'), TT_BREAK),
+        (keyword('continue'), TT_CONTINUE),
+
         (keyword('import'), TT_IMPORT),
         (keyword('from'), TT_FROM),
         (keyword('as'), TT_AS),
@@ -216,6 +226,7 @@ class IpyLexicon(Lexicon):
     TERM_BLOCK = [TT_END]
     TERM_EXP = [TT_END_EXPR]
     TERM_CONDITION = [TT_COLON]
+    TERM_FOR_CONDITION = [TT_IN]
 
     TERM_IF_BODY = [TT_ELSE, TT_ELIF]
 
@@ -224,8 +235,6 @@ class IpyLexicon(Lexicon):
 
     TERM_FUN_SIGNATURE = [TT_COLON]
 
-    TERM_FOR_CONDITION = [TT_IN]
-    
     TERM_FROM_IMPORTED = [TT_IMPORT]
 
     LEVELS_IF = [TT_ELSE, TT_ELIF]

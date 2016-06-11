@@ -26,9 +26,11 @@ def skip_end_expression(parser):
 ##############################################################
 
 def infix_comma(parser, op, token, left):
-    # it would be very easy, if not needed for trailing commas, aka postfix operators
+    # it would be very easy, if not needed for trailing commas, aka postfix
+    # operators
     tt = parser.token_type
-    # check for end expr because it will be auto inserted and it has nud which produces empty node
+    # check for end expr because it will be auto inserted and it has nud which
+    # produces empty node
     if not parser.token_has_nud(parser.token) \
             or tt == lex.TT_END_EXPR:
         # check some corner cases with 1,2,.name or 1,2,,
@@ -52,14 +54,24 @@ def infix_lsquare(parser, op, token, left):
     parser.advance_expected(lex.TT_RSQUARE)
     return node_2(lex.NT_DOT, token, left, exp)
 
+
 def commas_as_list(node):
     return flatten_infix(node, lex.NT_COMMA)
+
+
+def maybe_tuple(node):
+    if node.node_type == lex.NT_COMMA:
+        els = commas_as_list(node)
+        return node_1(lex.NT_TUPLE, node.token, els)
+    return node
+
 
 def commas_as_list_if_commas(node):
     if node.node_type != lex.NT_COMMA:
         return node
 
     return flatten_infix(node, lex.NT_COMMA)
+
 
 def infix_lparen(parser, op, token, left):
     if parser.token_type != lex.TT_RPAREN:
@@ -115,6 +127,7 @@ def prefix_lparen(parser, op, token):
 def layout_lsquare(parser, op, token):
     init_free_layout(parser, token, [lex.TT_RSQUARE])
 
+
 def prefix_lsquare(parser, op, token):
     if parser.token_type != lex.TT_RSQUARE:
         expr = parser.expression(0)
@@ -125,6 +138,7 @@ def prefix_lsquare(parser, op, token):
 
     parser.advance_expected(lex.TT_RSQUARE)
     return node_1(lex.NT_LIST, token, args)
+
 
 def layout_lcurly(parser, op, token):
     init_free_layout(parser, token, [lex.TT_RCURLY])
@@ -154,7 +168,7 @@ def infix_if(parser, op, token, left):
         [list_node([condition, left]),
          list_node([empty_node(), else_exp])]))
 
-# 
+
 def prefix_if(parser, op, token):
     init_node_layout(parser, token, parser.lex.LEVELS_IF)
     branches = []
@@ -267,15 +281,40 @@ def stmt_while(parser, op, token):
 def stmt_for(parser, op, token):
     init_node_layout(parser, token)
 
-    condition = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
-    check_condition(parser, condition)
-    parser.assert_node_type(condition, lex.NT_IN)
-
+    var = parser.for_signature_parser.terminated_expression(0, parser.lex.TERM_FOR_CONDITION)
+    var = maybe_tuple(var)
+    parser.advance_expected(lex.TT_IN)
+    expr = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
     parser.advance_expected(lex.TT_COLON)
     init_code_layout(parser, parser.token)
     body = parser.statements(parser.lex.TERM_BLOCK)
     parser.advance_end()
-    return node_2(lex.NT_FOR, token, condition, body)
+    return node_3(lex.NT_FOR, token, var, expr, body)
+
+
+# CLASS
+def prefix_class(parser, op, token):
+    init_node_layout(parser, token)
+    if parser.token_type != lex.TT_NAME:
+        name = empty_node()
+    else:
+        name = grab_name(parser.name_parser)
+
+    if parser.token_type == lex.TT_LPAREN:
+        parser.advance()
+        init_free_layout(parser, token, [lex.TT_RPAREN])
+        expr = parser.expression(0)
+        skip_end_expression(parser)
+        parents = commas_as_list(expr)
+        parser.advance_expected(lex.TT_RPAREN)
+    else:
+        parents = empty_node()
+
+    parser.advance_expected(lex.TT_COLON)
+    init_code_layout(parser, parser.token)
+    body = parser.statements(lex.TERM_BLOCK)
+    parser.advance_end()
+    return node_3(lex.NT_CLASS, token, name, parents, body)
 
 
 # FUNCTION STUFF################################
@@ -286,24 +325,20 @@ def grab_name(parser):
     return name
 
 
-def _parse_function(parser):
+def _parse_function(parser, token):
     parser.advance_expected(lex.TT_LPAREN)
-    args = []
+    init_free_layout(parser, token, [lex.TT_RPAREN])
     if parser.token_type != lex.TT_RPAREN:
-        while True:
-            args.append(parser.signature_parser.expression(0))
-            skip_end_expression(parser)
-
-            if parser.token_type != lex.TT_COMMA:
-                break
-
-            parser.advance_expected(lex.TT_COMMA)
-
+        expr = parser.signature_parser.expression(0)
+        skip_end_expression(parser)
+        args = commas_as_list(expr)
+    else:
+        args = list_node([])
     parser.advance_expected(lex.TT_RPAREN)
     parser.advance_expected(lex.TT_COLON)
     init_code_layout(parser, parser.token)
     body = parser.statements(parser.lex.TERM_BLOCK)
-    return list_node(args), body
+    return args, body
 
 
 # TODO TRY DO IT IN COMPLETELY OPERATOR WAY
@@ -313,7 +348,7 @@ def prefix_fun(parser, op, token):
         name = empty_node()
     else:
         name = grab_name(parser.name_parser)
-    args, body = _parse_function(parser)
+    args, body = _parse_function(parser, token)
     parser.advance_end()
     return node_3(lex.NT_FUN, token, name, args, body)
 
@@ -322,7 +357,7 @@ def stmt_def(parser, op, token):
     init_node_layout(parser, token)
     parser.assert_token_type(lex.TT_NAME)
     name = grab_name(parser.name_parser)
-    args, body = _parse_function(parser)
+    args, body = _parse_function(parser, token)
     parser.advance_end()
     return node_3(lex.NT_FUN, token, name, args, body)
 
