@@ -1,6 +1,4 @@
 from opparse.parse import *
-from opparse.indenter import (skip_indent, init_code_layout, init_free_layout,
-                              init_node_layout, init_offside_layout)
 from opparse import nodes, lexer
 from lexicon import IpyLexicon as lex
 
@@ -8,44 +6,16 @@ from opparse.nodes import (
     node_0, node_1, node_2, node_3, empty_node,
     is_list_node, list_node)
 
-
-# CONSTRUCTORS
-
-def create_function_variants(args, body):
-    # print "ARGS", args
-    # print "BODY", body
-    return list_node([list_node([args, body])])
-
-
-def skip_end_expression(parser):
-    parser.skip_once(parser.lex.TT_END_EXPR)
-
-
 ##############################################################
 # INFIX
 ##############################################################
 
-def infix_comma(parser, op, token, left):
-    # it would be very easy, if not needed for trailing commas, aka postfix
-    # operators
-    tt = parser.token_type
-    # check for end expr because it will be auto inserted and it has nud which
-    # produces empty node
-    if not parser.token_has_nud(parser.token) \
-            or tt == lex.TT_END_EXPR:
-        # check some corner cases with 1,2,.name or 1,2,,
-        if tt == lex.TT_DOT or tt == lex.TT_COMMA:
-            parse_error(parser, "Invalid tuple syntax", token)
 
-        return left
-    right = parser.expression(op.lbp)
-    return node_2(lex.NT_COMMA, token, left, right)
-
-
-def infix_dot(parser, op, token, left):
+def infix_name_to_the_right(parser, op, token, left):
+    parser.assert_node_type(left, lex.NT_NAME)
     parser.assert_token_type(lex.TT_NAME)
     exp = parser.expression(op.lbp)
-    return node_2(lex.NT_DOT, token, left, exp)
+    return node_2(op.infix_node_type, token, left, exp)
 
 
 def infix_lsquare(parser, op, token, left):
@@ -59,29 +29,8 @@ def commas_as_list(node):
     return flatten_infix(node, lex.NT_COMMA)
 
 
-def maybe_tuple(node):
-    if node.node_type == lex.NT_COMMA:
-        els = commas_as_list(node)
-        return node_1(lex.NT_TUPLE, node.token, els)
-    return node
-
-
-def commas_as_list_if_commas(node):
-    if node.node_type != lex.NT_COMMA:
-        return node
-
-    return flatten_infix(node, lex.NT_COMMA)
-
-
 def infix_lparen(parser, op, token, left):
-    if parser.token_type != lex.TT_RPAREN:
-        init_free_layout(parser, token, [lex.TT_RPAREN])
-        expr = parser.expression(0)
-        skip_end_expression(parser)
-        args = commas_as_list(expr)
-    else:
-        args = list_node([])
-    parser.advance_expected(lex.TT_RPAREN)
+    args = parse_struct(parser, lex.TT_RPAREN, lex.TT_COMMA)
     return node_2(lex.NT_CALL, token, left, args)
 
 
@@ -92,40 +41,8 @@ def infix_name_pair(parser, op, token, left):
     return node_2(op.infix_node_type, token, left, name)
 
 
-##############################################################
-# INFIX
-##############################################################
-
-
-def prefix_indent(parser, op, token):
-    return parse_error(parser, "Invalid indentation level", token)
-
-
-# MOST complicated operator
-# expressions (f 1 2 3) (2 + 3) (-1)
-# tuples (1,2,3,4,5)
-def layout_lparen(parser, op, token):
-    init_free_layout(parser, token, [lex.TT_RPAREN])
-
-
 def prefix_lparen(parser, op, token):
-    if parser.token_type == lex.TT_RPAREN:
-        parser.advance_expected(lex.TT_RPAREN)
-        return node_1(lex.NT_TUPLE, token, list_node([]))
-
-    e = parser.terminated_expression(0, [lex.TT_RPAREN])
-    skip_end_expression(parser)
-    if e.node_type == lex.NT_COMMA:
-        parser.advance_expected(lex.TT_RPAREN)
-        items = commas_as_list(e)
-        return node_1(lex.NT_TUPLE, token, items)
-
-    parser.advance_expected(lex.TT_RPAREN)
-    return e
-
-
-def layout_lsquare(parser, op, token):
-    init_free_layout(parser, token, [lex.TT_RSQUARE])
+    return parser.maybe_expression(0, lex.TT_RPAREN,empty_node())
 
 
 def prefix_lsquare(parser, op, token):

@@ -91,7 +91,12 @@ def flatten_infix(node, ttype):
         return nodes.list_node([node])
 
 
-def parse_struct(parser, func, terminator, separator, initializer=None):
+def lowest_expression(parser):
+    return parser.expression(0)
+
+
+def parse_struct(parser, terminator, separator,
+                 func=lowest_expression, initializer=None):
     items = []
     if parser.token_type != terminator:
         if initializer:
@@ -519,6 +524,14 @@ class Parser(object):
 
         assert left is not None
         return left
+
+    def maybe_expression(self, rbp, terminator, default):
+        if self.token_type == terminator:
+            self.advance()
+            return default
+        exp = self.expression(rbp)
+        self.advance_expected(terminator)
+        return exp
 
     def expression(self, rbp):
         return self.terminated_expression(rbp, None)

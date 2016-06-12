@@ -69,6 +69,7 @@ def expressions_parser(statement_parser):
         .symbol(lex.TT_RSQUARE)
         .symbol(lex.TT_RPAREN)
         .symbol(lex.TT_RCURLY)
+        .symbol(lex.TT_COMMA)
         .symbol(lex.TT_IN)
         .symbol(lex.TT_ENDSTREAM)
         .symbol(lex.TT_END)
@@ -82,7 +83,6 @@ def expressions_parser(statement_parser):
 
         .prefix(lex.TT_FUNCTION, prefix_function)
 
-        .infix(lex.TT_COMMA, 10, infix_comma)
         .infix_default(lex.TT_OR, 20, lex.NT_OR)
         .infix_default(lex.TT_AND, 30, lex.NT_AND)
         .infix_default(lex.TT_LE, 35, lex.NT_LE)
@@ -101,8 +101,8 @@ def expressions_parser(statement_parser):
         .infix_default(lex.TT_PERCENTS, 60, lex.NT_MOD)
         .infix_default(lex.TT_CARET, 60, lex.NT_POW)
 
-        .infix(lex.TT_DOT, 90, infix_dot)
-        .infix(lex.TT_COLON, 90, infix_dot)
+        .infix(lex.TT_DOT, 90, infix_name_to_the_right, lex.NT_DOT)
+        .infix(lex.TT_COLON, 90, infix_name_to_the_right, lex.NT_COLON)
         .infix(lex.TT_LSQUARE, 90, infix_lsquare)
         .infix(lex.TT_LPAREN, 90, infix_lparen)
 
@@ -123,13 +123,16 @@ def lua_parser():
 
         .stmt(lex.TT_FUNCTION, stmt_function)
 
-        .infix(lex.TT_COMMA, 10, infix_comma)
-        .assignment(lex.TT_ASSIGN, 10, lex.NT_ASSIGN)
+        # .infix(lex.TT_COMMA, 10, infix_comma)
+        .infix_default(lex.TT_COMMA, 10, lex.NT_COMMA)
+        .infix_default(lex.TT_ASSIGN, 5, infix_assign)
 
-        .infix(lex.TT_DOT, 90, infix_dot)
-        .infix(lex.TT_COLON, 90, infix_dot)
+        .infix(lex.TT_DOT, 90, infix_name_to_the_right, lex.NT_DOT)
+        .infix(lex.TT_COLON, 90, infix_name_to_the_right, lex.NT_COLON)
         .infix(lex.TT_LSQUARE, 90, infix_lsquare)
         .infix(lex.TT_LPAREN, 90, infix_lparen)
+        # TODO add infix lcurly
+        #.infix(lex.TT_LCURLY, 90, infix_lcurly)
 
         .literal(lex.TT_BREAK, lex.NT_BREAK)
 
@@ -152,6 +155,7 @@ def lua_parser():
 
 
 def parse(source):
+    parser = lua_parser()
     lx = lexer.Lexer(parser.lex, source)
     ts = tokenstream.TokenStream(lx.as_generator(), source)
     return parse_token_stream(parser, ts)

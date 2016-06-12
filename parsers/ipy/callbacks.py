@@ -155,7 +155,7 @@ def _lcurly_pair(parser):
 
 
 def prefix_lcurly(parser, op, token):
-    items = parse_struct(parser, _lcurly_pair, lex.TT_RCURLY, lex.TT_COMMA)
+    items = parse_struct(parser, lex.TT_RCURLY, lex.TT_COMMA, _lcurly_pair)
     return node_1(lex.NT_DICT, token, items)
 
 
