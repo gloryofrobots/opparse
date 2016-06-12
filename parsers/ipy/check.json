@@ -1239,6 +1239,140 @@
     ]
   },
   {
+    "_ntype": "NT_IF",
+    "_value": "if",
+    "children": [
+      [
+        [
+          {
+            "_ntype": "NT_EQ",
+            "_value": "==",
+            "children": [
+              {
+                "_ntype": "NT_INT",
+                "_value": "1"
+              },
+              {
+                "_ntype": "NT_INT",
+                "_value": "1"
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_TRUE",
+                    "_value": "True"
+                  }
+                ]
+              ]
+            },
+            {
+              "_ntype": "NT_IF",
+              "_value": "if",
+              "children": [
+                [
+                  [
+                    {
+                      "_ntype": "NT_EQ",
+                      "_value": "==",
+                      "children": [
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "2"
+                        },
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "1"
+                        }
+                      ]
+                    },
+                    [
+                      {
+                        "_ntype": "NT_CALL",
+                        "_value": "(",
+                        "children": [
+                          {
+                            "_ntype": "NT_NAME",
+                            "_value": "print"
+                          },
+                          [
+                            {
+                              "_ntype": "NT_FALSE",
+                              "_value": "False"
+                            }
+                          ]
+                        ]
+                      }
+                    ]
+                  ],
+                  [
+                    {
+                      "_ntype": "NT_EQ",
+                      "_value": "==",
+                      "children": [
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "3"
+                        },
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "3"
+                        }
+                      ]
+                    },
+                    [
+                      {
+                        "_ntype": "NT_CALL",
+                        "_value": "(",
+                        "children": [
+                          {
+                            "_ntype": "NT_NAME",
+                            "_value": "print"
+                          },
+                          [
+                            {
+                              "_ntype": "NT_TRUE",
+                              "_value": "True"
+                            }
+                          ]
+                        ]
+                      }
+                    ]
+                  ],
+                  [
+                    {
+                      "empty": true
+                    },
+                    {
+                      "empty": true
+                    }
+                  ]
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "empty": true
+          },
+          {
+            "empty": true
+          }
+        ]
+      ]
+    ]
+  },
+  {
     "_ntype": "NT_FOR",
     "_value": "for",
     "children": [

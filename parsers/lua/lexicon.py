@@ -78,6 +78,7 @@ class LuaLexicon(Lexicon):
     NT_IF = "NT_IF"
     NT_FOR = "NT_FOR"
     NT_WHILE = "NT_WHILE"
+    NT_REPEAT = "NT_REPEAT"
     NT_BREAK = "NT_BREAK"
     NT_ASSIGN = "NT_ASSIGN"
     NT_CALL = "NT_CALL"
@@ -177,4 +178,5 @@ class LuaLexicon(Lexicon):
     TERM_EXP = [TT_END_EXPR]
     TERM_CONDITION = [TT_COLON]
     TERM_FOR_CONDITION = [TT_IN]
+    TERM_LOOP_CONDITION = [TT_DO]
     TERM_IF_BODY = [TT_ELSE, TT_ELSEIF]

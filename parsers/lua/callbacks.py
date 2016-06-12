@@ -19,7 +19,6 @@ def infix_name_to_the_right(parser, op, token, left):
 
 
 def infix_lsquare(parser, op, token, left):
-    init_free_layout(parser, token, [lex.TT_RSQUARE])
     exp = parser.expression(0)
     parser.advance_expected(lex.TT_RSQUARE)
     return node_2(lex.NT_DOT, token, left, exp)
@@ -42,162 +41,88 @@ def infix_name_pair(parser, op, token, left):
 
 
 def prefix_lparen(parser, op, token):
-    return parser.maybe_expression(0, lex.TT_RPAREN,empty_node())
+    return parser.maybe_expression(0, lex.TT_RPAREN, empty_node())
 
 
-def prefix_lsquare(parser, op, token):
-    if parser.token_type != lex.TT_RSQUARE:
-        expr = parser.expression(0)
-        skip_end_expression(parser)
-        args = commas_as_list(expr)
-    else:
-        args = list_node([])
+# TABLES
 
+def prefix_table_lsquare(parser, op, token):
+    exp = parser.expression_parser.expression(0)
     parser.advance_expected(lex.TT_RSQUARE)
-    return node_1(lex.NT_LIST, token, args)
+    return exp
 
 
-def layout_lcurly(parser, op, token):
-    init_free_layout(parser, token, [lex.TT_RCURLY])
-
-
-def _lcurly_pair(parser):
-    parser.assert_token_types([lex.TT_INT, lex.TT_STR])
-
-    key = parser.terminated_expression(0, [lex.TT_COLON])
-    parser.advance_expected(lex.TT_COLON)
-    value = parser.terminated_expression(0, [lex.TT_COMMA])
-    skip_end_expression(parser)
+def _table_item(parser):
+    key = parser.expression(0)
+    parser.advance_expected(lex.TT_ASSIGN)
+    value = parser.expression_parser.expression(0)
     return list_node([key, value])
 
 
 def prefix_lcurly(parser, op, token):
-    items = parse_struct(parser, _lcurly_pair, lex.TT_RCURLY, lex.TT_COMMA)
-    return node_1(lex.NT_DICT, token, items)
+    items = parse_struct(parser.table_parser,
+                         _table_item, lex.TT_RCURLY, lex.TT_COMMA)
 
-
-def infix_if(parser, op, token, left):
-    condition = parser.expression(0)
-    parser.advance_expected(lex.TT_ELSE)
-    else_exp = parser.expression(0)
-
-    return node_1(lex.NT_IF, token, list_node(
-        [list_node([condition, left]),
-         list_node([empty_node(), else_exp])]))
+    return node_1(lex.NT_TABLE, token, items)
 
 
 def prefix_if(parser, op, token):
-    init_node_layout(parser, token, parser.lex.LEVELS_IF)
     branches = []
-
-    cond = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
-    parser.advance_expected_one_of(parser.lex.TERM_CONDITION)
-    init_code_layout(parser, parser.token, parser.lex.TERM_IF_BODY)
+    cond = parser.expression(0)
+    parser.advance_expected(lex.TT_THEN)
 
     body = parser.statements(parser.lex.TERM_IF_BODY)
 
     branches.append(list_node([cond, body]))
     parser.assert_token_types(parser.lex.TERM_IF_BODY)
 
-    while parser.token_type == lex.TT_ELIF:
-        parser.advance_expected(lex.TT_ELIF)
+    while parser.token_type == lex.TT_ELSEIF:
+        parser.advance_expected(lex.TT_ELSEIF)
 
-        cond = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
-        parser.advance_expected_one_of(parser.lex.TERM_CONDITION)
-        init_code_layout(parser, parser.token, parser.lex.TERM_IF_BODY)
-
+        cond = parser.expression(0)
+        parser.advance_expected(lex.TT_THEN)
         body = parser.statements(parser.lex.TERM_IF_BODY)
         parser.assert_token_types(parser.lex.TERM_IF_BODY)
         branches.append(list_node([cond, body]))
 
-    parser.advance_expected(lex.TT_ELSE)
-    parser.advance_expected(lex.TT_COLON)
+    if parser.token_type == lex.TT_ELSE:
+        parser.advance_expected(lex.TT_ELSE)
+        parser.advance_expected(lex.TT_COLON)
 
-    init_code_layout(parser, parser.token, parser.lex.TERM_BLOCK)
+        else_body = parser.statements(parser.lex.TERM_BLOCK)
+    else:
+        else_body = empty_body()
 
-    body = parser.statements(parser.lex.TERM_BLOCK)
-    branches.append(list_node([empty_node(), body]))
+    branches.append(list_node([empty_node(), else_body]))
     parser.advance_end()
     return node_1(lex.NT_IF, token, list_node(branches))
 
 
-def prefix_try(parser, op, token):
-    init_node_layout(parser, token, parser.lex.LEVELS_TRY)
-    parser.advance_expected(lex.TT_COLON)
-    init_code_layout(parser, parser.token, parser.lex.TERM_TRY)
-
-    trybody = parser.statements(parser.lex.TERM_TRY)
-    catches = []
-    parser.assert_token_type(lex.TT_EXCEPT)
-
-    while parser.token_type == lex.TT_EXCEPT:
-        parser.advance_expected(lex.TT_EXCEPT)
-
-        if parser.token_type == lex.TT_COLON:
-            sig = empty_node()
-        else:
-            sig = parser.exception_name_parser. \
-                terminated_expression(0, parser.lex.TERM_CONDITION)
-
-        parser.advance_expected_one_of(parser.lex.TERM_CONDITION)
-
-        init_code_layout(parser, parser.token, parser.lex.TERM_EXCEPT)
-        body = parser.statements(parser.lex.TERM_EXCEPT)
-        catches.append(list_node([sig, body]))
-
-    if parser.token_type == lex.TT_FINALLY:
-        parser.advance_expected(lex.TT_FINALLY)
-        parser.advance_expected(lex.TT_COLON)
-        init_code_layout(parser, parser.token)
-        finallybody = parser.statements(parser.lex.TERM_BLOCK)
-    else:
-        finallybody = empty_node()
-
-    parser.advance_end()
-    return node_3(lex.NT_TRY,
-                  token, trybody, list_node(catches), finallybody)
-
-
-# simplify common functions
-
-def stmt_raise(parser, op, token):
-    exp = parser.expression(0)
-    return node_1(lex.TT_RAISE, token, exp)
-
-
-def stmt_yield(parser, op, token):
-    exp = parser.expression(0)
-    return node_1(lex.TT_YIELD, token, exp)
-
-
 def stmt_return(parser, op, token):
-    exp = parser.expression(0)
-    return node_1(lex.TT_RETURN, token, exp)
+    items = [parser.expression_parser.expression(0)]
+    while parser.token_type == lex.TT_COMMA:
+        parser.advance_expected(lex.TT_COMMA)
+        items.append(parser.expression_parser.expression(0))
 
-
-# LOOPS
-def check_condition(parser, condition):
-    # assignment not a statement in operator precedence parser
-    if condition.token_type in lex.ASSIGNMENT_TOKENS:
-        parse_error(parser, "Invalid use of assignment inside condition",
-                    condition.token)
-    return True
+    return node_1(lex.TT_RETURN, token, list_node(items))
 
 
 def stmt_while(parser, op, token):
-    init_node_layout(parser, token)
-    condition = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
-    check_condition(parser, condition)
-    parser.advance_expected(lex.TT_COLON)
-    init_code_layout(parser, parser.token)
-    body = parser.statements(parser.lex.TERM_BLOCK)
+    condition = parser.expressions_parser. \
+        terminated_expression(0, parser.lex.LOOP_CONDITION)
 
+    parser.advance_expected(lex.TT_DO)
+    body = parser.statements(parser.lex.TERM_BLOCK)
     return node_2(lex.NT_WHILE, token, condition, body)
+
+def stmt_repeat(parser, op, token):
+    body = parser.statements(parser.lex.TERM_UNTIL)
+    parser.advance_expected(lex.TT_UNTIL)
+    condition = parser.expressions_parser.expression(0)
+    return node_2(lex.NT_REPEAT, token, condition, body)
 
 
 def stmt_for(parser, op, token):
-    init_node_layout(parser, token)
-
     var = parser.for_signature_parser. \
         terminated_expression(0, parser.lex.TERM_FOR_CONDITION)
 
@@ -205,7 +130,6 @@ def stmt_for(parser, op, token):
     parser.advance_expected(lex.TT_IN)
     expr = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
     parser.advance_expected(lex.TT_COLON)
-    init_code_layout(parser, parser.token)
     body = parser.statements(parser.lex.TERM_BLOCK)
     parser.advance_end()
     return node_3(lex.NT_FOR, token, var, expr, body)
@@ -213,7 +137,6 @@ def stmt_for(parser, op, token):
 
 # CLASS
 def prefix_class(parser, op, token):
-    init_node_layout(parser, token)
     if parser.token_type != lex.TT_NAME:
         name = empty_node()
     else:
@@ -221,7 +144,6 @@ def prefix_class(parser, op, token):
 
     if parser.token_type == lex.TT_LPAREN:
         parser.advance()
-        init_free_layout(parser, token, [lex.TT_RPAREN])
         expr = parser.expression(0)
         skip_end_expression(parser)
         parents = commas_as_list(expr)
@@ -230,7 +152,6 @@ def prefix_class(parser, op, token):
         parents = empty_node()
 
     parser.advance_expected(lex.TT_COLON)
-    init_code_layout(parser, parser.token)
     body = parser.statements(lex.TERM_BLOCK)
     parser.advance_end()
     return node_3(lex.NT_CLASS, token, name, parents, body)
@@ -246,7 +167,6 @@ def grab_name(parser):
 
 def _parse_function(parser, token):
     parser.advance_expected(lex.TT_LPAREN)
-    init_free_layout(parser, token, [lex.TT_RPAREN])
     if parser.token_type != lex.TT_RPAREN:
         expr = parser.signature_parser.expression(0)
         skip_end_expression(parser)
@@ -255,14 +175,12 @@ def _parse_function(parser, token):
         args = list_node([])
     parser.advance_expected(lex.TT_RPAREN)
     parser.advance_expected(lex.TT_COLON)
-    init_code_layout(parser, parser.token)
     body = parser.statements(parser.lex.TERM_BLOCK)
     return args, body
 
 
 # TODO TRY DO IT IN COMPLETELY OPERATOR WAY
 def prefix_fun(parser, op, token):
-    init_node_layout(parser, token)
     if parser.token_type == lex.TT_LPAREN:
         name = empty_node()
     else:
@@ -273,7 +191,6 @@ def prefix_fun(parser, op, token):
 
 
 def stmt_def(parser, op, token):
-    init_node_layout(parser, token)
     parser.assert_token_type(lex.TT_NAME)
     name = grab_name(parser.name_parser)
     args, body = _parse_function(parser, token)

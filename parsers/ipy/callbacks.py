@@ -193,13 +193,17 @@ def prefix_if(parser, op, token):
         parser.assert_token_types(parser.lex.TERM_IF_BODY)
         branches.append(list_node([cond, body]))
 
-    parser.advance_expected(lex.TT_ELSE)
-    parser.advance_expected(lex.TT_COLON)
+    if parser.token_type == lex.TT_ELSE:
+        parser.advance_expected(lex.TT_ELSE)
+        parser.advance_expected(lex.TT_COLON)
 
-    init_code_layout(parser, parser.token, parser.lex.TERM_BLOCK)
+        init_code_layout(parser, parser.token, parser.lex.TERM_BLOCK)
 
-    body = parser.statements(parser.lex.TERM_BLOCK)
-    branches.append(list_node([empty_node(), body]))
+        body = parser.statements(parser.lex.TERM_BLOCK)
+        branches.append(list_node([empty_node(), body]))
+    else:
+        branches.append(list_node([empty_node(), empty_node()]))
+
     parser.advance_end()
     return node_1(lex.NT_IF, token, list_node(branches))
 

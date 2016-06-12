@@ -63,6 +63,17 @@ def for_signature_parser():
     )
 
 
+def table_parser(expressions_parser):
+    parser = (
+        builder(break_on_juxtaposition=True)
+        .literal(TT_NAME, NT_NAME)
+        .literal(TT_INT, NT_INT)
+        .prefix(TT_LSQUARE, prefix_table_lsquare)
+    ).build("table_parser")
+
+    return parser.add_parser(expressions_parser)
+
+
 def expressions_parser(statement_parser):
     parser = (
         set_literals(builder(break_on_juxtaposition=True))
@@ -150,6 +161,7 @@ def lua_parser():
         .add_parser(expression_parser(parser))
         .add_builder("signature_parser", signature_parser())
         .add_builder("for_signature_parser", for_signature_parser())
+        .add_builder("table_parser", table_parser(parser.expressions_parser))
         # .add_builder("name_parser", name_parser())
     )
 
