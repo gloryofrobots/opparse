@@ -110,7 +110,7 @@ class LuaLexicon(Lexicon):
     NT_VARGS = "NT_VARGS"
 
     RULES = [
-        (token('\n'), TT_END_EXPR),
+        (token('\n'), -1),
         (token(' '), -1),
         (token('#[^\n]*'), -1),
 

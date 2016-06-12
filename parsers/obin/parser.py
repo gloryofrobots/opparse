@@ -24,9 +24,9 @@ def create_stream(parser, source):
 
 
 class ObinParser(JuxtapositionParser):
+
     def advance_end(self):
         self.advance_expected(self.lex.TT_END)
-
 
     def endofexpression(self):
         if self.isend():
@@ -37,7 +37,6 @@ class ObinParser(JuxtapositionParser):
             self.advance()
             return True
         return False
-
 
 
 def builder(**settings):

@@ -602,6 +602,7 @@ class Parser(object):
     def builder(cls, lexicon, settings):
         return Builder(cls, lexicon, settings)
 
+
 class JuxtapositionParser(Parser):
 
     def __init__(self, name, lexicon, operators, settings):
@@ -716,6 +717,7 @@ class JuxtapositionParser(Parser):
 
 
 class Builder:
+
     def __init__(self, parser_class, lexicon, settings):
         self.lexicon = lexicon
         self.settings = settings

@@ -210,7 +210,9 @@ def ipy_parser():
     )
 
 
-def create_stream(parser, source):
+def parse(source):
+    parser = ipy_parser()
+
     indenter_settings = dict(
         operator_tokens=[lex.TT_PLUS, lex.TT_MINUS, lex.TT_STAR, lex.TT_SLASH,
                          lex.TT_PIPE, lex.TT_PERCENTS, lex.TT_AMP,
@@ -228,10 +230,5 @@ def create_stream(parser, source):
     )
 
     lx = lexer.Lexer(parser.lex, source)
-    return IndentationTokenStream(lx.as_list(), source, indenter_settings)
-
-
-def parse(source):
-    parser = ipy_parser()
-    ts = create_stream(parser, source)
+    ts = IndentationTokenStream(lx.as_list(), source, indenter_settings)
     return parse_token_stream(parser, ts)
