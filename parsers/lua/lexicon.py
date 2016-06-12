@@ -1,58 +1,52 @@
 from opparse.lexicon import Lexicon, token, keyword
 
 
-class IpyLexicon(Lexicon):
+class LuaLexicon(Lexicon):
 
     # TOKEN TYPES
     TT_INT = "TT_INT"
     TT_STR = "TT_STR"
     TT_NAME = "TT_NAME"
-    TT_FUN = "TT_FUN"
+    TT_FUNCTION = "TT_FUNCTION"
     TT_FOR = "TT_FOR"
     TT_WHILE = "TT_WHILE"
 
     TT_BREAK = "TT_BREAK"
     TT_CONTINUE = "TT_CONTINUE"
 
-    TT_CLASS = "TT_CLASS"
-    TT_DEF = "TT_DEF"
+    TT_REPEAT = "TT_REPEAT"
+    TT_UNTIL = "TT_UNTIL"
+    TT_LOCAL = "TT_LOCAL"
+    TT_DO = "TT_DO"
+
     TT_IF = "TT_IF"
-    TT_ELIF = "TT_ELIF"
     TT_ELSE = "TT_ELSE"
+    TT_ELSEIF = "TT_ELSEIF"
     TT_IN = "TT_IN"
-    TT_AS = "TT_AS"
-    TT_IS = "TT_IS"
-    TT_IS_NOT = "TT_IS_NOT"
-    TT_NOT_IN = "TT_NOT_IN"
 
     TT_AND = "TT_AND"
     TT_NOT = "TT_AND"
     TT_OR = "TT_OR"
     TT_TRUE = "TT_TRUE"
     TT_FALSE = "TT_FALSE"
-    TT_NONE = "TT_NONE"
-    TT_TRY = "TT_TRY"
-    TT_RAISE = "TT_RAISE"
-    TT_YIELD = "TT_YIELD"
+    TT_NIL = "TT_NIL"
     TT_RETURN = "TT_RETURN"
-    TT_EXCEPT = "TT_EXCEPT"
-    TT_FINALLY = "TT_FINALLY"
     TT_END = "TT_END"
     TT_END_EXPR = "TT_END_EXPR"
-    TT_INDENT = "TT_INDENT"
     TT_NEWLINE = "TT_NEWLINE"
-    TT_LAMBDA = "TT_LAMBDA"
     TT_LCURLY = "TT_LCURLY"
     TT_RCURLY = "TT_RCURLY"
     TT_COMMA = "TT_COMMA"
     TT_ASSIGN = "TT_ASSIGN"
-    TT_PLUS_ASSIGN = "TT_PLUS_ASSIGN"
-    TT_MINUS_ASSIGN = "TT_MINUS_ASSIGN"
     TT_LPAREN = "TT_LPAREN"
     TT_RPAREN = "TT_RPAREN"
     TT_LSQUARE = "TT_LSQUARE"
     TT_RSQUARE = "TT_RSQUARE"
+
     TT_DOT = "TT_DOT"
+    TT_DOT_2 = "TT_DOT_2"
+    TT_DOT_3 = "TT_DOT_3"
+
     TT_COLON = "TT_COLON"
 
     TT_GT = "TT_GT"
@@ -65,48 +59,36 @@ class IpyLexicon(Lexicon):
     TT_MINUS = "TT_MINUS"
     TT_SLASH = "TT_SLASH"
     TT_STAR = "TT_STAR"
-    TT_DOUBLE_STAR = "TT_DOUBLE_STAR"
+
     TT_PERCENTS = "TT_PERCENTS"
-
-    TT_TILDE = "TT_TILDE"
     TT_CARET = "TT_CARET"
-    TT_PIPE = "TT_PIPE"
-    TT_SHL = "TT_SHL"
-    TT_SHR = "TT_SHR"
-    TT_AMP = "TT_AMP"
-
-    TT_IMPORT = "TT_IMPORT"
-    TT_FROM = "TT_FROM"
     # NODE_TYPES
 
     NT_TRUE = "NT_TRUE"
     NT_FALSE = "NT_FALSE"
-    NT_NONE = "NT_NONE"
+    NT_NIL = "NT_NIL"
     NT_INT = "NT_INT"
     NT_STR = "NT_STR"
     NT_MULTI_STR = "NT_MULTI_STR"
     NT_NAME = "NT_NAME"
-    NT_DICT = "NT_DICT"
-    NT_LIST = "NT_LIST"
-    NT_TUPLE = "NT_TUPLE"
-    NT_FUN = "NT_FUN"
+    NT_TABLE = "NT_LIST"
+    NT_FUNCTION = "NT_FUNCTION"
+    NT_BLOCK = "NT_BLOCK"
+
     NT_IF = "NT_IF"
-    NT_TRY = "NT_TRY"
     NT_FOR = "NT_FOR"
     NT_WHILE = "NT_WHILE"
-    NT_CONTINUE = "NT_CONTINUE"
     NT_BREAK = "NT_BREAK"
-    NT_RAISE = "NT_RAISE"
     NT_ASSIGN = "NT_ASSIGN"
-    NT_PLUS_ASSIGN = "NT_PLUS_ASSIGN"
-    NT_MINUS_ASSIGN = "NT_MINUS_ASSIGN"
     NT_CALL = "NT_CALL"
     NT_DOT = "NT_DOT"
+    NT_COLON = "NT_COLON"
     NT_COMMA = "NT_COMMA"
-    NT_AS = "NT_AS"
     NT_AND = "NT_AND"
     NT_OR = "NT_OR"
     NT_NOT = "NT_NOT"
+    # NT_END_EXPR = "NT_END_EXPR"
+    # NT_END = "NT_END"
 
     NT_GT = "NT_GT"
     NT_GE = "NT_GE"
@@ -115,9 +97,6 @@ class IpyLexicon(Lexicon):
     NT_EQ = "NT_EQ"
     NT_NE = "NT_NE"
     NT_IN = "NT_IN"
-    NT_IS = "NT_IS"
-    NT_IS_NOT = "NT_IS_NOT"
-    NT_NOT_IN = "NT_NOT_IN"
 
     NT_ADD = "NT_ADD"
     NT_SUB = "NT_SUB"
@@ -125,63 +104,40 @@ class IpyLexicon(Lexicon):
     NT_MUL = "NT_MUL"
     NT_POW = "NT_POW"
     NT_MOD = "NT_MOD"
-    NT_BXOR = "NT_BXOR"
-    NT_BNOT = "NT_BNOT"
-    NT_BOR = "NT_BOR"
-    NT_BAND = "NT_BAND"
-    NT_BSHL = "NT_BSHL"
-    NT_BSHR = "NT_BSHR"
 
     NT_NEGATE = "NT_NEGATE"
 
     NT_VARGS = "NT_VARGS"
-    NT_KVARGS = "NT_KVARGS"
-    NT_CLASS = "NT_CLASS"
-
-    NT_IMPORT = "NT_IMPORT"
-    NT_IMPORT_FROM = "NT_IMPORT_FROM"
-    NT_IMPORT_ALL = "NT_IMPORT_ALL"
 
     RULES = [
-        (token('\n'), TT_NEWLINE),
+        (token('\n'), TT_END_EXPR),
         (token(' '), -1),
         (token('#[^\n]*'), -1),
 
-        (token('is[\s]+not'), TT_IS_NOT),
-        (token('not[\s]+in'), TT_NOT_IN),
+        (keyword('local'), TT_LOCAL),
+        (keyword('do'), TT_DO),
+        (keyword('repeat'), TT_REPEAT),
+        (keyword('until'), TT_UNTIL),
         (keyword('if'), TT_IF),
-        (keyword('elif'), TT_ELIF),
+        (keyword('elseif'), TT_ELSEIF),
         (keyword('else'), TT_ELSE),
         (keyword('end'), TT_END),
-        (keyword('is'), TT_IS),
         (keyword('and'), TT_AND),
         (keyword('or'), TT_OR),
         (keyword('not'), TT_NOT),
-        (keyword('True'), TT_TRUE),
-        (keyword('False'), TT_FALSE),
-        (keyword('None'), TT_NONE),
+        (keyword('true'), TT_TRUE),
+        (keyword('false'), TT_FALSE),
+        (keyword('nil'), TT_NIL),
 
-        (keyword('raise'), TT_RAISE),
         (keyword('return'), TT_RETURN),
-        (keyword('yield'), TT_YIELD),
-        (keyword('try'), TT_TRY),
-        (keyword('except'), TT_EXCEPT),
-        (keyword('finally'), TT_FINALLY),
-        (keyword('lambda'), TT_LAMBDA),
-        (keyword('fun'), TT_FUN),
-        (keyword('def'), TT_DEF),
+        (keyword('function'), TT_FUNCTION),
 
-        (keyword('class'), TT_CLASS),
         (keyword('while'), TT_WHILE),
         (keyword('for'), TT_FOR),
         (keyword('in'), TT_IN),
 
         (keyword('break'), TT_BREAK),
         (keyword('continue'), TT_CONTINUE),
-
-        (keyword('import'), TT_IMPORT),
-        (keyword('from'), TT_FROM),
-        (keyword('as'), TT_AS),
 
         (token("[0-9]+"), TT_INT),
         (token('"([^\\\"]+|\\.)*"'), TT_STR),
@@ -194,26 +150,19 @@ class IpyLexicon(Lexicon):
         (token('\)'), TT_RPAREN),
         (token('\['), TT_LSQUARE),
         (token('\]'), TT_RSQUARE),
+        (token('\.\.\.'), TT_DOT_3),
+        (token('\.\.'), TT_DOT_2),
         (token('\.'), TT_DOT),
         (token(':'), TT_COLON),
 
-        (token('>>'), TT_SHR),
-        (token('<<'), TT_SHL),
         (token('\^'), TT_CARET),
-        (token('\&'), TT_AMP),
-        (token('\~'), TT_TILDE),
-        (token('\|'), TT_PIPE),
-
-        (token('\+='), TT_PLUS_ASSIGN),
-        (token('\-='), TT_MINUS_ASSIGN),
-        (token('\*\*'), TT_DOUBLE_STAR),
         (token('=='), TT_EQ),
         (token('>='), TT_GE),
         (token('>'), TT_GT),
         (token('<'), TT_LT),
         (token('<='), TT_LE),
         (token('=='), TT_EQ),
-        (token('!='), TT_NE),
+        (token('~='), TT_NE),
 
 
         (token('\+'), TT_PLUS),
@@ -228,18 +177,4 @@ class IpyLexicon(Lexicon):
     TERM_EXP = [TT_END_EXPR]
     TERM_CONDITION = [TT_COLON]
     TERM_FOR_CONDITION = [TT_IN]
-
-    TERM_IF_BODY = [TT_ELSE, TT_ELIF]
-
-    TERM_TRY = [TT_EXCEPT]
-    TERM_EXCEPT = [TT_FINALLY, TT_EXCEPT] + TERM_BLOCK
-
-    TERM_FUN_SIGNATURE = [TT_COLON]
-
-    TERM_FROM_IMPORTED = [TT_IMPORT]
-
-    LEVELS_IF = [TT_ELSE, TT_ELIF]
-    LEVELS_TRY = [TT_EXCEPT, TT_FINALLY]
-    LEVELS_FOR = [TT_ELSE]
-
-    ASSIGNMENT_TOKENS = [TT_ASSIGN, TT_PLUS_ASSIGN, TT_MINUS_ASSIGN]
+    TERM_IF_BODY = [TT_ELSE, TT_ELSEIF]

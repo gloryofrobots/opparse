@@ -493,10 +493,7 @@ class Parser(object):
     def endofexpression(self):
         if self.isend():
             return False
-        if self.token_type == self.lex.TT_END_EXPR:
-            self.advance()
-            return True
-        return False
+        return True
 
     def base_expression(self, _rbp, terminators):
         previous = self.token
@@ -601,6 +598,9 @@ class Parser(object):
 
         return nodes.list_node(stmts)
 
+    @classmethod
+    def builder(cls, lexicon, settings):
+        return Builder(cls, lexicon, settings)
 
 class JuxtapositionParser(Parser):
 
@@ -716,17 +716,12 @@ class JuxtapositionParser(Parser):
 
 
 class Builder:
-    DEFAULT_CLASS = Parser
-
-    def __init__(self, lexicon, settings, parser_class=None):
+    def __init__(self, parser_class, lexicon, settings):
         self.lexicon = lexicon
         self.settings = settings
         self.operators = Operators()
-        if parser_class is None:
-            self.parser_class = self.DEFAULT_CLASS
-        else:
-            assert issubclass(parser_class, Parser), parser_class
-            self.parser_class = parser_class
+        assert issubclass(parser_class, Parser), parser_class
+        self.parser_class = parser_class
 
     def infix(self, ttype, lbp, led, node_type=None):
         self.operators.set_led(ttype, lbp, led)

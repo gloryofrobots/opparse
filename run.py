@@ -1,9 +1,7 @@
 import importlib
-import json
-from opparse import nodes
 from opparse.misc import fs, timer
 
-PARSERS = ["obin"]
+PARSERS = ["ipy", "obin"]
 
 
 def execute_parser(parser_name):

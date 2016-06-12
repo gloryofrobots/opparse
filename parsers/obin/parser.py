@@ -25,7 +25,7 @@ def create_stream(parser, source):
 
 class ObinParser(JuxtapositionParser):
     def advance_end(self):
-        self.advance_expected_one_of(self.lex.TERM_BLOCK)
+        self.advance_expected(self.lex.TT_END)
 
 
     def endofexpression(self):
@@ -41,7 +41,7 @@ class ObinParser(JuxtapositionParser):
 
 
 def builder(**settings):
-    return Builder(lex, settings, ObinParser)
+    return ObinParser.builder(lex, settings)
 
 
 def set_literals(parser_builder):

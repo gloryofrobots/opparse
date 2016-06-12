@@ -2,27 +2,26 @@ import lexicon
 from opparse.indenter import IndentationTokenStream
 from callbacks import *
 
-lex = lexicon.IpyLexicon()
+lex = lexicon.LuaLexicon()
 
-
-class IpyParser(Parser):
+class LuaParser(Parser):
 
     def advance_end(self):
         self.advance_expected(self.lex.TT_END)
 
-    def endofexpression(self):
-        if self.isend():
-            return False
-        if self.token_type in self.lex.TERM_BLOCK:
-            return True
-        if self.token_type == self.lex.TT_END_EXPR:
-            self.advance()
-            return True
-        return False
+    # def endofexpression(self):
+    #     if self.isend():
+    #         return False
+    #     if self.token_type in self.lex.TERM_BLOCK:
+    #         return True
+    #     if self.token_type == self.lex.TT_END_EXPR:
+    #         self.advance()
+    #         return True
+    #     return False
 
 
 def builder(**settings):
-    return IpyParser.builder(lex, settings)
+    return Builder(lex, settings, LuaParser)
 
 
 def set_literals(parser_builder):
