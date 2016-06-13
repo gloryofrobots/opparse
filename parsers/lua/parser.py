@@ -135,6 +135,7 @@ def lua_parser():
         .symbol(lex.TT_ELSEIF)
         .symbol(lex.TT_ELSE)
         .symbol(lex.TT_THEN)
+        .symbol(lex.TT_UNTIL)
         .symbol(lex.TT_END_EXPR, prefix_empty)
         .symbol(lex.TT_END)
         .symbol(lex.TT_ENDSTREAM)

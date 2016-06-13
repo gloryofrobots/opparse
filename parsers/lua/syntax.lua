@@ -69,3 +69,12 @@ elseif op == "/" then
 else
     error("invalid operation")
 end
+
+while a[i] do
+   print(a[i])
+   i = i + 1
+end
+
+repeat
+   line = os.read()
+until line ~= ""

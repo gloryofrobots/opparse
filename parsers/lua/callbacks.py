@@ -147,16 +147,17 @@ def stmt_return(parser, op, token):
 
 
 def stmt_while(parser, op, token):
-    condition = parser.expressions_parser.expression(0)
+    condition = parser.expression_parser.expression(0)
     parser.advance_expected(lex.TT_DO)
     body = parser.statements(parser.lex.TERM_BLOCK)
+    parser.advance_end()
     return node_2(lex.NT_WHILE, token, condition, body)
 
 
 def stmt_repeat(parser, op, token):
-    body = parser.statements(parser.lex.TERM_UNTIL)
+    body = parser.statements(parser.lex.TERM_REPEAT)
     parser.advance_expected(lex.TT_UNTIL)
-    condition = parser.expressions_parser.expression(0)
+    condition = parser.expression_parser.expression(0)
     return node_2(lex.NT_REPEAT, token, condition, body)
 
 
