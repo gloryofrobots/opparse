@@ -45,7 +45,7 @@ def signature_parser():
         .symbol(lex.TT_LPAREN)
         .symbol(lex.TT_COMMA)
         .literal(lex.TT_NAME, lex.NT_NAME)
-        .prefix_default(lex.TT_DOT_3, lex.NT_VARGS)
+        .prefix(lex.TT_DOT_3, prefix_dot_3)
     )
 
 

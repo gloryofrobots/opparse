@@ -69,3 +69,51 @@ elseif op == "/" then
 else
     error("invalid operation")
 end
+
+while a[i] do
+   print(a[i])
+   i = i + 1
+end
+
+repeat
+   line = os.read()
+until line ~= ""
+
+for i=1,f(x) do print(i) end
+for i=10,1,-1 do print(i) end
+
+local found = nil
+for i=1,a.n do
+    if a[i] == value then
+        found = i      -- save value of `i'
+        break
+    end
+end
+
+for i,v in ipairs(a) do print(v) end
+
+function add (a)
+      local sum = 0
+      for i,v in ipairs(a) do
+        sum = sum + v
+      end
+      return sum
+end
+
+function maximum (a)
+    local mi = 1          -- maximum index
+    local m = a[mi]       -- maximum value
+    for i,val in ipairs(a) do
+        if val > m then
+            mi = i
+            m = val
+        end
+    end
+    return m, mi
+end
+
+reduce({1,2,3,4}, function (el, acc) return el + acc, acc + 42, 42 end)
+
+function fwrite (fmt, ...)
+    return io.write(string.format(fmt, unpack(arg)))
+end

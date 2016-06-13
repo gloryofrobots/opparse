@@ -1,4 +1,3 @@
-
 a = 2 + 3 - 5 * (6 + 7)
 a = {}     -- create a table and store its reference in `a'
 k = "x"
@@ -93,3 +92,28 @@ end
 
 for i,v in ipairs(a) do print(v) end
 
+function add (a)
+      local sum = 0
+      for i,v in ipairs(a) do
+        sum = sum + v
+      end
+      return sum
+end
+
+function maximum (a)
+    local mi = 1          -- maximum index
+    local m = a[mi]       -- maximum value
+    for i,val in ipairs(a) do
+        if val > m then
+            mi = i
+            m = val
+        end
+    end
+    return m, mi
+end
+
+reduce({1,2,3,4}, function (el, acc) return el + acc, acc + 42, 42 end)
+
+function fwrite (fmt, ...)
+    return io.write(string.format(fmt, unpack(arg)))
+end

@@ -209,6 +209,11 @@ def grab_name(parser):
     parser.advance()
     return name
 
+def prefix_dot_3(parser, op, token):
+    if parser.token_type != lex.TT_RPAREN:
+        parse_error(parser, "Invalid use of ... syntax", token)
+    return node_0(lex.NT_VARGS, token)
+
 
 def _parse_function(parser, token):
     parser.advance_expected(lex.TT_LPAREN)
@@ -220,7 +225,7 @@ def _parse_function(parser, token):
 
 # TODO TRY DO IT IN COMPLETELY OPERATOR WAY
 def prefix_function(parser, op, token):
-    args, body = _parse_function(parser.statement_parser, token)
+    args, body = _parse_function(parser.lua_parser, token)
     return node_2(lex.NT_LAMBDA, token, args, body)
 
 
