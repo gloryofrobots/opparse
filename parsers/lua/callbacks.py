@@ -170,14 +170,15 @@ def stmt_for(parser, op, token):
     if parser.token_type == lex.TT_ASSIGN:
         exps = []
         parser.advance()
-        exp1 = parser.expression(0)
+        exp1 = parser.expression_parser.expression(0)
         exps.append(exp1)
         if parser.token_type == lex.TT_COMMA:
-            exp2 = parser.expression(0)
-            exps.append(exp2)
             parser.advance_expected(lex.TT_COMMA)
+            exp2 = parser.expression_parser.expression(0)
+            exps.append(exp2)
             if parser.token_type == lex.TT_COMMA:
-                exp3 = parser.expression(0)
+                parser.advance_expected(lex.TT_COMMA)
+                exp3 = parser.expression_parser.expression(0)
                 exps.append(exp3)
 
         parser.advance_expected(lex.TT_DO)
@@ -193,7 +194,7 @@ def stmt_for(parser, op, token):
             names.append(name)
 
         parser.advance_expected(lex.TT_IN)
-        expr = parser.expression(0)
+        expr = parser.expression_parser.expression(0)
         parser.advance_expected(lex.TT_DO)
         body = parser.statements(lex.TERM_BLOCK)
         parser.advance_end()

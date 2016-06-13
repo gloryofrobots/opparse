@@ -82,6 +82,7 @@ def expression_parser(statement_parser):
         .symbol(lex.TT_UNTIL)
         .symbol(lex.TT_DO)
         .symbol(lex.TT_FOR)
+        .symbol(lex.TT_BREAK)
         .symbol(lex.TT_END_EXPR, prefix_empty)
         .symbol(lex.TT_ENDSTREAM)
         .symbol(lex.TT_END)

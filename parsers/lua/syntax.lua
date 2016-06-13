@@ -1,3 +1,4 @@
+
 a = 2 + 3 - 5 * (6 + 7)
 a = {}     -- create a table and store its reference in `a'
 k = "x"
@@ -78,3 +79,17 @@ end
 repeat
    line = os.read()
 until line ~= ""
+
+for i=1,f(x) do print(i) end
+for i=10,1,-1 do print(i) end
+
+local found = nil
+for i=1,a.n do
+    if a[i] == value then
+        found = i      -- save value of `i'
+        break
+    end
+end
+
+for i,v in ipairs(a) do print(v) end
+

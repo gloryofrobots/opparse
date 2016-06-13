@@ -1,5 +1,275 @@
 [
   {
+    "_ntype": "NT_NUMERIC_FOR",
+    "_value": "for",
+    "children": [
+      {
+        "_ntype": "NT_NAME",
+        "_value": "i"
+      },
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "1"
+        },
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "f"
+            },
+            [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "x"
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "print"
+            },
+            [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "i"
+              }
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_NUMERIC_FOR",
+    "_value": "for",
+    "children": [
+      {
+        "_ntype": "NT_NAME",
+        "_value": "i"
+      },
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "10"
+        },
+        {
+          "_ntype": "NT_INT",
+          "_value": "1"
+        },
+        {
+          "_ntype": "NT_NEGATE",
+          "_value": "-",
+          "children": [
+            {
+              "_ntype": "NT_INT",
+              "_value": "1"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "print"
+            },
+            [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "i"
+              }
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_LOCAL",
+    "_value": "local",
+    "children": [
+      {
+        "_ntype": "NT_ASSIGN",
+        "_value": "=",
+        "children": [
+          [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "found"
+            }
+          ],
+          [
+            {
+              "_ntype": "NT_NIL",
+              "_value": "nil"
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "_ntype": "NT_NUMERIC_FOR",
+    "_value": "for",
+    "children": [
+      {
+        "_ntype": "NT_NAME",
+        "_value": "i"
+      },
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "1"
+        },
+        {
+          "_ntype": "NT_DOT",
+          "_value": ".",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_NAME",
+              "_value": "n"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_IF",
+          "_value": "if",
+          "children": [
+            [
+              [
+                {
+                  "_ntype": "NT_EQ",
+                  "_value": "==",
+                  "children": [
+                    {
+                      "_ntype": "NT_LOOKUP",
+                      "_value": "[",
+                      "children": [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "a"
+                        },
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "i"
+                        }
+                      ]
+                    },
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "value"
+                    }
+                  ]
+                },
+                [
+                  {
+                    "_ntype": "NT_ASSIGN",
+                    "_value": "=",
+                    "children": [
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "found"
+                        }
+                      ],
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "i"
+                        }
+                      ]
+                    ]
+                  },
+                  {
+                    "_ntype": "NT_BREAK",
+                    "_value": "break"
+                  }
+                ]
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "empty": true
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_GENERIC_FOR",
+    "_value": "for",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "i"
+        },
+        {
+          "_ntype": "NT_NAME",
+          "_value": "v"
+        }
+      ],
+      {
+        "_ntype": "NT_CALL",
+        "_value": "(",
+        "children": [
+          {
+            "_ntype": "NT_NAME",
+            "_value": "ipairs"
+          },
+          [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            }
+          ]
+        ]
+      },
+      [
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "print"
+            },
+            [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "v"
+              }
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
     "_ntype": "NT_ASSIGN",
     "_value": "=",
     "children": [
