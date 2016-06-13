@@ -1,7 +1,8 @@
 import importlib
 from opparse.misc import fs, timer
 
-PARSERS = ["ipy", "obin"]
+#PARSERS = ["ipy", "obin"]
+PARSERS = ["lua"]
 
 
 def execute_parser(parser_name):

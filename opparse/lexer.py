@@ -115,7 +115,6 @@ class Lexer:
             tok = self.token()
             if tok is None:
                 # ADD FAKE NEWLINE TO SUPPORT ONE LINE SCRIPT FILES
-                yield Token(self.lexicon.TT_NEWLINE, "\n", -1, -1, 1)
                 yield Token(self.lexicon.TT_ENDSTREAM, "", -1, -1, 1)
                 break
             yield tok

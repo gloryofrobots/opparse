@@ -42,39 +42,25 @@ def signature_parser():
     return (
         builder()
         .symbol(lex.TT_RPAREN)
-        .symbol(lex.TT_INDENT)
-        .symbol(lex.TT_COLON)
         .symbol(lex.TT_LPAREN)
+        .symbol(lex.TT_COMMA)
         .literal(lex.TT_NAME, lex.NT_NAME)
         .prefix_default(lex.TT_DOT_3, lex.NT_VARGS)
-        .infix(lex.TT_COMMA, 10, infix_comma)
-    )
-
-
-def for_signature_parser():
-    return (
-        builder()
-        .symbol(lex.TT_RPAREN)
-        .symbol(lex.TT_INDENT)
-        .symbol(lex.TT_IN)
-        .literal(lex.TT_NAME, lex.NT_NAME)
-        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
-        .infix(lex.TT_COMMA, 10, infix_comma)
     )
 
 
 def table_parser(expressions_parser):
     parser = (
         builder(break_on_juxtaposition=True)
-        .literal(TT_NAME, NT_NAME)
-        .literal(TT_INT, NT_INT)
-        .prefix(TT_LSQUARE, prefix_table_lsquare)
+        .literal(lex.TT_NAME, lex.NT_NAME)
+        .literal(lex.TT_INT, lex.NT_INT)
+        .prefix(lex.TT_LSQUARE, prefix_table_lsquare)
     ).build("table_parser")
 
-    return parser.add_parser(expressions_parser)
+    return parser.add_weakref(expressions_parser)
 
 
-def expressions_parser(statement_parser):
+def expression_parser(statement_parser):
     parser = (
         set_literals(builder(break_on_juxtaposition=True))
         .symbol(lex.TT_RSQUARE)
@@ -86,8 +72,8 @@ def expressions_parser(statement_parser):
         .symbol(lex.TT_END)
         .symbol(lex.TT_END_EXPR, prefix_empty)
 
-        .prefix_layout(lex.TT_LPAREN, prefix_lparen, layout_lparen)
-        .prefix_layout(lex.TT_LCURLY, prefix_lcurly, layout_lcurly)
+        .prefix(lex.TT_LPAREN, prefix_lparen)
+        .prefix(lex.TT_LCURLY, prefix_lcurly)
 
         .prefix_default(lex.TT_NOT, lex.NT_NOT)
         .prefix_default(lex.TT_MINUS, lex.NT_NEGATE)
@@ -119,16 +105,20 @@ def expressions_parser(statement_parser):
 
     ).build("expression_parser")
 
-    parser.add_parser(statement_parser)
-    return parser
+    return (
+        parser
+        .add_weakref(statement_parser)
+        .add_subparser(table_parser(parser))
+    )
 
 
 def lua_parser():
-    return (
+    parser = (
         builder(break_on_juxtaposition=True)
         .literal(lex.TT_NAME, lex.NT_NAME)
         .symbol(lex.TT_END)
         .symbol(lex.TT_IN)
+        .symbol(lex.TT_RSQUARE)
         .symbol(lex.TT_ENDSTREAM)
         .symbol(lex.TT_END_EXPR, prefix_empty)
 
@@ -136,7 +126,7 @@ def lua_parser():
 
         # .infix(lex.TT_COMMA, 10, infix_comma)
         .infix_default(lex.TT_COMMA, 10, lex.NT_COMMA)
-        .infix_default(lex.TT_ASSIGN, 5, infix_assign)
+        .infix(lex.TT_ASSIGN, 5, infix_assign)
 
         .infix(lex.TT_DOT, 90, infix_name_to_the_right, lex.NT_DOT)
         .infix(lex.TT_COLON, 90, infix_name_to_the_right, lex.NT_COLON)
@@ -158,11 +148,8 @@ def lua_parser():
     return (
         parser
         # expression and statement parsers must have cycle refs to each other
-        .add_parser(expression_parser(parser))
+        .add_subparser(expression_parser(parser))
         .add_builder("signature_parser", signature_parser())
-        .add_builder("for_signature_parser", for_signature_parser())
-        .add_builder("table_parser", table_parser(parser.expressions_parser))
-        # .add_builder("name_parser", name_parser())
     )
 
 

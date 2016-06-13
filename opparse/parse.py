@@ -30,8 +30,6 @@ def parser_error_indentation(parser, msg, position, lineno, column):
 
 
 def parse_error(parser, message, token):
-    print parser.ts.advanced_values()
-    print parser.ts.layouts
     if token.type == parser.lex.TT_ENDSTREAM:
         line = "Unclosed top level statement"
     else:
@@ -271,6 +269,7 @@ class Parser(object):
         self.operators = operators
 
         self.subparsers = {}
+        self.weakrefs = []
         self.state = None
 
         self.allow_overloading = settings.get("allow_overloading", False)
@@ -282,22 +281,37 @@ class Parser(object):
         parser = builder.build(name)
         return self.add_subparser(parser)
 
+    def add_weakref(self, parser):
+        self.weakrefs.append(parser)
+        return self.add_subparser(parser)
+
+    def is_weakref(self, parser):
+        for p in self.weakrefs:
+            if p is parser:
+                return True
+        return False
+    
     def add_subparser(self, parser):
         setattr(self, parser.name, parser)
         self.subparsers[parser.name] = parser
         return self
 
+    def is_open(self):
+        return self.state is not None
+
     def open(self, state):
-        assert self.state is None
+        assert not self.is_open()
         self.state = state
         for parser in self.subparsers.values():
-            parser.open(state)
+            if not self.is_weakref(parser):
+                parser.open(state)
 
     def close(self):
         state = self.state
         self.state = None
         for parser in self.subparsers.values():
-            parser.close()
+            if not self.is_weakref(parser):
+                parser.close()
 
         return state
 
@@ -625,6 +639,7 @@ class Parser(object):
     def builder(cls, lexicon, settings):
         return Builder(cls, lexicon, settings)
 
+
 class JuxtapositionParser(Parser):
 
     def __init__(self, name, lexicon, operators, settings):
@@ -644,7 +659,6 @@ class JuxtapositionParser(Parser):
         #   parse_error(self, "Left binding power error", token)
 
         return lbp
-
 
     def base_expression(self, _rbp, terminators):
         previous = self.token

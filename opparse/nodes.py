@@ -185,3 +185,8 @@ def node_3(ntype, token, child1, child2, child3):
 
 def node_4(ntype, token, child1, child2, child3, child4):
     return Node(ntype, token, [child1, child2, child3, child4])
+
+def ensure_list(node):
+    if not is_list_node(node):
+        return list_node([node])
+    return node

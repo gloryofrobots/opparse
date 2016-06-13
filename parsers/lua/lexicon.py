@@ -113,9 +113,8 @@ class LuaLexicon(Lexicon):
     NT_VARGS = "NT_VARGS"
 
     RULES = [
-        (token('\n'), -1),
-        (token(' '), -1),
-        (token('#[^\n]*'), -1),
+        (token('\s'), -1),
+        (token('--[^\n]*'), -1),
 
         (keyword('local'), TT_LOCAL),
         (keyword('do'), TT_DO),

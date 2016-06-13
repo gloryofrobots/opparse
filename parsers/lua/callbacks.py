@@ -1,10 +1,13 @@
 from opparse.parse import *
 from opparse import nodes, lexer
-from lexicon import IpyLexicon as lex
+from lexicon import LuaLexicon as lex
 
 from opparse.nodes import (
     node_0, node_1, node_2, node_3, empty_node,
     is_list_node, list_node)
+
+def commas_as_list(node):
+    return flatten_infix(node, lex.NT_COMMA)
 
 ##############################################################
 # INFIX
@@ -24,8 +27,14 @@ def infix_lsquare(parser, op, token, left):
     return node_2(lex.NT_DOT, token, left, exp)
 
 
-def commas_as_list(node):
-    return flatten_infix(node, lex.NT_COMMA)
+# TODO parser common
+def infix_assign(parser, op, token, left):
+    vals = [parser.expression_parser.expression(0)]
+    while parser.token_type == lex.TT_COMMA:
+        parser.advance_expected(lex.TT_COMMA)
+        vals.append(parser.expression_parser.expression(0))
+
+    return node_2(lex.TT_ASSIGN, token, nodes.ensure_list(left), list_node(vals))
 
 
 def infix_lparen(parser, op, token, left):
@@ -61,12 +70,12 @@ def _table_item(parser):
 
 def prefix_lcurly(parser, op, token):
     items = parse_struct(parser.table_parser,
-                         _table_item, lex.TT_RCURLY, lex.TT_COMMA)
+                         lex.TT_RCURLY, lex.TT_COMMA, _table_item)
 
     return node_1(lex.NT_TABLE, token, items)
 
 
-def prefix_if(parser, op, token):
+def stmt_if(parser, op, token):
     branches = []
     cond = parser.expression(0)
     parser.advance_expected(lex.TT_THEN)
@@ -97,6 +106,11 @@ def prefix_if(parser, op, token):
     parser.advance_end()
     return node_1(lex.NT_IF, token, list_node(branches))
 
+
+def stmt_local(parser, op, token):
+    s = parser.statement()
+    parser.assert_node_types(s, [lex.NT_ASSIGN, lex.NT_NAME])
+    return node_1(lex.NT_LOCAL, token, s)
 
 def stmt_return(parser, op, token):
     items = [parser.expression_parser.expression(0)]
@@ -171,7 +185,7 @@ def grab_name(parser):
 
 def _parse_function(parser, token):
     parser.advance_expected(lex.TT_LPAREN)
-    args = parse_struct(parser, lex.TT_RPAREN, lex.TT_COMMA)
+    args = parse_struct(parser.signature_parser, lex.TT_RPAREN, lex.TT_COMMA)
     body = parser.statements(parser.lex.TERM_BLOCK)
     parser.advance_end()
     return args, body
@@ -179,12 +193,12 @@ def _parse_function(parser, token):
 
 # TODO TRY DO IT IN COMPLETELY OPERATOR WAY
 def prefix_function(parser, op, token):
-    args, body = _parse_function(parser, token)
+    args, body = _parse_function(parser.statement_parser, token)
     return node_2(lex.NT_LAMBDA, token, args, body)
 
 
 def stmt_function(parser, op, token):
     parser.assert_token_type(lex.TT_NAME)
-    name = grab_name(parser.name_parser)
+    name = grab_name(parser)
     args, body = _parse_function(parser, token)
     return node_3(lex.NT_FUNCTION, token, name, args, body)
