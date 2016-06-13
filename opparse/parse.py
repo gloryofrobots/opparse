@@ -275,6 +275,8 @@ class Parser(object):
 
         self.allow_overloading = settings.get("allow_overloading", False)
         self.allow_unknown = settings.get("allow_unknown", True)
+        self.break_on_juxtaposition = \
+            settings.get("break_on_juxtaposition", False)
 
     def add_builder(self, name, builder):
         parser = builder.build(name)
@@ -409,8 +411,8 @@ class Parser(object):
         assert isinstance(token, lexer.Token)
         handler = self.token_operator(token)
         lbp = handler.lbp
-        if lbp < 0:
-            parse_error(self, "Left binding power error", token)
+        # if lbp < 0:
+        #     parse_error(self, "Left binding power error", token)
 
         return lbp
 
@@ -515,6 +517,14 @@ class Parser(object):
 
             _lbp = self.token_lbp(self.token)
 
+            if _lbp < 0:
+                if self.break_on_juxtaposition is True:
+                    return left
+                else:
+                    parse_error(self, "Invalid syntax:"
+                                " can't calculate left binding power",
+                                self.token)
+
             if _rbp >= _lbp:
                 break
             previous = self.token
@@ -615,7 +625,6 @@ class Parser(object):
     def builder(cls, lexicon, settings):
         return Builder(cls, lexicon, settings)
 
-
 class JuxtapositionParser(Parser):
 
     def __init__(self, name, lexicon, operators, settings):
@@ -627,8 +636,6 @@ class JuxtapositionParser(Parser):
 
         self.juxtaposition_as_list = \
             settings.get("juxtaposition_as_list", False)
-        self.break_on_juxtaposition = \
-            settings.get("break_on_juxtaposition", False)
 
     def token_lbp(self, token):
         operator = self.token_operator(token)
@@ -638,16 +645,6 @@ class JuxtapositionParser(Parser):
 
         return lbp
 
-    def flatten_juxtaposition(self, node):
-        ntype = node.node_type
-        if ntype == self.lex.NT_JUXTAPOSITION:
-            first = node.first()
-            second = node.second()
-            head = self.flatten_juxtaposition(first)
-            tail = self.flatten_juxtaposition(second)
-            return head.concat(tail)
-        else:
-            return nodes.list_node([node])
 
     def base_expression(self, _rbp, terminators):
         previous = self.token
@@ -702,7 +699,7 @@ class JuxtapositionParser(Parser):
 
         ntype = node.node_type
         if ntype == self.lex.NT_JUXTAPOSITION:
-            flatten = self.flatten_juxtaposition(node)
+            flatten = flatten_infix(node, self.lex.NT_JUXTAPOSITION)
             assert len(flatten) >= 2
 
             if self.juxtaposition_as_list:

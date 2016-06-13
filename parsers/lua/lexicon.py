@@ -73,10 +73,12 @@ class LuaLexicon(Lexicon):
     NT_NAME = "NT_NAME"
     NT_TABLE = "NT_LIST"
     NT_FUNCTION = "NT_FUNCTION"
+    NT_LAMBDA = "NT_LAMBDA"
     NT_BLOCK = "NT_BLOCK"
 
     NT_IF = "NT_IF"
-    NT_FOR = "NT_FOR"
+    NT_NUMERIC_FOR = "NT_NUMERIC_FOR"
+    NT_GENERIC_FOR = "NT_GENERIC_FOR"
     NT_WHILE = "NT_WHILE"
     NT_REPEAT = "NT_REPEAT"
     NT_BREAK = "NT_BREAK"

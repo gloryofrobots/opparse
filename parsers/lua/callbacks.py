@@ -108,12 +108,11 @@ def stmt_return(parser, op, token):
 
 
 def stmt_while(parser, op, token):
-    condition = parser.expressions_parser. \
-        terminated_expression(0, parser.lex.LOOP_CONDITION)
-
+    condition = parser.expressions_parser.expression(0)
     parser.advance_expected(lex.TT_DO)
     body = parser.statements(parser.lex.TERM_BLOCK)
     return node_2(lex.NT_WHILE, token, condition, body)
+
 
 def stmt_repeat(parser, op, token):
     body = parser.statements(parser.lex.TERM_UNTIL)
@@ -123,41 +122,46 @@ def stmt_repeat(parser, op, token):
 
 
 def stmt_for(parser, op, token):
-    var = parser.for_signature_parser. \
-        terminated_expression(0, parser.lex.TERM_FOR_CONDITION)
-
-    var = maybe_tuple(var)
-    parser.advance_expected(lex.TT_IN)
-    expr = parser.terminated_expression(0, parser.lex.TERM_CONDITION)
-    parser.advance_expected(lex.TT_COLON)
-    body = parser.statements(parser.lex.TERM_BLOCK)
-    parser.advance_end()
-    return node_3(lex.NT_FOR, token, var, expr, body)
-
-
-# CLASS
-def prefix_class(parser, op, token):
-    if parser.token_type != lex.TT_NAME:
-        name = empty_node()
-    else:
-        name = grab_name(parser.name_parser)
-
-    if parser.token_type == lex.TT_LPAREN:
+    var_name = grab_name(parser)
+    # numeric for
+    """
+    numeric for can have 2 or 3 expressions for name=exp1,exp2 (,exp3)? do
+    """
+    if parser.token_type == lex.TT_ASSIGN:
+        exps = []
         parser.advance()
-        expr = parser.expression(0)
-        skip_end_expression(parser)
-        parents = commas_as_list(expr)
-        parser.advance_expected(lex.TT_RPAREN)
+        exp1 = parser.expression(0)
+        exps.append(exp1)
+        if parser.token_type == lex.TT_COMMA:
+            exp2 = parser.expression(0)
+            exps.append(exp2)
+            parser.advance_expected(lex.TT_COMMA)
+            if parser.token_type == lex.TT_COMMA:
+                exp3 = parser.expression(0)
+                exps.append(exp3)
+
+        parser.advance_expected(lex.TT_DO)
+        body = parser.statements(lex.TERM_BLOCK)
+        parser.advance_end()
+        return node_3(lex.NT_NUMERIC_FOR, token,
+                      var_name, list_node(exps), body)
     else:
-        parents = empty_node()
+        names = [var_name]
+        while parser.token_type != lex.TT_IN:
+            parser.advance_expected(lex.TT_COMMA)
+            name = grab_name(parser)
+            names.append(name)
 
-    parser.advance_expected(lex.TT_COLON)
-    body = parser.statements(lex.TERM_BLOCK)
-    parser.advance_end()
-    return node_3(lex.NT_CLASS, token, name, parents, body)
-
+        parser.advance_expected(lex.TT_IN)
+        expr = parser.expression(0)
+        parser.advance_expected(lex.TT_DO)
+        body = parser.statements(lex.TERM_BLOCK)
+        parser.advance_end()
+        return node_3(lex.NT_GENERIC_FOR, token, list_node(names), expr, body)
 
 # FUNCTION STUFF################################
+
+
 def grab_name(parser):
     parser.assert_token_type(lex.TT_NAME)
     name = node_0(lex.NT_NAME, parser.token)
@@ -167,66 +171,20 @@ def grab_name(parser):
 
 def _parse_function(parser, token):
     parser.advance_expected(lex.TT_LPAREN)
-    if parser.token_type != lex.TT_RPAREN:
-        expr = parser.signature_parser.expression(0)
-        skip_end_expression(parser)
-        args = commas_as_list(expr)
-    else:
-        args = list_node([])
-    parser.advance_expected(lex.TT_RPAREN)
-    parser.advance_expected(lex.TT_COLON)
+    args = parse_struct(parser, lex.TT_RPAREN, lex.TT_COMMA)
     body = parser.statements(parser.lex.TERM_BLOCK)
+    parser.advance_end()
     return args, body
 
 
 # TODO TRY DO IT IN COMPLETELY OPERATOR WAY
-def prefix_fun(parser, op, token):
-    if parser.token_type == lex.TT_LPAREN:
-        name = empty_node()
-    else:
-        name = grab_name(parser.name_parser)
+def prefix_function(parser, op, token):
     args, body = _parse_function(parser, token)
-    parser.advance_end()
-    return node_3(lex.NT_FUN, token, name, args, body)
+    return node_2(lex.NT_LAMBDA, token, args, body)
 
 
-def stmt_def(parser, op, token):
+def stmt_function(parser, op, token):
     parser.assert_token_type(lex.TT_NAME)
     name = grab_name(parser.name_parser)
     args, body = _parse_function(parser, token)
-    parser.advance_end()
-    return node_3(lex.NT_FUN, token, name, args, body)
-
-
-def prefix_lambda(parser, op, token):
-    args = []
-    while parser.token_type != lex.TT_COLON:
-        args.append(parser.signature_parser.expression(0))
-        if parser.token_type != lex.TT_COMMA:
-            break
-
-        parser.advance_expected(lex.TT_COMMA)
-
-    parser.advance_expected(lex.TT_COLON)
-
-    body = parser.expression(0)
-    return node_3(lex.NT_FUN, token, empty_node(), list_node(args), body)
-
-
-###############################################################
-# IMPORT STATEMENTS
-###############################################################
-# import callbacks are not error prone
-# you need better tuned parsers to do it properly
-# for example, current implementation allows
-# import mod1.mod2.file as mod3.file
-def stmt_from(parser, op, token):
-    module = parser.import_parser.expression(0)
-    parser.advance_expected(lex.TT_IMPORT)
-    what = parser.import_parser.expression(0)
-    return node_2(lex.NT_IMPORT_FROM, token, module, what)
-
-
-def stmt_import(parser, op, token):
-    imported = parser.import_parser.expression(0)
-    return node_1(lex.NT_IMPORT, token, imported)
+    return node_3(lex.NT_FUNCTION, token, name, args, body)
