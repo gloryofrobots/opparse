@@ -6,6 +6,7 @@ from opparse.nodes import (
     node_0, node_1, node_2, node_3, empty_node,
     is_list_node, list_node)
 
+
 def commas_as_list(node):
     return flatten_infix(node, lex.NT_COMMA)
 
@@ -21,20 +22,35 @@ def infix_name_to_the_right(parser, op, token, left):
     return node_2(op.infix_node_type, token, left, exp)
 
 
-def infix_lsquare(parser, op, token, left):
-    exp = parser.expression(0)
-    parser.advance_expected(lex.TT_RSQUARE)
-    return node_2(lex.NT_DOT, token, left, exp)
-
-
 # TODO parser common
 def infix_assign(parser, op, token, left):
+    if left.node_type == lex.NT_COMMA:
+        names = commas_as_list(left)
+    else:
+        parser.assert_node_types(left,
+                                 [lex.NT_NAME, lex.NT_DOT, lex.NT_LOOKUP])
+        names = nodes.ensure_list(left)
+
     vals = [parser.expression_parser.expression(0)]
     while parser.token_type == lex.TT_COMMA:
         parser.advance_expected(lex.TT_COMMA)
         vals.append(parser.expression_parser.expression(0))
 
-    return node_2(lex.TT_ASSIGN, token, nodes.ensure_list(left), list_node(vals))
+    return node_2(lex.NT_ASSIGN, token, names, list_node(vals))
+
+
+def infix_statement_lsquare(parser, op, token, left):
+    return infix_lsquare(parser.expression_parser, op, token, left)
+
+
+def infix_lsquare(parser, op, token, left):
+    exp = parser.expression(0)
+    parser.advance_expected(lex.TT_RSQUARE)
+    return node_2(lex.NT_LOOKUP, token, left, exp)
+
+
+def infix_statement_lparen(parser, op, token, left):
+    return infix_lparen(parser.expression_parser, op, token, left)
 
 
 def infix_lparen(parser, op, token, left):
@@ -55,29 +71,36 @@ def prefix_lparen(parser, op, token):
 
 # TABLES
 
-def prefix_table_lsquare(parser, op, token):
-    exp = parser.expression_parser.expression(0)
-    parser.advance_expected(lex.TT_RSQUARE)
-    return exp
-
-
 def _table_item(parser):
-    key = parser.expression(0)
-    parser.advance_expected(lex.TT_ASSIGN)
-    value = parser.expression_parser.expression(0)
+    if parser.token_type == lex.TT_LSQUARE:
+        parser.advance()
+        key = parser.expression(0)
+        parser.advance_expected(lex.TT_RSQUARE)
+        parser.advance_expected(lex.TT_ASSIGN)
+        value = parser.expression(0)
+    else:
+        key = parser.expression(0)
+        if parser.token_type == lex.TT_ASSIGN:
+            parser.assert_node_type(key, lex.NT_NAME)
+            parser.advance_expected(lex.TT_ASSIGN)
+            value = parser.expression(0)
+        else:
+            value = key
+            key = empty_node()
+
     return list_node([key, value])
 
 
 def prefix_lcurly(parser, op, token):
-    items = parse_struct(parser.table_parser,
-                         lex.TT_RCURLY, lex.TT_COMMA, _table_item)
+    items = parse_struct(parser, lex.TT_RCURLY, lex.TT_COMMA, _table_item)
 
     return node_1(lex.NT_TABLE, token, items)
 
 
 def stmt_if(parser, op, token):
     branches = []
-    cond = parser.expression(0)
+    exp_parser = parser.expression_parser
+    cond = exp_parser.expression(0)
     parser.advance_expected(lex.TT_THEN)
 
     body = parser.statements(parser.lex.TERM_IF_BODY)
@@ -88,7 +111,7 @@ def stmt_if(parser, op, token):
     while parser.token_type == lex.TT_ELSEIF:
         parser.advance_expected(lex.TT_ELSEIF)
 
-        cond = parser.expression(0)
+        cond = exp_parser.expression(0)
         parser.advance_expected(lex.TT_THEN)
         body = parser.statements(parser.lex.TERM_IF_BODY)
         parser.assert_token_types(parser.lex.TERM_IF_BODY)
@@ -96,11 +119,9 @@ def stmt_if(parser, op, token):
 
     if parser.token_type == lex.TT_ELSE:
         parser.advance_expected(lex.TT_ELSE)
-        parser.advance_expected(lex.TT_COLON)
-
         else_body = parser.statements(parser.lex.TERM_BLOCK)
     else:
-        else_body = empty_body()
+        else_body = empty_node()
 
     branches.append(list_node([empty_node(), else_body]))
     parser.advance_end()
@@ -109,8 +130,12 @@ def stmt_if(parser, op, token):
 
 def stmt_local(parser, op, token):
     s = parser.statement()
-    parser.assert_node_types(s, [lex.NT_ASSIGN, lex.NT_NAME])
+    parser.assert_node_types(s, [lex.NT_ASSIGN, lex.NT_NAME, lex.NT_COMMA])
+    if s.node_type == lex.NT_COMMA:
+        s = commas_as_list(s)
+
     return node_1(lex.NT_LOCAL, token, s)
+
 
 def stmt_return(parser, op, token):
     items = [parser.expression_parser.expression(0)]

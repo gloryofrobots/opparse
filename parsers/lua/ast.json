@@ -1,6 +1,6 @@
 [
   {
-    "_ntype": "TT_ASSIGN",
+    "_ntype": "NT_ASSIGN",
     "_value": "=",
     "children": [
       [
@@ -54,6 +54,1735 @@
             }
           ]
         }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "a"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            []
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "k"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_STR",
+          "_value": "\"x\""
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_LOOKUP",
+          "_value": "[",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_NAME",
+              "_value": "k"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "10"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_LOOKUP",
+          "_value": "[",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_INT",
+              "_value": "20"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_STR",
+          "_value": "\"great\""
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_CALL",
+    "_value": "(",
+    "children": [
+      {
+        "_ntype": "NT_NAME",
+        "_value": "print"
+      },
+      [
+        {
+          "_ntype": "NT_LOOKUP",
+          "_value": "[",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_STR",
+              "_value": "\"x\""
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_CALL",
+    "_value": "(",
+    "children": [
+      {
+        "_ntype": "NT_NAME",
+        "_value": "print"
+      },
+      [
+        {
+          "_ntype": "NT_LOOKUP",
+          "_value": "[",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_NAME",
+              "_value": "k"
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_LOOKUP",
+          "_value": "[",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_STR",
+              "_value": "\"x\""
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_ADD",
+          "_value": "+",
+          "children": [
+            {
+              "_ntype": "NT_LOOKUP",
+              "_value": "[",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "a"
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"x\""
+                }
+              ]
+            },
+            {
+              "_ntype": "NT_INT",
+              "_value": "1"
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "a"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            []
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_DOT",
+          "_value": ".",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_NAME",
+              "_value": "x"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "1"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_DOT",
+          "_value": ".",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_NAME",
+              "_value": "y"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "0"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "b"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            []
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_DOT",
+          "_value": ".",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "b"
+            },
+            {
+              "_ntype": "NT_NAME",
+              "_value": "x"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "1"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_DOT",
+          "_value": ".",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "b"
+            },
+            {
+              "_ntype": "NT_NAME",
+              "_value": "y"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "0"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "c"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "a"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "a"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_ADD",
+          "_value": "+",
+          "children": [
+            {
+              "_ntype": "NT_ADD",
+              "_value": "+",
+              "children": [
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "2"
+                },
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "3"
+                }
+              ]
+            },
+            {
+              "_ntype": "NT_INT",
+              "_value": "4"
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "b"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "2"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "c"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_CALL",
+          "_value": "(",
+          "children": [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "add"
+            },
+            [
+              {
+                "_ntype": "NT_INT",
+                "_value": "13"
+              },
+              {
+                "_ntype": "NT_INT",
+                "_value": "15"
+              }
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "days"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            [
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"Sunday\""
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"Monday\""
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"Tuesday\""
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"Wednesday\""
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"Thursday\""
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"Friday\""
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"Saturday\""
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "tab"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            [
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "sin"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "1"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "sin"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "2"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "sin"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "3"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "sin"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "4"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "sin"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "5"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "sin"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "6"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "sin"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "7"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_CALL",
+                  "_value": "(",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "sin"
+                    },
+                    [
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "8"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "a"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            [
+              [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "x"
+                },
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "0"
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "y"
+                },
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "1"
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "polyline"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            [
+              [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "color"
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"blue\""
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "thickness"
+                },
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "2"
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "npoints"
+                },
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "4"
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_TABLE",
+                  "_value": "{",
+                  "children": [
+                    [
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "x"
+                        },
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "0"
+                        }
+                      ],
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "y"
+                        },
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "0"
+                        }
+                      ]
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_TABLE",
+                  "_value": "{",
+                  "children": [
+                    [
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "x"
+                        },
+                        {
+                          "_ntype": "NT_NEGATE",
+                          "_value": "-",
+                          "children": [
+                            {
+                              "_ntype": "NT_INT",
+                              "_value": "10"
+                            }
+                          ]
+                        }
+                      ],
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "y"
+                        },
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "0"
+                        }
+                      ]
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_TABLE",
+                  "_value": "{",
+                  "children": [
+                    [
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "x"
+                        },
+                        {
+                          "_ntype": "NT_NEGATE",
+                          "_value": "-",
+                          "children": [
+                            {
+                              "_ntype": "NT_INT",
+                              "_value": "10"
+                            }
+                          ]
+                        }
+                      ],
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "y"
+                        },
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "1"
+                        }
+                      ]
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_TABLE",
+                  "_value": "{",
+                  "children": [
+                    [
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "x"
+                        },
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "0"
+                        }
+                      ],
+                      [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "y"
+                        },
+                        {
+                          "_ntype": "NT_INT",
+                          "_value": "1"
+                        }
+                      ]
+                    ]
+                  ]
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "opnames"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            [
+              [
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"+\""
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"add\""
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"-\""
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"sub\""
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"*\""
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"mul\""
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"/\""
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"div\""
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "i"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_INT",
+          "_value": "20"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "s"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_STR",
+          "_value": "\"-\""
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "s_a"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            [
+              [
+                {
+                  "_ntype": "NT_ADD",
+                  "_value": "+",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "i"
+                    },
+                    {
+                      "_ntype": "NT_INT",
+                      "_value": "0"
+                    }
+                  ]
+                },
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "s"
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_ADD",
+                  "_value": "+",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "i"
+                    },
+                    {
+                      "_ntype": "NT_INT",
+                      "_value": "1"
+                    }
+                  ]
+                },
+                {
+                  "_ntype": "NT_CONCAT",
+                  "_value": "..",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "s"
+                    },
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "s"
+                    }
+                  ]
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_ADD",
+                  "_value": "+",
+                  "children": [
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "i"
+                    },
+                    {
+                      "_ntype": "NT_INT",
+                      "_value": "2"
+                    }
+                  ]
+                },
+                {
+                  "_ntype": "NT_CONCAT",
+                  "_value": "..",
+                  "children": [
+                    {
+                      "_ntype": "NT_CONCAT",
+                      "_value": "..",
+                      "children": [
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "s"
+                        },
+                        {
+                          "_ntype": "NT_NAME",
+                          "_value": "s"
+                        }
+                      ]
+                    },
+                    {
+                      "_ntype": "NT_NAME",
+                      "_value": "s"
+                    }
+                  ]
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_ASSIGN",
+    "_value": "=",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "a"
+        }
+      ],
+      [
+        {
+          "_ntype": "NT_TABLE",
+          "_value": "{",
+          "children": [
+            [
+              [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "x"
+                },
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "10"
+                }
+              ],
+              [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "y"
+                },
+                {
+                  "_ntype": "NT_INT",
+                  "_value": "45"
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"one\""
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"two\""
+                }
+              ],
+              [
+                {
+                  "empty": true
+                },
+                {
+                  "_ntype": "NT_STR",
+                  "_value": "\"three\""
+                }
+              ]
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_LOCAL",
+    "_value": "local",
+    "children": [
+      {
+        "_ntype": "NT_ASSIGN",
+        "_value": "=",
+        "children": [
+          [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            },
+            {
+              "_ntype": "NT_NAME",
+              "_value": "b"
+            }
+          ],
+          [
+            {
+              "_ntype": "NT_INT",
+              "_value": "1"
+            },
+            {
+              "_ntype": "NT_INT",
+              "_value": "10"
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "_ntype": "NT_LOCAL",
+    "_value": "local",
+    "children": [
+      {
+        "_ntype": "NT_ASSIGN",
+        "_value": "=",
+        "children": [
+          [
+            {
+              "_ntype": "NT_NAME",
+              "_value": "a"
+            }
+          ],
+          [
+            {
+              "_ntype": "NT_INT",
+              "_value": "1"
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "_ntype": "NT_LOCAL",
+    "_value": "local",
+    "children": [
+      {
+        "_ntype": "NT_NAME",
+        "_value": "a"
+      }
+    ]
+  },
+  {
+    "_ntype": "NT_LOCAL",
+    "_value": "local",
+    "children": [
+      [
+        {
+          "_ntype": "NT_NAME",
+          "_value": "a"
+        },
+        {
+          "_ntype": "NT_NAME",
+          "_value": "b"
+        },
+        {
+          "_ntype": "NT_NAME",
+          "_value": "c"
+        }
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_IF",
+    "_value": "if",
+    "children": [
+      [
+        [
+          {
+            "_ntype": "NT_LT",
+            "_value": "<",
+            "children": [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "a"
+              },
+              {
+                "_ntype": "NT_NAME",
+                "_value": "b"
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_NAME",
+                    "_value": "a"
+                  }
+                ]
+              ]
+            },
+            {
+              "_ntype": "NT_LOCAL",
+              "_value": "local",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "a"
+                }
+              ]
+            },
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_NAME",
+                    "_value": "a"
+                  }
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "empty": true
+          },
+          {
+            "empty": true
+          }
+        ]
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_IF",
+    "_value": "if",
+    "children": [
+      [
+        [
+          {
+            "_ntype": "NT_GT",
+            "_value": ">",
+            "children": [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "i"
+              },
+              {
+                "_ntype": "NT_INT",
+                "_value": "20"
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_LOCAL",
+              "_value": "local",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "x"
+                }
+              ]
+            },
+            {
+              "_ntype": "NT_ASSIGN",
+              "_value": "=",
+              "children": [
+                [
+                  {
+                    "_ntype": "NT_NAME",
+                    "_value": "x"
+                  }
+                ],
+                [
+                  {
+                    "_ntype": "NT_INT",
+                    "_value": "20"
+                  }
+                ]
+              ]
+            },
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_ADD",
+                    "_value": "+",
+                    "children": [
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "x"
+                      },
+                      {
+                        "_ntype": "NT_INT",
+                        "_value": "2"
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "empty": true
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "print"
+                },
+                [
+                  {
+                    "_ntype": "NT_NAME",
+                    "_value": "x"
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      ]
+    ]
+  },
+  {
+    "_ntype": "NT_IF",
+    "_value": "if",
+    "children": [
+      [
+        [
+          {
+            "_ntype": "NT_EQ",
+            "_value": "==",
+            "children": [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "op"
+              },
+              {
+                "_ntype": "NT_STR",
+                "_value": "\"+\""
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_ASSIGN",
+              "_value": "=",
+              "children": [
+                [
+                  {
+                    "_ntype": "NT_NAME",
+                    "_value": "r"
+                  }
+                ],
+                [
+                  {
+                    "_ntype": "NT_ADD",
+                    "_value": "+",
+                    "children": [
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "a"
+                      },
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "b"
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "_ntype": "NT_EQ",
+            "_value": "==",
+            "children": [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "op"
+              },
+              {
+                "_ntype": "NT_STR",
+                "_value": "\"-\""
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_ASSIGN",
+              "_value": "=",
+              "children": [
+                [
+                  {
+                    "_ntype": "NT_NAME",
+                    "_value": "r"
+                  }
+                ],
+                [
+                  {
+                    "_ntype": "NT_SUB",
+                    "_value": "-",
+                    "children": [
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "a"
+                      },
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "b"
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "_ntype": "NT_EQ",
+            "_value": "==",
+            "children": [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "op"
+              },
+              {
+                "_ntype": "NT_STR",
+                "_value": "\"*\""
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_ASSIGN",
+              "_value": "=",
+              "children": [
+                [
+                  {
+                    "_ntype": "NT_NAME",
+                    "_value": "r"
+                  }
+                ],
+                [
+                  {
+                    "_ntype": "NT_MUL",
+                    "_value": "*",
+                    "children": [
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "a"
+                      },
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "b"
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "_ntype": "NT_EQ",
+            "_value": "==",
+            "children": [
+              {
+                "_ntype": "NT_NAME",
+                "_value": "op"
+              },
+              {
+                "_ntype": "NT_STR",
+                "_value": "\"/\""
+              }
+            ]
+          },
+          [
+            {
+              "_ntype": "NT_ASSIGN",
+              "_value": "=",
+              "children": [
+                [
+                  {
+                    "_ntype": "NT_NAME",
+                    "_value": "r"
+                  }
+                ],
+                [
+                  {
+                    "_ntype": "NT_DIV",
+                    "_value": "/",
+                    "children": [
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "a"
+                      },
+                      {
+                        "_ntype": "NT_NAME",
+                        "_value": "b"
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        ],
+        [
+          {
+            "empty": true
+          },
+          [
+            {
+              "_ntype": "NT_CALL",
+              "_value": "(",
+              "children": [
+                {
+                  "_ntype": "NT_NAME",
+                  "_value": "error"
+                },
+                [
+                  {
+                    "_ntype": "NT_STR",
+                    "_value": "\"invalid operation\""
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
       ]
     ]
   }

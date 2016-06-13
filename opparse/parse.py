@@ -276,6 +276,8 @@ class Parser(object):
         self.allow_unknown = settings.get("allow_unknown", True)
         self.break_on_juxtaposition = \
             settings.get("break_on_juxtaposition", False)
+        self.allow_empty_source = \
+            settings.get("allow_empty_source", True)
 
     def add_builder(self, name, builder):
         parser = builder.build(name)
@@ -629,9 +631,10 @@ class Parser(object):
 
         length = len(stmts)
         if length == 0:
-            return parse_error(self,
-                               "Expected one or more expressions",
-                               self.token)
+            if not self.allow_empty_source:
+                return parse_error(self,
+                                "Expected one or more expressions",
+                                self.token)
 
         return nodes.list_node(stmts)
 

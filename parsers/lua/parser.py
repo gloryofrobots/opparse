@@ -52,9 +52,11 @@ def signature_parser():
 def table_parser(expressions_parser):
     parser = (
         builder(break_on_juxtaposition=True)
+        .symbol(lex.TT_ASSIGN)
+        .symbol(lex.TT_COMMA)
         .literal(lex.TT_NAME, lex.NT_NAME)
         .literal(lex.TT_INT, lex.NT_INT)
-        .prefix(lex.TT_LSQUARE, prefix_table_lsquare)
+        # .prefix(lex.TT_LSQUARE, prefix_table_lsquare)
     ).build("table_parser")
 
     return parser.add_weakref(expressions_parser)
@@ -64,13 +66,25 @@ def expression_parser(statement_parser):
     parser = (
         set_literals(builder(break_on_juxtaposition=True))
         .symbol(lex.TT_RSQUARE)
+        .symbol(lex.TT_ASSIGN)
         .symbol(lex.TT_RPAREN)
         .symbol(lex.TT_RCURLY)
         .symbol(lex.TT_COMMA)
         .symbol(lex.TT_IN)
+        .symbol(lex.TT_IF)
+        .symbol(lex.TT_ELSEIF)
+        .symbol(lex.TT_ELSE)
+        .symbol(lex.TT_THEN)
+        .symbol(lex.TT_LOCAL)
+        .symbol(lex.TT_RETURN)
+        .symbol(lex.TT_WHILE)
+        .symbol(lex.TT_REPEAT)
+        .symbol(lex.TT_UNTIL)
+        .symbol(lex.TT_DO)
+        .symbol(lex.TT_FOR)
+        .symbol(lex.TT_END_EXPR, prefix_empty)
         .symbol(lex.TT_ENDSTREAM)
         .symbol(lex.TT_END)
-        .symbol(lex.TT_END_EXPR, prefix_empty)
 
         .prefix(lex.TT_LPAREN, prefix_lparen)
         .prefix(lex.TT_LCURLY, prefix_lcurly)
@@ -89,7 +103,7 @@ def expression_parser(statement_parser):
         .infix_default(lex.TT_EQ, 35, lex.NT_EQ)
         .infix_default(lex.TT_NE, 35, lex.NT_NE)
 
-        .infix_default(lex.TT_DOT_2, 40, lex.NT_POW)
+        .infix_default(lex.TT_DOT_2, 40, lex.NT_CONCAT)
 
         .infix_default(lex.TT_MINUS, 50, lex.NT_SUB)
         .infix_default(lex.TT_PLUS, 50, lex.NT_ADD)
@@ -116,11 +130,14 @@ def lua_parser():
     parser = (
         builder(break_on_juxtaposition=True)
         .literal(lex.TT_NAME, lex.NT_NAME)
-        .symbol(lex.TT_END)
         .symbol(lex.TT_IN)
         .symbol(lex.TT_RSQUARE)
-        .symbol(lex.TT_ENDSTREAM)
+        .symbol(lex.TT_ELSEIF)
+        .symbol(lex.TT_ELSE)
+        .symbol(lex.TT_THEN)
         .symbol(lex.TT_END_EXPR, prefix_empty)
+        .symbol(lex.TT_END)
+        .symbol(lex.TT_ENDSTREAM)
 
         .stmt(lex.TT_FUNCTION, stmt_function)
 
@@ -130,8 +147,8 @@ def lua_parser():
 
         .infix(lex.TT_DOT, 90, infix_name_to_the_right, lex.NT_DOT)
         .infix(lex.TT_COLON, 90, infix_name_to_the_right, lex.NT_COLON)
-        .infix(lex.TT_LSQUARE, 90, infix_lsquare)
-        .infix(lex.TT_LPAREN, 90, infix_lparen)
+        .infix(lex.TT_LSQUARE, 90, infix_statement_lsquare)
+        .infix(lex.TT_LPAREN, 90, infix_statement_lparen)  # 
         # TODO add infix lcurly
         #.infix(lex.TT_LCURLY, 90, infix_lcurly)
 

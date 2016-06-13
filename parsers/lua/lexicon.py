@@ -19,6 +19,7 @@ class LuaLexicon(Lexicon):
     TT_LOCAL = "TT_LOCAL"
     TT_DO = "TT_DO"
 
+    TT_THEN = "TT_THEN"
     TT_IF = "TT_IF"
     TT_ELSE = "TT_ELSE"
     TT_ELSEIF = "TT_ELSEIF"
@@ -71,10 +72,11 @@ class LuaLexicon(Lexicon):
     NT_STR = "NT_STR"
     NT_MULTI_STR = "NT_MULTI_STR"
     NT_NAME = "NT_NAME"
-    NT_TABLE = "NT_LIST"
+    NT_TABLE = "NT_TABLE"
     NT_FUNCTION = "NT_FUNCTION"
     NT_LAMBDA = "NT_LAMBDA"
     NT_BLOCK = "NT_BLOCK"
+    NT_LOCAL = "NT_LOCAL"
 
     NT_IF = "NT_IF"
     NT_NUMERIC_FOR = "NT_NUMERIC_FOR"
@@ -85,6 +87,7 @@ class LuaLexicon(Lexicon):
     NT_ASSIGN = "NT_ASSIGN"
     NT_CALL = "NT_CALL"
     NT_DOT = "NT_DOT"
+    NT_LOOKUP = "NT_LOOKUP"
     NT_COLON = "NT_COLON"
     NT_COMMA = "NT_COMMA"
     NT_AND = "NT_AND"
@@ -107,6 +110,7 @@ class LuaLexicon(Lexicon):
     NT_MUL = "NT_MUL"
     NT_POW = "NT_POW"
     NT_MOD = "NT_MOD"
+    NT_CONCAT = "NT_CONCAT"
 
     NT_NEGATE = "NT_NEGATE"
 
@@ -121,6 +125,7 @@ class LuaLexicon(Lexicon):
         (keyword('repeat'), TT_REPEAT),
         (keyword('until'), TT_UNTIL),
         (keyword('if'), TT_IF),
+        (keyword('then'), TT_THEN),
         (keyword('elseif'), TT_ELSEIF),
         (keyword('else'), TT_ELSE),
         (keyword('end'), TT_END),
@@ -180,4 +185,4 @@ class LuaLexicon(Lexicon):
     TERM_CONDITION = [TT_COLON]
     TERM_FOR_CONDITION = [TT_IN]
     TERM_LOOP_CONDITION = [TT_DO]
-    TERM_IF_BODY = [TT_ELSE, TT_ELSEIF]
+    TERM_IF_BODY = [TT_ELSE, TT_ELSEIF] + TERM_BLOCK
